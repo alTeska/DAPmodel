@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from DAPmodel import DAP_Model
+from DAP_model import DAPModel
 
 start = time.time()
 # stiumlation current
