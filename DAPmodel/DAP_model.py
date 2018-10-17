@@ -19,7 +19,6 @@ class DAP_Model():
     Ra = 100.0
 
     e_hcn = -29.46    #* 1e-3  # mV
-    e_kdr = -110.0    #* 1e-3  # mV
     e_nap = 60.0      #* 1e-3  # mV
     e_nat = 60.0      #* 1e-3  # mV
     e_leak = -86.53   #* 1e-3  # mV
@@ -28,13 +27,25 @@ class DAP_Model():
     # kdr
     n_pow_kdr = 4
 
-    gbar_kdr = 0.00313   # (S/cm2)
 
     n_vh_kdr = -68.29         # * 1e-3  # mV
     n_vs_kdr = 18.84          # * 1e-3  # mV
     n_tau_min_kdr = 0.286     # * 1e-3  # ms
     n_tau_max_kdr = 21.286    # * 1e-3  # ms
     n_tau_delta_kdr = 0.746   # * 1e-3  # ms
+
+
+    e_kdr = -110.0    #* 1e-3  # mV
+    gbar_kdr = 0.00313   # (S/cm2)
+
+    kdr_n = {
+        'pow' : 4,
+        'vh' : -68.29,         # mV
+        'vs' : 18.84,         # mV
+        'tau_min' : 0.286,     # ms
+        'tau_max' : 21.286,    # ms
+        'tau_delta' : 0.746,   # ms
+    }
 
     # hcn_slow
     n_pow_hcn = 1
@@ -97,17 +108,29 @@ class DAP_Model():
         return (x_tau_min + (x_tau_max - x_tau_min) * xinf * \
                 np.exp(x_tau_delta * (x_vh - V) / x_vs))
 
+    def x_tau_dict(self, V, xinf, ion_ch):
+        return (ion_ch['tau_min'] + (ion_ch['tau_max'] - ion_ch['tau_min']) * \
+                xinf * np.exp(ion_ch['tau_delta'] * \
+                (ion_ch['vh'] - V) / ion_ch['vs']))
+
+
     def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
         return (gbar * self.cell_area) * m**m_pow * h**h_pow * (V - e_ion)
 
     def i_k(self, V, n, gbar, n_pow, e_ion):
         return (gbar * self.cell_area) * n**n_pow * (V - e_ion)
 
+    def i_k_dict(self, V, n, gbar, n_pow, e_ion):
+        return (gbar * self.cell_area) * n**n_pow * (V - e_ion)
+
+
     def simulate(self, T, dt, i_inj):
 
         '''run simulation of DAP model given the injection current'''
         t = np.linspace(0, T, int(T/dt))
         U = np.zeros_like(t)
+        i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
+
         M_nap = np.zeros_like(t)
         M_nat = np.zeros_like(t)
         H_nap = np.zeros_like(t)
@@ -116,7 +139,13 @@ class DAP_Model():
         N_kdr = np.zeros_like(t)
 
         U[0] = -75 #* 1e-3   # mV
-        i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
+        M_nap[0] = self.x_inf(U[0], self.m_vh_nap, self.m_vs_nap)
+        M_nat[0] = self.x_inf(U[0], self.m_vh_nat, self.m_vs_nat)
+        H_nap[0] = self.x_inf(U[0], self.h_vh_nap, self.h_vs_nap)
+        H_nat[0] = self.x_inf(U[0], self.h_vh_nat, self.h_vs_nat)
+        N_hcn[0] = self.x_inf(U[0], self.n_vh_hcn, self.n_vs_hcn)
+        N_kdr[0] = self.x_inf(U[0], self.n_vh_kdr, self.n_vs_kdr)
+
 
         for n in range(0, len(i_inj)-1):
             # calculate steady states
@@ -128,12 +157,6 @@ class DAP_Model():
             N_hcn_inf = self.x_inf(U[n], self.n_vh_hcn, self.n_vs_hcn)
             N_kdr_inf = self.x_inf(U[n], self.n_vh_kdr, self.n_vs_kdr)
 
-            M_nap[0] = M_nap_inf
-            M_nat[0] = M_nat_inf
-            H_nap[0] = H_nap_inf
-            H_nat[0] = H_nat_inf
-            N_hcn[0] = N_hcn_inf
-            N_kdr[0] = N_kdr_inf
 
             # calcualte  time constants
             tau_m_nap = self.x_tau(U[n], self.m_tau_min_nap, self.m_tau_max_nap,
@@ -153,9 +176,12 @@ class DAP_Model():
             tau_n_hcn = self.x_tau(U[n], self.n_tau_min_hcn, self.n_tau_max_hcn,
                                    N_hcn_inf, self.n_tau_delta_hcn,
                                    self.n_vs_hcn, self.n_vh_hcn)
-            tau_n_kdr = self.x_tau(U[n], self.n_tau_min_kdr, self.n_tau_max_kdr,
-                                   N_kdr_inf, self.n_tau_delta_kdr,
-                                   self.n_vs_kdr, self.n_vh_kdr)
+            # tau_n_kdr = self.x_tau(U[n], self.n_tau_min_kdr, self.n_tau_max_kdr,
+            #                        N_kdr_inf, self.n_tau_delta_kdr,
+            #                        self.n_vs_kdr, self.n_vh_kdr)
+
+            tau_n_kdr = self.x_tau_dict(U[n], N_kdr_inf, self.kdr_n)
+
 
             # calculate all steady states
             M_nap[n+1] = M_nap[n] + self.dx_dt(M_nap[n], M_nap_inf, tau_m_nap) * dt
