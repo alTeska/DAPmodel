@@ -1,17 +1,31 @@
 import numpy as np
 
-class DAP_Model():
+class DAP():
     """
-    Hodgkin Huxley modified to DAP Model for the tests of LFI
+    DAP Model based on HH equations for the tests with LFI
     Model conists of 4 types of ion channels: Nap, Nat, Kdr, hcn_slow.
     """
-    nois_fact_obs = 0.
-    seed = None
 
-    if seed is not None:
-        rng = np.random.RandomState(seed=seed)
-    else:
-        rng = np.random.RandomState()
+    def __init__(self, init, params, seed=None):
+        self.state = np.asarray(init)
+        self.params = np.asarray(params)
+
+
+        self.gbar_kdr = params[0]
+        self.gbar_hcn = params[1]
+        self.gbar_nap = params[2]
+        self.gbar_nat = params[3]
+
+        self.seed = seed
+        if seed is not None:
+            self.rng = np.random.RandomState(seed=seed)
+        else:
+            self.rng = np.random.RandomState()
+
+    # self.gbar_kdr = 0.00313  # (S/cm2)
+    # self.gbar_hcn = 5e-05    # (S/cm2)
+    # self.gbar_nap = 0.01527  # (S/cm2)
+    # self.gbar_nat = 0.142    # (S/cm2)
 
     cm = 0.63      #* 1e-6  # uF
     diam = 50.0    * 1e-4  # cm
@@ -25,10 +39,7 @@ class DAP_Model():
     e_leak = -86.53   # mV
     e_kdr = -110.0    # mV
     g_leak = 0.000430
-    gbar_kdr = 0.00313  # (S/cm2)
-    gbar_hcn = 5e-05    # (S/cm2)
-    gbar_nap = 0.01527  # (S/cm2)
-    gbar_nat = 0.142    # (S/cm2)
+
 
     kdr_n = {
         'pow': 4,
@@ -79,7 +90,7 @@ class DAP_Model():
     }
 
     nap_h = {
-        'pow': 1,  
+        'pow': 1,
         'vs': -19.19,        # mV
         'vh': -82.54,        # mV
         'tau_min': 0.336,    # ms
@@ -96,6 +107,7 @@ class DAP_Model():
         return 1 / (1 + np.exp((x_vh - V) / x_vs))
 
     def dx_dt(self, x, x_inf, x_tau):
+        '''differential equations for m,h,n'''
         return (x_inf - x) / x_tau
 
     def x_tau(self, V, xinf, ion_ch):
@@ -105,17 +117,28 @@ class DAP_Model():
 
 
     def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
+        '''calculates sodium-like ion current'''
         return (gbar * self.cell_area) * m**m_pow * h**h_pow * (V - e_ion)
 
     def i_k(self, V, n, gbar, n_pow, e_ion):
+        '''calculates potasium-like ion current'''
         return (gbar * self.cell_area) * n**n_pow * (V - e_ion)
 
 
 
-    def simulate(self, T, dt, i_inj):
+    def simulate(self, dt, t, i_inj):
+        """run simulation of DAP model given the injection current
 
-        '''run simulation of DAP model given the injection current'''
-        t = np.linspace(0, T, int(T/dt))
+        Parameters
+        ----------
+        dt : float
+            Timestep
+        t : float
+            Numpy array with time course
+        i_inj : array
+            Numpy array with the input I
+        """
+
         U = np.zeros_like(t)
         i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
 
@@ -126,7 +149,7 @@ class DAP_Model():
         N_hcn = np.zeros_like(t)
         N_kdr = np.zeros_like(t)
 
-        U[0] = -75 #* 1e-3   # mV
+        U[0] = self.state
         M_nap[0] = self.x_inf(U[0], self.nap_m['vh'], self.nap_m['vs'])
         M_nat[0] = self.x_inf(U[0], self.nat_m['vh'], self.nat_m['vs'])
         H_nap[0] = self.x_inf(U[0], self.nap_h['vh'], self.nap_h['vs'])
@@ -143,7 +166,6 @@ class DAP_Model():
             N_hcn_inf = self.x_inf(U[n], self.hcn_n['vh'], self.hcn_n['vs'])
             N_kdr_inf = self.x_inf(U[n], self.kdr_n['vh'], self.kdr_n['vs'])
 
-
             # calcualte  time constants
             tau_m_nap = self.x_tau(U[n], M_nap_inf, self.nap_m)
             tau_h_nap = self.x_tau(U[n], H_nap_inf, self.nap_h)
@@ -151,7 +173,6 @@ class DAP_Model():
             tau_h_nat = self.x_tau(U[n], H_nat_inf, self.nat_h)
             tau_n_hcn = self.x_tau(U[n], N_hcn_inf, self.hcn_n)
             tau_n_kdr = self.x_tau(U[n], N_kdr_inf, self.kdr_n)
-
 
             # calculate all steady states
             M_nap[n+1] = M_nap[n] + self.dx_dt(M_nap[n], M_nap_inf, tau_m_nap) * dt
@@ -173,10 +194,10 @@ class DAP_Model():
                              self.e_kdr)
 
             i_ion = (i_nap + i_nat + i_kdr + i_hcn) * 1e3
+            i_leak = (self.g_leak * self.cell_area) * (U[n] - self.e_leak) * 1e3
 
             # calculate membrane potential
-            i_leak = (self.g_leak * self.cell_area) * (U[n] - self.e_leak) * 1e3
             U[n+1] = U[n] + (-i_ion - i_leak + i_inj[n])/(self.cm*self.cell_area) * dt
 
         return U #+ self.nois_fact_obs*self.rng.randn(t.shape[0],1)
-        # return U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr
+        
