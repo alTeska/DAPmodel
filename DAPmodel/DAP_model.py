@@ -94,7 +94,8 @@ class DAP_Model():
         return (x_inf - x) / x_tau
 
     def x_tau(self, V, x_tau_min, x_tau_max, xinf, x_tau_delta, x_vs, x_vh):
-        return (x_tau_min + (x_tau_max - x_tau_min) * xinf * np.exp(x_tau_delta * (x_vh - V) / x_vs)) #* 3**(0.1*(20-6.3)) # + temp correction
+        return (x_tau_min + (x_tau_max - x_tau_min) * xinf * \
+                np.exp(x_tau_delta * (x_vh - V) / x_vs))
 
     def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
         return (gbar * self.cell_area) * m**m_pow * h**h_pow * (V - e_ion)
