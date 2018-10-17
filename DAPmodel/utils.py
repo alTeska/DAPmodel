@@ -1,4 +1,8 @@
+# model based on lfimodels library by Jan-Matthis Lückmann
 import numpy as np
+import delfi.distribution as dd
+from delfi.summarystats import Identity
+
 from DAPmodel import DAPSimulator
 
 
@@ -32,7 +36,36 @@ def syn_current(duration=300, dt=0.01, seed=None):
 
     return I, t
 
+
 def syn_obs_data(I, dt, params, V0=-75, seed=None):
     """Data for x_o"""
     m = DAPSimulator(I=I, dt=dt, V0=V0, seed=seed)
     return m.gen_single(params)
+
+
+def prior(true_params, seed=None, prior_log=False):
+    """Prior"""
+    range_lower = param_transform(prior_log,0.5*true_params)
+    range_upper = param_transform(prior_log,1.5*true_params)
+
+    range_lower = range_lower[0:len(true_params)]
+    range_upper = range_upper[0:len(true_params)]
+
+    prior_mn = param_transform(prior_log,true_params)
+    prior_cov = np.diag((range_upper - range_lower)**2)/12
+
+    return dd.Gaussian(m=prior_mn, S=prior_cov, seed=seed)
+
+
+def param_transform(prior_log, x):
+    if prior_log:
+        return np.log(x)
+    else:
+        return x
+
+
+def param_invtransform(prior_log, x):
+    if prior_log:
+        return np.exp(x)
+    else:
+        return x
