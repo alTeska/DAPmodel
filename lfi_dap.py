@@ -2,7 +2,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 from DAPmodel import DAP, DAPSimulator
-from DAPmodel import obs_params, syn_current
+from DAPmodel import obs_params, syn_current, syn_obs_data
 
 from delfi.inference import SNPE
 from delfi.summarystats import Identity
@@ -19,9 +19,10 @@ observables = {'loss.lprobs', 'imputation_values', 'h1.mW', 'h1.mb', 'h2.mW',
 
 # setting up fake parameters
 params, labels = obs_params()
-I, dt = syn_current()
+I, t = syn_current(duration=300, dt=0.01)
 
-# x_o = utils.syn_obs_data(I, dt, params)    # data
+x_o = syn_obs_data(I, 0.01, params)
+
 # sum_stats = utils.syn_obs_stats(I, params, dt, t_on, t_off, n_summary=4)
 # prior = utils.prior(params)
 #

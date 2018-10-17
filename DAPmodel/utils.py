@@ -1,4 +1,6 @@
 import numpy as np
+from DAPmodel import DAPSimulator
+
 
 def obs_params(reduced_model=False):
     """Parameters for x_o
@@ -29,3 +31,8 @@ def syn_current(duration=300, dt=0.01, seed=None):
     I[15000:15500] = np.append(i_up, i_down)[:]
 
     return I, t
+
+def syn_obs_data(I, dt, params, V0=-75, seed=None):
+    """Data for x_o"""
+    m = DAPSimulator(I=I, dt=dt, V0=V0, seed=seed)
+    return m.gen_single(params)

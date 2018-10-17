@@ -34,10 +34,7 @@ class DAPSimulator(BaseSimulator):
         super().__init__(dim_param=dim_param, seed=seed)
         self.I = I
         self.dt = dt
-
         self.t = np.linspace(0, len(I), len(I))
-        print(len(self.t))
-
         self.prior_log = prior_log
         self.init = [V0]
 
