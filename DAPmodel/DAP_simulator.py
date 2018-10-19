@@ -34,7 +34,9 @@ class DAPSimulator(BaseSimulator):
         super().__init__(dim_param=dim_param, seed=seed)
         self.I = I
         self.dt = dt
-        self.t = np.linspace(0, len(I), len(I))
+        self.t = np.linspace(0, len(I), len(I))*self.dt
+        # print(self.t)
+
         self.prior_log = prior_log
         self.init = [V0]
 
@@ -61,7 +63,7 @@ class DAPSimulator(BaseSimulator):
         dap = DAP(self.init, params, seed=dap_seed)
         states = dap.simulate(self.dt, self.t, self.I)
 
-        return {'data': states,
+        return {'data': states.reshape(-1),
                 'time': self.t,
                 'dt': self.dt,
-                'I': self.I}
+                'I': self.I.reshape(-1)}

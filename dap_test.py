@@ -4,16 +4,27 @@ import matplotlib.pyplot as plt
 from DAPmodel import DAP
 from DAPmodel import obs_params, syn_current
 
+# from lfimodels.hodgkinhuxley.HodgkinHuxley import HodgkinHuxley
+from lfimodels.hodgkinhuxley.HodgkinHuxleyBioPhys import HH
+
+dt = 0.01
 
 params, labels = obs_params()
-I, t = syn_current(duration=300, dt=0.01)
+I, t = syn_current(duration=300, dt=dt)
+
+
 
 # define model
 dap1 = DAP(-75, params)
+hh1 = HH(init=[-75], params=[[50, 5]])
 
 # run model
 # UDap, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr = dap1.simulate(T, dt, I1)
-UDap = dap1.simulate(0.01, t, I)
+Uhh = hh1.sim_time(dt, t, I*1e2)
+UDap = dap1.simulate(dt, t, I)
+
+print(Uhh.shape)
+print(UDap.shape)
 
 # plot voltage trace
 fig, ax = plt.subplots(ncols=1, nrows=2, figsize=(20, 10));
@@ -21,6 +32,7 @@ ax[0].grid()
 ax[0].set_ylabel('V (mV)')
 ax[0].set_xlabel('t (ms)')
 ax[0].plot(t, UDap, label='membrane potential');
+ax[0].plot(t, Uhh, label='membrane potential');
 ax[1].plot(t, I);
 
 # plot of activation functions

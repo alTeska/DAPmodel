@@ -5,6 +5,12 @@ from delfi.summarystats import Identity
 
 from DAPmodel import DAPSimulator
 
+from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
+from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
+from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes_mf import HodgkinHuxleyStatsSpikes_mf
+from delfi.summarystats import Identity
+
+
 
 def obs_params(reduced_model=False):
     """Parameters for x_o
@@ -24,7 +30,7 @@ def obs_params(reduced_model=False):
     return true_params, labels_params
 
 
-def syn_current(duration=300, dt=0.01, seed=None):
+def syn_current(duration=300, dt=0.01, seed=None, on_off=False):
     """Simulation of triangular current"""
     l = duration/dt
     t = np.linspace(0, duration, int(l))
@@ -34,13 +40,37 @@ def syn_current(duration=300, dt=0.01, seed=None):
     i_down = np.linspace(3.5,0,250)
     I[15000:15500] = np.append(i_up, i_down)[:]
 
-    return I, t
+    if on_off:
+        t_on = 15000 * 0.01
+        t_off = 15500 * 0.01
+        return I, t, t_on, t_off
+    else:
+        return I, t
 
 
 def syn_obs_data(I, dt, params, V0=-75, seed=None):
     """Data for x_o"""
     m = DAPSimulator(I=I, dt=dt, V0=V0, seed=seed)
     return m.gen_single(params)
+
+
+def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1, n_xcorr=5,
+                  n_mom=5, n_summary=4, seed=None):
+    """Summary stats for x_o of DAP"""
+
+    if data is None:
+        m = hh.DAP(I=I, dt=dt, V0=V0, seed=seed)
+        data = m.gen_single(params)
+
+    if summary_stats == 0:
+        s = Identity()
+    elif summary_stats == 1:
+        s = HodgkinHuxleyStatsMoments(t_on, t_off, n_xcorr=n_xcorr, n_mom=n_mom, n_summary=n_summary)
+    elif summary_stats == 2:
+        s = HodgkinHuxleyStatsSpikes(t_on, t_off, n_summary=n_summary)
+    elif summary_stats == 3:
+        s = HodgkinHuxleyStatsSpikes_mf(t_on, t_off, n_summary=n_summary)
+    return s.calc([data])
 
 
 def prior(true_params, seed=None, prior_log=False):

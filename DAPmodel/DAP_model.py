@@ -199,4 +199,6 @@ class DAP():
             # calculate membrane potential
             U[n+1] = U[n] + (-i_ion - i_leak + i_inj[n])/(self.cm*self.cell_area) * dt
 
-        return U #+ self.nois_fact_obs*self.rng.randn(t.shape[0],1)
+
+        return U.reshape(-1,1)
+         #+ self.nois_fact_obs*self.rng.randn(t.shape[0],1)
