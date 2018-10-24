@@ -10,7 +10,7 @@ from lfimodels.hodgkinhuxley.HodgkinHuxleyBioPhys import HH
 dt = 0.01
 
 params, labels = obs_params()
-I, t = syn_current(duration=300, dt=dt)
+I, t, t_on, t_off = syn_current(duration=150, dt=dt)
 
 
 

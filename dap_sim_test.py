@@ -8,7 +8,7 @@ from lfimodels.hodgkinhuxley.HodgkinHuxleyBioPhys import HH
 
 
 params, labels = obs_params()
-I, t = syn_current(duration=300, dt=0.01)
+I, t, t_on, t_off = syn_current(duration=150, dt=0.01)
 
 # define model
 dap1 = DAPSimulator(I, 0.01, -75)

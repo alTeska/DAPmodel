@@ -60,44 +60,22 @@ def sample_distributions(prior, posterior, M, S, ii=1000):
 
     posterior_sampl = simulate_data_distr(posterior, M, S, n_samples=ii)
     posterior_sampl = split_list(posterior_sampl)
-    
+
     return prior_sampl, posterior_sampl
 
 
-def plot_distributions(prior, posterior):
+def plot_distribution(distr, labels):
     """Returns a plot of prior and posterior distributions of the parameters (sampled)"""
-    l = len(prior)
-    fig, ax = plt.subplots(1, 2, figsize=(16, 8))
 
-    prior_df = pd.DataFrame(prior)
-    posterior_df = pd.DataFrame(posterior)
+    df = pd.DataFrame(np.array(distr).T, columns=labels)
+    df.dropna(inplace=True)
+    df = df.melt()
 
-    prior_df.dropna(inplace=True)
-    posterior_df.dropna(inplace=True)
-
-    print(prior_df)
-    # g = sns.FacetGrid(prior_df, height=6, aspect=2., hue='variable')
-    g = sns.FacetGrid(prior_df, height=6, aspect=2.)
-    print(g)
-    # g.map(plt.plot, 'value')
-    #
-    # g_post = sns.FacetGrid(posterior_df, height=6, aspect=2., hue='variable')
-    # g_post.map(plt.plot, 'value')
-
-    # for i in np.arange(0, l):
-    #     ax[0].hist(prior[i], bins=int(np.sqrt(len(prior[i])))
-    #                , label='param '+str(i+1))
-    #     ax[1].hist(posterior[i], bins=int(np.sqrt(len(posterior[i])))
-    #                , label='param '+str(i+1))
-    #
-    # ax[0].set_title('Prior distribution')
-    # ax[1].set_title('Posterior distribution')
-    # ax[0].legend()
-    # ax[1].legend()
+    g = sns.FacetGrid(df, height=6, aspect=2., hue='variable')
+    g.map(sns.distplot, 'value')
+    plt.legend()
 
     return g
-    # return g, g_post
-    # pass
 
 
 def plot_distributions_cross(prior, posterior, params=None):
@@ -107,10 +85,10 @@ def plot_distributions_cross(prior, posterior, params=None):
         fig, ax = plt.subplots(2, l, figsize=(16, 16))
 
         for i in np.arange(0, l):
-            ax[0, i].hist(prior[i], bins=int(np.sqrt(len(prior[i])))
-                    , label='prior')
-            ax[0, i].hist(posterior[i], bins=int(np.sqrt(len(posterior[i])))
-                    , label='post')
+            ax[0, i].hist(prior[i], bins=int(np.sqrt(len(prior[i]))),
+                          label='prior')
+            ax[0, i].hist(posterior[i], bins=int(np.sqrt(len(posterior[i]))),
+                         label='post')
 
             ax[0, i].set_title(str(i+1) + ' parameter distr')
             ax[0, i].legend()

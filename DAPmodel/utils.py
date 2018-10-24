@@ -30,22 +30,18 @@ def obs_params(reduced_model=False):
     return true_params, labels_params
 
 
-def syn_current(duration=300, dt=0.01, seed=None, on_off=False):
+def syn_current(duration=200, dt=0.01, t_on=55, t_off=60, seed=None, on_off=False):
     """Simulation of triangular current"""
     l = duration/dt
     t = np.linspace(0, duration, int(l))
 
+
     I = np.zeros_like(t)
     i_up = np.linspace(0,3.5,250)
     i_down = np.linspace(3.5,0,250)
-    I[15000:15500] = np.append(i_up, i_down)[:]
+    I[t_on*100:t_off*100] = np.append(i_up, i_down)[:]
 
-    if on_off:
-        t_on = 15000 * 0.01
-        t_off = 15500 * 0.01
-        return I, t, t_on, t_off
-    else:
-        return I, t
+    return I, t, t_on, t_off
 
 
 def syn_obs_data(I, dt, params, V0=-75, seed=None):
