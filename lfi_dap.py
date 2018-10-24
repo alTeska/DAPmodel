@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from DAPmodel import DAP, DAPSimulator
 from DAPmodel import obs_params, syn_current, syn_obs_data, prior, syn_obs_stats
+from DAPmodel.utils_analysis import simulate_data_distr
 from lfimodels.hodgkinhuxley import utils
 
 from delfi.inference import SNPE
@@ -27,7 +28,7 @@ if not os.path.exists(directory):
     os.makedirs(directory)
 
 n_rounds = 1
-n_samples = 50
+n_samples = 100
 dt = 0.01
 
 # picking experiments observables
@@ -59,6 +60,10 @@ logs, tds, posteriors = inf_snpe.run(n_train=[n_samples], n_rounds=n_rounds,
                                      monitor=observables, proposal=prior,
                                      round_cl=1)
 
+
+posterior_sampl = simulate_data_distr(posteriors[-1], M, sum_stats, n_samples=10)
+print(posterior_sampl)
+
 print('Saving Data')
 sys.setrecursionlimit(10000)
 # save(inf_snpe, directory + '/dap_snpe' + args.name)
@@ -69,7 +74,8 @@ save_pkl(t_on, directory + '/dap_t_on' + args.name)
 save_pkl(t_off, directory + '/dap_t_off' + args.name)
 
 save_pkl(M, directory + '/dap_model' + args.name)
-save_pkl(S, directory + '/dap_stats' + args.name)
+save_pkl(sum_stats, directory + '/dap_stats' + args.name)
+# save_pkl(S, directory + '/dap_stats' + args.name)
 save_pkl(G, directory + '/dap_gen' + args.name)
 
 save_pkl(logs, directory + '/dap_logs' + args.name)
