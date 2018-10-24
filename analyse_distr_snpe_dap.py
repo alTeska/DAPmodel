@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # from tqdm import tqdm  #TODO
 from scipy.stats import ttest_ind, wilcoxon
 
-from DAPmodel.utils_analysis import sample_distributions, plot_distributions
+from DAPmodel.utils_analysis import sample_distributions, plot_distribution
 from DAPmodel.utils_analysis import plot_distributions_cross, plot_mean_std
 from lfimodels.hodgkinhuxley import utils
 
@@ -65,13 +65,13 @@ for i in np.arange(0, len(sampl_prior)):
 
 print('Generating Plots')
 # Plot distributions
-# g1, g_post = plot_distributions(sampl_prior, sampl_posterior)
-g1 = plot_distributions(sampl_prior, sampl_posterior)
-# g2, _ = plot_distributions_cross(sampl_prior, sampl_posterior, params=len(sampl_prior))
+g1 = plot_distribution(sampl_prior, labels)
+g2 = plot_distribution(sampl_posterior, labels)
+# g3, _ = plot_distributions_cross(sampl_prior, sampl_posterior)
 
 
 # Results Visualization
-# pdf_prior, _ = plot_pdf(prior, lims=[-3, 3],figsize=(10,10), resolution=8, labels_params=labels)
+pdf_prior, _ = plot_pdf(prior, lims=[-3, 3],figsize=(10,10), resolution=8, labels_params=labels)
 pdf, _ = plot_pdf(posteriors[-1], lims=[-3, 3],figsize=(10,10), resolution=50, labels_params=labels)
 
 
@@ -101,12 +101,11 @@ axes[1].step(idx, x_post['data'], label='posterior')
 axes[1].legend()
 
 
-pdf.savefig(direct_out + 'pdf.png', labels_params=labels, bbox_inches='tight')
 # pdf_prior.savefig(direct_out + 'pdf_prior.png', labels_params=labels, bbox_inches='tight')
+pdf.savefig(direct_out + 'pdf.png', labels_params=labels, bbox_inches='tight')
 
-g1.savefig(direct_out + 'distr_by_inference.png', bbox_inches='tight')
-# g_post.savefig(direct_out + 'distr_by_inference_post.png', bbox_inches='tight')
-# g2.savefig(direct_out + 'distr_by_param.png', bbox_inches='tight')
+g1.savefig(direct_out + 'distr_by_inference_prior.png', bbox_inches='tight')
+g2.savefig(direct_out + 'distr_by_inference_post.png', bbox_inches='tight')
 
 prior_means_std.savefig(direct_out + 'prior_mean_std.png', bbox_inches='tight')
 simulation.savefig(direct_out + 'simulation.png', bbox_inches='tight')

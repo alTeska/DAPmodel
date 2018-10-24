@@ -3,7 +3,7 @@ import numpy as np
 import delfi.distribution as dd
 from delfi.summarystats import Identity
 
-from DAPmodel import DAPSimulator
+from DAPmodel import DAPSimulator, DAP
 
 from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
 from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
@@ -55,7 +55,7 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1
     """Summary stats for x_o of DAP"""
 
     if data is None:
-        m = hh.DAP(I=I, dt=dt, V0=V0, seed=seed)
+        m = DAP(I=I, dt=dt, V0=V0, seed=seed)
         data = m.gen_single(params)
 
     if summary_stats == 0:
