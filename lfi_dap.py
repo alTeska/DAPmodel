@@ -74,7 +74,7 @@ save_pkl(t_off, directory + '/dap_t_off' + args.name)
 
 save_pkl(M, directory + '/dap_model' + args.name)
 save_pkl(sum_stats, directory + '/dap_stats' + args.name)
-# save_pkl(S, directory + '/dap_stats' + args.name)
+save_pkl(S, directory + '/dap_stats_data' + args.name)
 save_pkl(G, directory + '/dap_gen' + args.name)
 
 save_pkl(logs, directory + '/dap_logs' + args.name)
