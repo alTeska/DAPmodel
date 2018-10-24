@@ -54,7 +54,7 @@ sum_stats = HodgkinHuxleyStatsMoments(t_on, t_off, n_summary=4)
 
 
 G = Default(model=M, prior=prior, summary=sum_stats)  # Generator
-inf_snpe = SNPE(generator=G, n_components=2, n_hiddens=[10, 10], obs=S)
+inf_snpe = SNPE(generator=G, n_components=2, n_hiddens=[10], obs=S)
 # verbose=True, svi=False)
 logs, tds, posteriors = inf_snpe.run(n_train=[n_samples], n_rounds=n_rounds,
                                      monitor=observables, proposal=prior,
