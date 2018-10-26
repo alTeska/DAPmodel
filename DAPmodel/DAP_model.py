@@ -10,12 +10,6 @@ class DAP():
         self.state = np.asarray(init)
         self.params = np.asarray(params)
 
-
-        # self.gbar_kdr = params[0]
-        # self.gbar_hcn = params[1]
-        # self.gbar_nap = params[2]
-        # self.gbar_nat = params[3]
-
         # Nap
         self.nap_m = {
             'pow': 3,
@@ -141,6 +135,8 @@ class DAP():
         i_inj : array
             Numpy array with the input I
         """
+        nois_fact_obs = 0.001
+
 
         U = np.zeros_like(t)
         i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
@@ -203,5 +199,4 @@ class DAP():
             U[n+1] = U[n] + (-i_ion - i_leak + i_inj[n])/(self.cm*self.cell_area) * dt
 
 
-        return U.reshape(-1,1)
-         #+ self.nois_fact_obs*self.rng.randn(t.shape[0],1)
+        return U.reshape(-1,1) + nois_fact_obs*self.rng.randn(t.shape[0],1)

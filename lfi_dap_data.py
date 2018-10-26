@@ -32,7 +32,7 @@ if not os.path.exists(directory):
     os.makedirs(directory)
 
 n_rounds = 1
-n_samples = 1000
+n_samples = 100
 dt = 0.01
 
 # load the data
@@ -65,12 +65,12 @@ observables = {'loss.lprobs', 'imputation_values', 'h1.mW', 'h1.mb', 'h2.mW',
                'precisions.mb0', 'precisions.mb1'}
 
 # setting up parameters
+
 # _, labels = obs_params()
-# nap_m = { 'tau_max': 15.332,   # ms
-          # 'vs': 16.11,         # mV
-         # }
-# nap_h = { 'tau_max': 13.659,   # ms
-# }
+#'nap_m_tau_max': 15.332,   # ms
+#'nap_m_vs': 16.11,         # mV
+#'nap_h_tau_max': 13.659,   # ms
+
 
 labels = ['nap_m_tau_max', 'nap_m_vs', 'nap_h_tau_max']
 params = np.array([15, 16, 13])
@@ -87,7 +87,7 @@ sum_stats = HodgkinHuxleyStatsSpikes(t_on, t_off, n_summary=3)
 
 
 G = Default(model=M, prior=prior, summary=sum_stats)  # Generator
-inf_snpe = SNPE(generator=G, n_components=2, n_hiddens=[10, 10], obs=S)
+inf_snpe = SNPE(generator=G, n_components=2, n_hiddens=[10], obs=S)
 logs, tds, posteriors = inf_snpe.run(n_train=[n_samples], n_rounds=n_rounds,
                                      monitor=observables, round_cl=1)
 
