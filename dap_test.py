@@ -31,9 +31,10 @@ fig, ax = plt.subplots(ncols=1, nrows=2, figsize=(20, 10));
 ax[0].grid()
 ax[0].set_ylabel('V (mV)')
 ax[0].set_xlabel('t (ms)')
-ax[0].plot(t, UDap, label='membrane potential');
-ax[0].plot(t, Uhh, label='membrane potential');
+ax[0].plot(t, UDap, label='DAP');
+ax[0].plot(t, Uhh, label='hh');
 ax[1].plot(t, I);
+ax[0].legend()
 
 # plot of activation functions
 # fig, ax = plt.subplots(ncols=1, figsize=(20, 10));

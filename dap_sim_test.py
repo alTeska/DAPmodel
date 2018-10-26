@@ -26,8 +26,9 @@ fig, ax = plt.subplots(ncols=1, nrows=2, figsize=(20, 10));
 ax[0].grid()
 ax[0].set_ylabel('V (mV)')
 ax[0].set_xlabel('t (ms)')
-ax[0].plot(stats['time'], stats['data'], label='membrane potential');
-ax[0].plot(stats_hh['time'], stats_hh['data'], label='membrane potential');
+ax[0].plot(stats['time'], stats['data'], label='DAP');
+ax[0].plot(stats_hh['time'], stats_hh['data'], label='hh');
+ax[0].legend()
 ax[1].plot(t, I);
 
 end = time.time()
