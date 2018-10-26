@@ -10,13 +10,17 @@ class DAP():
         self.state = np.asarray(init)
         self.params = np.asarray(params)
 
+        params[0] =  15.332   # ms
+        params[1] =  16.11         # mV
+        params[2] =  13.659   # ms
+
         # Nap
         self.nap_m = {
             'pow': 3,
             'vs': params[1],         # mV
             'vh': -52.82,        # mV
-            'tau_min': params[0], #0.036,    # ms
-            'tau_max': 15.332,   # ms
+            'tau_min': 0.036,    # ms
+            'tau_max': params[0],   # ms # 15.332,
             'tau_delta': 0.505,  # ms
             }
 
@@ -25,7 +29,7 @@ class DAP():
             'vs': -19.19,        # mV
             'vh': -82.54,        # mV
             'tau_min': 0.336,    # ms
-            'tau_max': params[2],   # ms
+            'tau_max': params[2],   # ms  # 13.659
             'tau_delta': 0.439,  # ms
             }
 
@@ -135,7 +139,7 @@ class DAP():
         i_inj : array
             Numpy array with the input I
         """
-        nois_fact_obs = 0.001
+        nois_fact_obs = 0.
 
 
         U = np.zeros_like(t)
@@ -199,4 +203,4 @@ class DAP():
             U[n+1] = U[n] + (-i_ion - i_leak + i_inj[n])/(self.cm*self.cell_area) * dt
 
 
-        return U.reshape(-1,1) + nois_fact_obs*self.rng.randn(t.shape[0],1)
+        return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)
