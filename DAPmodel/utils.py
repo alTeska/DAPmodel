@@ -12,7 +12,7 @@ from delfi.summarystats import Identity
 
 
 
-def obs_params(reduced_model=False):
+def obs_params_gbar(reduced_model=False):
     """Parameters for x_o
     Returns
     -------
@@ -29,6 +29,27 @@ def obs_params(reduced_model=False):
 
     return true_params, labels_params
 
+def obs_params():
+    """Parameters for x_o
+    Returns
+    -------
+    true_params : array
+    labels_params : list of str
+    """
+    nap_m_tau_max = 15.332   # ms
+    nap_m_vs = 16.11         # mV
+    nap_h_tau_max = 13.659   # ms
+
+    true_params = np.array([nap_m_tau_max, nap_m_vs, nap_h_tau_max])
+    labels_params = ['nap_m_tau_max', 'nap_m_vs', 'nap_h_tau_max']
+
+    return true_params, labels_params
+
+
+
+
+labels = ['nap_m_tau_max', 'nap_m_vs', 'nap_h_tau_max']
+params = np.array([15, 16, 13])
 
 def syn_current(duration=200, dt=0.01, t_on=55, t_off=60, seed=None, on_off=False):
     """Simulation of triangular current"""
