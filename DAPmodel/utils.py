@@ -71,8 +71,8 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1
 
 def prior(true_params, seed=None, prior_log=False):
     """Prior"""
-    range_lower = param_transform(prior_log,0.5*true_params)
-    range_upper = param_transform(prior_log,1.5*true_params)
+    range_lower = param_transform(prior_log ,0.5*true_params)
+    range_upper = param_transform(prior_log, 1.5*true_params)
 
     range_lower = range_lower[0:len(true_params)]
     range_upper = range_upper[0:len(true_params)]

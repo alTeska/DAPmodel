@@ -31,7 +31,7 @@ if not os.path.exists(directory):
     print('creating directory')
     os.makedirs(directory)
 
-n_rounds = 3
+n_rounds = 1
 n_samples = 1000
 dt = 0.01
 
@@ -64,23 +64,32 @@ observables = {'loss.lprobs', 'imputation_values', 'h1.mW', 'h1.mb', 'h2.mW',
                'means.mb0', 'means.mb1', 'precisions.mW0', 'precisions.mW1',
                'precisions.mb0', 'precisions.mb1'}
 
-# setting up fake parameters
-params, labels = obs_params()
+# setting up parameters
+# _, labels = obs_params()
+# nap_m = { 'tau_max': 15.332,   # ms
+          # 'vs': 16.11,         # mV
+         # }
+# nap_h = { 'tau_max': 13.659,   # ms
+# }
+
+labels = ['nap_m_tau_max', 'nap_m_vs', 'nap_h_tau_max']
+params = np.array([15, 16, 13])
+
+print(params)
 prior = prior(params)
 
 
-S = syn_obs_stats(x_o['I'], params=params, dt=x_o['dt'], t_on=t_on, t_off=t_off, n_summary=4,
+S = syn_obs_stats(x_o['I'], params=params, dt=x_o['dt'], t_on=t_on, t_off=t_off, n_summary=3,
            summary_stats=2, data=x_o)
 
 M = DAPSimulator(x_o['I'], x_o['dt'], -75)
-sum_stats = HodgkinHuxleyStatsSpikes(t_on, t_off, n_summary=4)
+sum_stats = HodgkinHuxleyStatsSpikes(t_on, t_off, n_summary=3)
 
 
 G = Default(model=M, prior=prior, summary=sum_stats)  # Generator
-inf_snpe = SNPE(generator=G, n_components=2, n_hiddens=[10], obs=S)
+inf_snpe = SNPE(generator=G, n_components=2, n_hiddens=[10, 10], obs=S)
 logs, tds, posteriors = inf_snpe.run(n_train=[n_samples], n_rounds=n_rounds,
-                                     monitor=observables, proposal=prior,
-                                     round_cl=1)
+                                     monitor=observables, round_cl=1)
 
 
 posterior_sampl = simulate_data_distr(posteriors[-1], M, sum_stats, n_samples=10)

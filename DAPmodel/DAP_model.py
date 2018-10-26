@@ -11,10 +11,30 @@ class DAP():
         self.params = np.asarray(params)
 
 
-        self.gbar_kdr = params[0]
-        self.gbar_hcn = params[1]
-        self.gbar_nap = params[2]
-        self.gbar_nat = params[3]
+        # self.gbar_kdr = params[0]
+        # self.gbar_hcn = params[1]
+        # self.gbar_nap = params[2]
+        # self.gbar_nat = params[3]
+
+        # Nap
+        self.nap_m = {
+            'pow': 3,
+            'vs': params[1],         # mV
+            'vh': -52.82,        # mV
+            'tau_min': params[0], #0.036,    # ms
+            'tau_max': 15.332,   # ms
+            'tau_delta': 0.505,  # ms
+            }
+
+        self.nap_h = {
+            'pow': 1,
+            'vs': -19.19,        # mV
+            'vh': -82.54,        # mV
+            'tau_min': 0.336,    # ms
+            'tau_max': params[2],   # ms
+            'tau_delta': 0.439,  # ms
+            }
+
 
         self.seed = seed
         if seed is not None:
@@ -22,10 +42,11 @@ class DAP():
         else:
             self.rng = np.random.RandomState()
 
-    # self.gbar_kdr = 0.00313  # (S/cm2)
-    # self.gbar_hcn = 5e-05    # (S/cm2)
-    # self.gbar_nap = 0.01527  # (S/cm2)
-    # self.gbar_nat = 0.142    # (S/cm2)
+
+    gbar_kdr = 0.00313  # (S/cm2)
+    gbar_hcn = 5e-05    # (S/cm2)
+    gbar_nap = 0.01527  # (S/cm2)
+    gbar_nat = 0.142    # (S/cm2)
 
     cm = 0.63      #* 1e-6  # uF
     diam = 50.0    * 1e-4  # cm
@@ -79,24 +100,6 @@ class DAP():
         'tau_delta': 0.44,  # ms
     }
 
-    # Nap
-    nap_m = {
-        'pow': 3,
-        'vs': 16.11,         # mV
-        'vh': -52.82,        # mV
-        'tau_min': 0.036,    # ms
-        'tau_max': 15.332,   # ms
-        'tau_delta': 0.505,  # ms
-    }
-
-    nap_h = {
-        'pow': 1,
-        'vs': -19.19,        # mV
-        'vh': -82.54,        # mV
-        'tau_min': 0.336,    # ms
-        'tau_max': 13.659,   # ms
-        'tau_delta': 0.439,  # ms
-    }
 
     def temp_corr(self, temp):
         '''temperature correction'''

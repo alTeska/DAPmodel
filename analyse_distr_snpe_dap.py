@@ -23,7 +23,7 @@ parser.add_argument("-ii", "--ii_samples", help="nr of dist samples")
 args = parser.parse_args()
 
 if args.name is None: args.name = ''
-if args.ii_samples is None: args.ii_samples = '200'
+if args.ii_samples is None: args.ii_samples = '20'
 
 args.ii_samples = int(args.ii_samples)
 
