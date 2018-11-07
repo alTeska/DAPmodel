@@ -235,7 +235,7 @@ def get_AP_width(v, t, AP_onset, AP_max, AP_end, vrest):
     if start_idx is not None and end_idx is not None:
         return t[end_idx] - t[start_idx]
     else:
-        return None
+        return 0
 
 
 def get_DAP_amp(v, DAP_max_idx, vrest):
@@ -303,7 +303,7 @@ def get_DAP_width(v, t, fAHP_min, DAP_max, AP_end, vrest):
     """
     halfwidth_idx = get_DAP_width_idx(v, t, fAHP_min, DAP_max, AP_end, vrest)
     if halfwidth_idx is None:
-        return None
+        return 0
     return t[halfwidth_idx] - t[fAHP_min]
 
 
@@ -447,6 +447,10 @@ def get_spike_characteristics(v, t, return_characteristics, v_rest, AP_threshold
         AP_onset, AP_end = get_AP_start_end(v, AP_threshold)
         if AP_onset is None or AP_end is None:
             print ('No AP found!')
+            for k in return_characteristics:
+                if characteristics[k] is None:
+                    characteristics[k] = 0
+            # print(characteristics)
             return [characteristics[k] for k in return_characteristics]
         characteristics['AP_max_idx'] = get_AP_max_idx(v, AP_onset, AP_end, interval=characteristics['AP_interval_idx'])
         if characteristics['AP_max_idx'] is None:
@@ -531,6 +535,9 @@ def get_spike_characteristics(v, t, return_characteristics, v_rest, AP_threshold
         characteristics['DAP_exp_slope'] = None
     if check:
         check_measures(v, t, characteristics)
+        for k in return_characteristics:
+            if characteristics[k] is None:
+                characteristics[k] = 0
     return [characteristics[k] for k in return_characteristics]
 
 
