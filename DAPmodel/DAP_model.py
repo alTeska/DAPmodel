@@ -10,27 +10,23 @@ class DAP():
         self.state = np.asarray(init)
         self.params = np.asarray(params)
 
-        params[0] =  15.332   # ms
-        params[1] =  16.11         # mV
-        params[2] =  13.659   # ms
-
         # Nap
         self.nap_m = {
             'pow': 3,
-            'vs': params[1],         # mV
-            'vh': -52.82,        # mV
-            'tau_min': 0.036,    # ms
-            'tau_max': params[0],   # ms # 15.332,
-            'tau_delta': 0.505,  # ms
+            'vs': 16.11,      # mV # 16.11 params[1]
+            'vh': -52.82,         # mV
+            'tau_min': 0.036,     # ms
+            'tau_max': params[0], # ms # 15.332
+            'tau_delta': 0.505,   # ms
             }
 
         self.nap_h = {
             'pow': 1,
-            'vs': -19.19,        # mV
-            'vh': -82.54,        # mV
-            'tau_min': 0.336,    # ms
-            'tau_max': params[2],   # ms  # 13.659
-            'tau_delta': 0.439,  # ms
+            'vs': -19.19,          # mV
+            'vh': -82.54,          # mV
+            'tau_min': 0.336,      # ms
+            'tau_max': 13.659,  # ms  # 13.659 params[2]
+            'tau_delta': 0.439,    # ms
             }
 
 
@@ -139,7 +135,7 @@ class DAP():
         i_inj : array
             Numpy array with the input I
         """
-        nois_fact_obs = 0.
+        nois_fact_obs = 0.00001
 
 
         U = np.zeros_like(t)
