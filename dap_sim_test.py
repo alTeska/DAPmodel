@@ -18,9 +18,6 @@ hh_sim = HodgkinHuxley(I*1e2, 0.01, -75)
 stats = dap1.gen_single(params)
 stats_hh = hh_sim.gen_single(params=[50, 5])
 
-print(np.shape(stats['time']))
-print(np.shape(stats_hh['time']))
-
 # plot voltage trace
 fig, ax = plt.subplots(ncols=1, nrows=2, figsize=(20, 10));
 ax[0].grid()
