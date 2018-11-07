@@ -1,7 +1,22 @@
+import math
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+
+
+def plot_distr(mean, variance):
+    '''Plots distribution based on mean and variance values'''
+    fig, ax = plt.subplots(1, 1, figsize=(8,8))
+
+    sigma = math.sqrt(variance)
+    x = np.linspace(mean - 3*sigma, mean + 3*sigma, 100)
+
+    ax.plot(x,mlab.normpdf(x, mean, sigma))
+    ax.grid()
+
+    return fig, ax
 
 
 # Plotting means and std

@@ -3,7 +3,8 @@ import numpy as np
 import delfi.distribution as dd
 from delfi.summarystats import Identity
 
-from DAPmodel import DAPSimulator, DAP
+from DAPmodel import DAP, DAPSimulator
+from .DAP_sumstats import DAPSummaryStats
 
 from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
 from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
@@ -40,16 +41,15 @@ def obs_params():
     nap_m_vs = 16.11         # mV
     nap_h_tau_max = 13.659   # ms
 
-    true_params = np.array([nap_m_tau_max, nap_m_vs, nap_h_tau_max])
-    labels_params = ['nap_m_tau_max', 'nap_m_vs', 'nap_h_tau_max']
+    # true_params = np.array([nap_m_tau_max, nap_m_vs, nap_h_tau_max])
+    # labels_params = ['nap_m_tau_max', 'nap_m_vs', 'nap_h_tau_max']
+
+    true_params = np.array([nap_m_tau_max])
+    labels_params = ['nap_m_tau_max']
 
     return true_params, labels_params
 
 
-
-
-labels = ['nap_m_tau_max', 'nap_m_vs', 'nap_h_tau_max']
-params = np.array([15, 16, 13])
 
 def syn_current(duration=200, dt=0.01, t_on=55, t_off=60, seed=None, on_off=False):
     """Simulation of triangular current"""
@@ -87,10 +87,12 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1
         s = HodgkinHuxleyStatsSpikes(t_on, t_off, n_summary=n_summary)
     elif summary_stats == 3:
         s = HodgkinHuxleyStatsSpikes_mf(t_on, t_off, n_summary=n_summary)
+    elif summary_stats == 4:
+        s = DAPSummaryStats(t_on, t_off, n_summary=n_summary)
     return s.calc([data])
 
 
-def prior(true_params, seed=None, prior_log=False):
+def prior(true_params, seed=None, prior_log=False, prior_uniform=False):
     """Prior"""
     range_lower = param_transform(prior_log ,0.5*true_params)
     range_upper = param_transform(prior_log, 1.5*true_params)
@@ -98,10 +100,17 @@ def prior(true_params, seed=None, prior_log=False):
     range_lower = range_lower[0:len(true_params)]
     range_upper = range_upper[0:len(true_params)]
 
-    prior_mn = param_transform(prior_log,true_params)
-    prior_cov = np.diag((range_upper - range_lower)**2)/12
+    if prior_uniform:
+        prior_min = range_lower
+        prior_max = range_upper
 
-    return dd.Gaussian(m=prior_mn, S=prior_cov, seed=seed)
+        return dd.Uniform(lower=prior_min, upper=prior_max,
+                               seed=seed)
+    else:
+        prior_mn = param_transform(prior_log,true_params)
+        prior_cov = np.diag((range_upper - range_lower)**2)/12
+
+        return dd.Gaussian(m=prior_mn, S=prior_cov, seed=seed)
 
 
 def param_transform(prior_log, x):
