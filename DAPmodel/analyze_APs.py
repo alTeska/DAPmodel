@@ -47,10 +47,8 @@ def exp_fit(t, a, v):
 def get_AP_onset_idxs(v, threshold=-30):
     """
     Returns the indices of the times where the membrane potential crossed threshold.
-    :param threshold: AP threshold.
-    :type threshold: float
-    :return: Indices of the times where the membrane potential crossed threshold.
-    :rtype: array_like
+    :param threshold (float): AP threshold.
+    :return (array_like): Indices of the times where the membrane potential crossed threshold.
     """
     return np.nonzero(np.diff(np.sign(v-threshold)) == 2)[0]
 
@@ -58,16 +56,11 @@ def get_AP_onset_idxs(v, threshold=-30):
 def get_AP_max_idx(v, AP_onset, AP_end, order=1, interval=None, v_diff_onset_max=None, add_noise=False):
     """
     Returns the index of the local maximum of the AP between AP onset and end during dur.
-    :param AP_onset: Index where the membrane potential crosses the AP threshold.
-    :type AP_onset: int
-    :param AP_end: Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
-    :type AP_end: int
-    :param order: Number of points to consider for determining the local maxima.
-    :type order: int
-    :param interval: Length of the interval during which the maximum of the AP shall occur starting from AP onset.
-    :type interval: int
-    :return: Index of the Maximum of the AP (None if it does not exist).
-    :rtype: int
+    :param AP_onset (int): Index where the membrane potential crosses the AP threshold.
+    :param AP_end (int): Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
+    :param order (int): Number of points to consider for determining the local maxima.
+    :param interval (int): Length of the interval during which the maximum of the AP shall occur starting from AP onset.
+    :return(int): Index of the Maximum of the AP (None if it does not exist).
     """
     if add_noise:
         maxima = argrelmax(v[AP_onset:AP_end] + np.random.uniform(-0.001, 0.001, len(v[AP_onset:AP_end])),
@@ -90,16 +83,11 @@ def get_AP_max_idx(v, AP_onset, AP_end, order=1, interval=None, v_diff_onset_max
 def get_fAHP_min_idx(v, AP_max, AP_end, order=1, interval=None):
     """
     Returns the index of the local minimum found after AP maximum.
-    :param AP_max: Index of the maximum of the AP.
-    :type AP_max: int
-    :param AP_end: Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
-    :type AP_end: int
-    :param order: Number of points to consider for determining the local minima.
-    :type order: int
-    :param interval: Length of the interval during which the minimum of the fAHP shall occur starting from AP max.
-    :type interval: int
-    :return: Index of the Minimum of the fAHP (None if it does not exist).
-    :rtype: int
+    :param AP_max (int): Index of the maximum of the AP.
+    :param AP_end (int): Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
+    :param order (int): Number of points to consider for determining the local minima.
+    :param interval (int): Length of the interval during which the minimum of the fAHP shall occur starting from AP max.
+    :return (int): Index of the Minimum of the fAHP (None if it does not exist).
     """
     minima = argrelmin(v[AP_max:AP_end], order=order)[0]
     if interval is not None:
@@ -133,16 +121,11 @@ def get_fAHP_min_idx_using_splines(v, t, AP_max_idx, AP_end, order=None, interva
 def get_DAP_max_idx(v, fAHP_min, AP_end, order=None, interval=None, min_dist_to_max=None):
     """
     Returns the index of the local maximum found after fAHP.
-    :param fAHP_min: Index of the minimum of the fAHP.
-    :type fAHP_min: int
-    :param AP_end: Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
-    :type AP_end: int
-    :param order: Number of points to consider for determining the local minima.
-    :type order: int
-    :param interval: Length of the interval during which the minimum of the fAHP shall occur starting from AP max.
-    :type interval: int
-    :return: Index of maximum of the DAP (None if it does not exist).
-    :rtype: int
+    :param fAHP_min(int): Index of the minimum of the fAHP.
+    :param AP_end (int): Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
+    :param order (int): Number of points to consider for determining the local minima.
+    :param interval (int): Length of the interval during which the minimum of the fAHP shall occur starting from AP max.
+    :return (int): Index of maximum of the DAP (None if it does not exist).
     """
     maxima = argrelmax(v[fAHP_min:AP_end], order=order)[0]
     if interval is not None:
@@ -176,12 +159,9 @@ def get_DAP_max_idx_using_splines(v, t, fAHP_min, AP_end, order=None, interval=N
 def get_AP_amp(v, AP_max, vrest):
     """
     Computes the amplitude of the AP in relation to the resting potential.
-    :param AP_max: Index of the maximum of the AP.
-    :type AP_max: int
-    :param vrest: Resting potential.
-    :type vrest: float
-    :return: Amplitude of the AP.
-    :rtype: float
+    :param AP_max (int): Index of the maximum of the AP.
+    :param vrest (float): Resting potential.
+    :return (float): Amplitude of the AP.
     """
     return v[AP_max] - vrest
 
@@ -189,16 +169,11 @@ def get_AP_amp(v, AP_max, vrest):
 def get_AP_width_idxs(v, t, AP_onset, AP_max, AP_end, vrest):
     """
     Computes the width at half maximum of the AP.
-    :param AP_onset: Index where the membrane potential crosses the AP threshold.
-    :type AP_onset: int
-    :param AP_max: Index of the maximum of the AP.
-    :type AP_max: int
-    :param AP_end: Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
-    :type AP_end: int
-    :param vrest: Resting potential.
-    :type vrest: float
-    :return: Indices of where voltage crosses the AP half maximum.
-    :rtype: Union[int, int]
+    :param AP_onset (int): Index where the membrane potential crosses the AP threshold.
+    :param AP_max (int): Index of the maximum of the AP.
+    :param AP_end (int): Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
+    :param vrest (float): Resting potential.
+    :return (Union[int, int]): Indices of where voltage crosses the AP half maximum.
     """
     halfmax = (v[AP_max] - vrest)/2
 
@@ -220,16 +195,11 @@ def get_AP_width_idxs(v, t, AP_onset, AP_max, AP_end, vrest):
 def get_AP_width(v, t, AP_onset, AP_max, AP_end, vrest):
     """
     Computes the width at half maximum of the AP.
-    :param AP_onset: Index where the membrane potential crosses the AP threshold.
-    :type AP_onset: int
-    :param AP_max: Index of the maximum of the AP.
-    :type AP_max: int
-    :param AP_end: Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
-    :type AP_end: int
-    :param vrest: Resting potential.
-    :type vrest: float
-    :return: AP width at half maximum.
-    :rtype: float
+    :param AP_onset (int): Index where the membrane potential crosses the AP threshold.
+    :param AP_max (int): Index of the maximum of the AP.
+    :param AP_end (int): Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace).
+    :param vrest (float): Resting potential.
+    :return (float): AP width at half maximum.
     """
     start_idx, end_idx = get_AP_width_idxs(v, t, AP_onset, AP_max, AP_end, vrest)
     if start_idx is not None and end_idx is not None:
@@ -241,12 +211,9 @@ def get_AP_width(v, t, AP_onset, AP_max, AP_end, vrest):
 def get_DAP_amp(v, DAP_max_idx, vrest):
     """
     Computes the amplitude of the DAP in relation to the resting potential.
-    :param DAP_max_idx: Index of maximum of the DAP.
-    :type DAP_max_idx: int
-    :param vrest: Resting potential.
-    :type vrest: float
-    :return: Amplitude of the DAP.
-    :rtype: float
+    :param DAP_max_idx (int): Index of maximum of the DAP.
+    :param vrest(float): Resting potential.
+    :return (float): Amplitude of the DAP.
     """
     return v[DAP_max_idx] - vrest
 
@@ -254,12 +221,9 @@ def get_DAP_amp(v, DAP_max_idx, vrest):
 def get_DAP_deflection(v, fAHP_min, DAP_max):
     """
     Computes the deflection of the DAP (the height of the depolarization in relation to the minimum of the fAHP).
-    :param fAHP_min: Index of the Minimum of the fAHP.
-    :type fAHP_min: int
-    :param DAP_max: Index of maximum of the DAP.
-    :type DAP_max: int
-    :return: Deflection of the DAP.
-    :rtype: float
+    :param fAHP_min (int): Index of the Minimum of the fAHP.
+    :param DAP_max (int): Index of maximum of the DAP.
+    :return (float): Deflection of the DAP.
     """
     return v[DAP_max] - v[fAHP_min]
 
@@ -268,16 +232,11 @@ def get_DAP_width_idx(v, t, fAHP_min, DAP_max, AP_end, vrest):
     """
     Width of the DAP (distance between the time point of the minimum of the fAHP and the time point where the
     downhill side of the DAP is closest to the half amplitude of the minimum of the fAHP).
-    :param fAHP_min: Index of the Minimum of the fAHP
-    :type fAHP_min: int
-    :param DAP_max: Index of maximum of the DAP.
-    :type DAP_max: int
-    :param AP_end: Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace)
-    :type AP_end: int
-    :param vrest: Resting potential.
-    :type vrest: float
-    :return: Idx where voltage crosses the halfwidth of the DAP.
-    :rtype: int
+    :param fAHP_min (int): Index of the Minimum of the fAHP
+    :param DAP_max (int): Index of maximum of the DAP.
+    :param AP_end (int): Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace)
+    :param vrest (float): Resting potential.
+    :return (int): Idx where voltage crosses the halfwidth of the DAP.
     """
     halfmax = (v[fAHP_min] - vrest)/2
     halfmax_crossings = np.nonzero(np.diff(np.sign(v[DAP_max:AP_end]-vrest-halfmax)) == -2)[0]
@@ -290,16 +249,11 @@ def get_DAP_width(v, t, fAHP_min, DAP_max, AP_end, vrest):
     """
     Width of the DAP (distance between the time point of the minimum of the fAHP and the time point where the
     downhill side of the DAP is closest to the half amplitude of the minimum of the fAHP).
-    :param fAHP_min: Index of the Minimum of the fAHP
-    :type fAHP_min: int
-    :param DAP_max: Index of maximum of the DAP.
-    :type DAP_max: int
-    :param AP_end: Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace)
-    :type AP_end: int
-    :param vrest: Resting potential.
-    :type vrest: float
-    :return: Width of the DAP.
-    :rtype: float
+    :param fAHP_min (int): Index of the Minimum of the fAHP
+    :param DAP_max (int): Index of maximum of the DAP.
+    :param AP_end (int): Index of the end of the AP (e.g. delimited by the onset of the next AP or the end of the trace)
+    :param vrest (float): Resting potential.
+    :return (float): Width of the DAP.
     """
     halfwidth_idx = get_DAP_width_idx(v, t, fAHP_min, DAP_max, AP_end, vrest)
     if halfwidth_idx is None:
@@ -311,10 +265,8 @@ def get_v_rest(v, i_inj):
     """
     Computes the resting potential as the mean of the voltage starting at 0 until current is injected.
 
-    :param i_inj: Injected current (nA).
-    :type i_inj: array_like
-    :return: Resting potential (mean of the voltage trace).
-    :rtype: float
+    :param i_inj (array_like): Injected current (nA).
+    :return (float): Resting potential (mean of the voltage trace).
     """
     nonzero = np.nonzero(i_inj)[0]
     if len(nonzero) == 0:
@@ -328,12 +280,9 @@ def get_inputresistance(v, i_inj):
     """Computes the input resistance. Assumes step current protocol: 0 current for some time, step to x current long
     enough to obtain the steady-state voltage.
 
-    :param v: Voltage (mV) from the step current experiment.
-    :type v: array_like
-    :param i_inj: Injected current (nA).
-    :type i_inj: array_like
-    :return: Input resistance (MOhm).
-    :rtype: float
+    :param v (array_like): Voltage (mV) from the step current experiment.
+    :param i_inj (array_like): Injected current (nA).
+    :return (float): Input resistance (MOhm).
     """
     step = np.nonzero(i_inj)[0]
     idx_step_start = step[0]
@@ -368,29 +317,22 @@ def get_spike_characteristics(v, t, return_characteristics, v_rest, AP_threshold
     """
     Computes the spike characteristics defined in return_characteristics.
 
-    :param v: Membrane Potential (must just contain one spike or set up proper intervals).
-    :type v: np.array
-    :param t: Time.
-    :type t: np.array
-    :param return_characteristics: Name of characteristics that shall be returned. Options: AP_amp, AP_width, AP_time,
+    :param v (np.array): Membrane Potential (must just contain one spike or set up proper intervals).
+    :param t (np.array): Time.
+    :param return_characteristics (list[str]): Name of characteristics that shall be returned. Options: AP_amp, AP_width, AP_time,
                                    fAHP_amp, fAHP_min_idx, DAP_amp, DAP_deflection, DAP_width, DAP_time, DAP_time_abs,
+                                   :type return_characteristics:
                                    DAP_lin_slope, DAP_exp_slope.
-    :type return_characteristics: list[str]
     :param AP_threshold: Threshold for detecting APs.
     :param AP_max_idx: Can be used instead of AP threshold to give the location of the AP directly. If used also need
                        to define AP_onset.
     :param: AP_onset: Just define of AP_max_idx is used otherwise it will be inferred using AP_threshold.
-    :param v_rest: Resting potential.
-    :type v_rest: float
-    :param AP_interval: Maximal time (ms) between crossing AP threshold and AP peak.
-    :type AP_interval: float
-    :param fAHP_interval: Maximal time (ms) between AP peak and fAHP minimum.
-    :type fAHP_interval: float
-    :param std_idx_times: Time (ms) of the start and end indices for the region in which the std of v shall be estimated.
-    :type std_idx_times: tuple[float, float]
-    :param k_splines: Degree of the smoothing spline. Must be <= 5.
-    :type k_splines: int
-    :param s_splines: Positive smoothing factor used to choose the number of knots. Number of knots will be increased
+    :param v_rest (float): Resting potential.
+    :param AP_interval (float): Maximal time (ms) between crossing AP threshold and AP peak.
+    :param fAHP_interval (float): Maximal time (ms) between AP peak and fAHP minimum.
+    :param std_idx_times (tuple[float, float]): Time (ms) of the start and end indices for the region in which the std of v shall be estimated.
+    :param k_splines (int): Degree of the smoothing spline. Must be <= 5.
+    :param s_splines (float): Positive smoothing factor used to choose the number of knots. Number of knots will be increased
         until the smoothing condition is satisfied:
 
             sum((w[i] * (y[i]-spl(x[i])))**2, axis=0) <= s
@@ -398,18 +340,12 @@ def get_spike_characteristics(v, t, return_characteristics, v_rest, AP_threshold
         If None (default), ``s = len(w)`` which should be a good value if ``1/w[i]`` is an estimate of the
         standard deviation of ``y[i]``.
         If 0, spline will interpolate through all data points.
-    :type s_splines: float
-    :param order_fAHP_min: Time interval (ms) to consider around the minimum for the comparison.
-    :type order_fAHP_min: float
-    :param DAP_interval: Maximal time (ms) between the fAHP_min and the DAP peak.
-    :type DAP_interval: float
-    :param order_DAP_max: Time interval (ms) to consider around the maximum for the comparison.
-    :type order_DAP_max: float
+    :param order_fAHP_min (float): Time interval (ms) to consider around the minimum for the comparison.
+    :param DAP_interval (float): Maximal time (ms) between the fAHP_min and the DAP peak.
+    :param order_DAP_max (float): Time interval (ms) to consider around the maximum for the comparison.
     :param min_dist_to_DAP_max:
-    :param check: Whether to print and plot the computed values.
-    :type check: bool
-    :return: Return characteristics.
-    :rtype: list[float]
+    :param check (bool): Whether to print and plot the computed values.
+    :return (list[float]): Return characteristics.
     """
     dt = t[1] - t[0]
 
