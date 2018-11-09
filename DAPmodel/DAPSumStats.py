@@ -66,9 +66,9 @@ class DAPSummaryStatsNoAP(BaseSummaryStats):
             # RMSE
             n = len(self.v0)
             rmse = np.linalg.norm(v - self.v0) / np.sqrt(n)
-            print(np.linalg.norm(v - self.v0))
-            # Action potential
-            threshold = -30
+
+            # Action potential #TODO
+            # threshold = -30
             # AP_onset = np.where(v > threshold)[0][0]
             # print(AP_onset)
             # v[AP_onset]

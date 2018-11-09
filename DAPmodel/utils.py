@@ -37,15 +37,19 @@ def obs_params():
     true_params : array
     labels_params : list of str
     """
+    # high variability parameters
     nap_m_tau_max = 15.332   # ms
     nap_m_vs = 16.11         # mV
     nap_h_tau_max = 13.659   # ms
 
+    # medium variability
+    nap_h_tau_delta = 0.439    # ms
+
     # true_params = np.array([nap_m_tau_max, nap_m_vs, nap_h_tau_max])
     # labels_params = ['nap_m_tau_max', 'nap_m_vs', 'nap_h_tau_max']
 
-    true_params = np.array([nap_m_tau_max])
-    labels_params = ['nap_m_tau_max']
+    true_params = np.array([nap_m_tau_max, nap_h_tau_delta])
+    labels_params = ['nap_m_tau_max', 'nap_h_tau_delta']
 
     return true_params, labels_params
 

@@ -26,7 +26,7 @@ class DAP():
             'vh': -82.54,          # mV
             'tau_min': 0.336,      # ms
             'tau_max': 13.659,  # ms  # 13.659 params[2]
-            'tau_delta': 0.439,    # ms
+            'tau_delta': params[1],    # ms
             }
 
 
