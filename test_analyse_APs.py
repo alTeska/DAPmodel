@@ -20,14 +20,6 @@ v = shift_v_rest(v[0], v_shift)
 t = t[0]
 i_inj = get_i_inj_from_function(protocol, [sweep_idx], t[-1], t[1]-t[0])[0]
 
-# plot
-# plt.figure()
-# plt.plot(t, v, 'k', label='Exp. Data')
-# plt.xlabel('Time (ms)')
-# plt.ylabel('Membrane Potential (mV)')
-# plt.tight_layout()
-# plt.show()
-
 # extract AP/DAP characteristics
 return_characteristics = ['AP_amp', 'AP_width', 'DAP_amp', 'DAP_width',
                           'DAP_deflection', 'DAP_time']
@@ -40,7 +32,7 @@ characteristics = get_spike_characteristics(v, t, return_characteristics,
                   v_rest=v[0], std_idx_times=(0, 1),
                   check=True, **get_spike_characteristics_dict)
 
-# check_measures(v, t, characteristics)
+check_measures(v, t, characteristics)
 
 print(
     characteristics['AP_amp'],

@@ -412,6 +412,8 @@ def get_spike_characteristics(v, t, return_characteristics, v_rest, AP_threshold
         characteristics['order_DAP_max_idx'] = to_idx(order_DAP_max, dt) if not order_DAP_max is None else 1
         characteristics['min_dist_to_DAP_max'] = to_idx(min_dist_to_DAP_max, dt) if not min_dist_to_DAP_max is None else None
 
+
+    # TODO:fix me, so there is everything returned anyway somehow
     if AP_max_idx is None:
         AP_onset, AP_end = get_AP_start_end(v, AP_threshold)
         if AP_onset is None or AP_end is None:
@@ -503,9 +505,9 @@ def get_spike_characteristics(v, t, return_characteristics, v_rest, AP_threshold
     except RuntimeError:
         characteristics['DAP_exp_slope'] = None
     if check:
-        for k in return_characteristics:
-            if characteristics[k] is None:
-                characteristics[k] = 0
+        for ch in characteristics:
+            if ch is None:
+                ch = 0
     return characteristics
 
 
