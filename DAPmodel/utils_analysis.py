@@ -19,9 +19,25 @@ def plot_distr(mean, variance):
     return fig, ax
 
 
+def plot_distr_multiple(means, variances, labels):
+    '''Plots distributions based on arrays of means and variances'''
+    fig, ax = plt.subplots(1, 1, figsize=(8,8))
+
+    for u, var, l in zip(means, variances, labels):
+        sigma = math.sqrt(var)
+        x = np.linspace(u - 3*sigma, u + 3*sigma, 100)
+
+        ax.plot(x,mlab.normpdf(x, u, sigma), label=l)
+
+    ax.grid()
+    ax.legend()
+
+    return fig, ax
+
+
 # Plotting means and std
 def plot_mean_std(means, stds, name=''):
-    """Function takes means and distributions and generates 3 subplots visualizaing the input separately and combined"""
+    """Function takes means and distributions and generates 3 subplots visualizaing the inputs characteristics separately and combined"""
     idx = np.arange(0, len(means))
 
     mean_std, axes = plt.subplots(3, 1, figsize=(16,8))

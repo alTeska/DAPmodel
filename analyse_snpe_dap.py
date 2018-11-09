@@ -17,7 +17,7 @@ direct_inp = 'pickle/dap_model' + args.name + '/'
 direct_out = 'plots/dap_models' + args.name + '/'
 
 if not os.path.exists(direct_out):
-    print('creating directory')
+    print('creating output directory')
     os.makedirs(direct_out)
 
 # Load From Pickle
