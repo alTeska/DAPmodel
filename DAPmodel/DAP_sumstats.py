@@ -46,20 +46,21 @@ class DAPSummaryStats(BaseSummaryStats):
             return_characteristics = ['AP_amp', 'AP_width', 'DAP_amp', 'DAP_width',
                           'DAP_deflection', 'DAP_time']
             spike_characteristics_dict = get_spike_characteristics_dict(for_data=True)  # standard parameters to use
-            AP_amp, AP_width, DAP_amp, DAP_width, DAP_deflection, DAP_time = get_spike_characteristics(v, t, return_characteristics,
-                                                                      v_rest=v[0], std_idx_times=(0, 1),
-                                                                      check=False, **spike_characteristics_dict)
+
+            characteristics = get_spike_characteristics(v, t, return_characteristics,
+                                                        v_rest=v[0], std_idx_times=(0, 1)
+                                                        ,**spike_characteristics_dict)
 
             rest_pot = np.mean(x['data'][t<t_on])
 
             sum_stats_vec = np.array([
                             rest_pot,
-                            AP_amp,
-                            AP_width,
-                            DAP_amp,
-                            DAP_width,
-                            DAP_deflection,
-                            DAP_time
+                            characteristics['AP_amp'],
+                            characteristics['AP_width'],
+                            characteristics['DAP_amp'],
+                            characteristics['DAP_width'],
+                            characteristics['DAP_deflection'],
+                            characteristics['DAP_time']
                             ])
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]

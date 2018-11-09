@@ -4,7 +4,7 @@ from scipy.interpolate import UnivariateSpline
 from scipy.optimize import curve_fit
 from functools import partial
 import numpy as np
-import matplotlib.pyplot as pl
+import matplotlib.pyplot as plt
 
 __author__ = 'caro'
 
@@ -122,10 +122,10 @@ def get_fAHP_min_idx_using_splines(v, t, AP_max_idx, AP_end, order=None, interva
     v_new = splines(t[AP_max_idx:AP_end])
 
     # import matplotlib.pyplot as pl
-    # pl.figure()
-    # pl.plot(t, v, 'k')
-    # pl.plot(t[AP_max_idx:AP_end], v_new, 'r')
-    # pl.show()
+    # plt.figure()
+    # plt.plot(t, v, 'k')
+    # plt.plot(t[AP_max_idx:AP_end], v_new, 'r')
+    # plt.show()
 
     fAHP_min_idx = get_fAHP_min_idx(v_new, 0, len(v_new), order, interval)
     if fAHP_min_idx is None:
@@ -163,10 +163,10 @@ def get_DAP_max_idx_using_splines(v, t, fAHP_min, AP_end, order=None, interval=N
     v_new = splines(t[fAHP_min:AP_end])
 
     # import matplotlib.pyplot as pl
-    # pl.figure()
-    # pl.plot(t, v, 'k')
-    # pl.plot(t[fAHP_min:AP_end], v_new, 'r')
-    # pl.show()
+    # plt.figure()
+    # plt.plot(t, v, 'k')
+    # plt.plot(t[fAHP_min:AP_end], v_new, 'r')
+    # plt.show()
 
     DAP_max_idx = get_DAP_max_idx(v_new, 0, len(v_new), order, interval, min_dist_to_max)
     if DAP_max_idx is None:
@@ -503,11 +503,10 @@ def get_spike_characteristics(v, t, return_characteristics, v_rest, AP_threshold
     except RuntimeError:
         characteristics['DAP_exp_slope'] = None
     if check:
-        check_measures(v, t, characteristics)
         for k in return_characteristics:
             if characteristics[k] is None:
                 characteristics[k] = 0
-    return [characteristics[k] for k in return_characteristics]
+    return characteristics
 
 
 def check_measures(v, t, characteristics):
@@ -526,85 +525,32 @@ def check_measures(v, t, characteristics):
                 print ('DAP_exp_slope: ', characteristics['DAP_exp_slope'])
                 print ('DAP_lin_slope: ', characteristics['DAP_lin_slope'])
 
-    pl.figure()
-    pl.plot(t, v)
-    pl.plot(t[characteristics['AP_max_idx']], v[characteristics['AP_max_idx']], 'or', label='AP_max_idx')
+    plt.figure()
+    plt.plot(t, v)
+    plt.plot(t[characteristics['AP_max_idx']], v[characteristics['AP_max_idx']], 'or', label='AP_max_idx')
     if not characteristics.get('AP_width_idxs')[0] is None and not characteristics.get('AP_width_idxs')[1] is None:
-        pl.plot(t[np.array(characteristics['AP_width_idxs'])],
+        plt.plot(t[np.array(characteristics['AP_width_idxs'])],
                 v[np.array(characteristics['AP_width_idxs'])], '-or', label='AP_width')
     if not characteristics.get('fAHP_min_idx') is None:
-        pl.plot(t[int(characteristics['fAHP_min_idx'])], v[int(characteristics['fAHP_min_idx'])], 'og', label='fAHP')
+        plt.plot(t[int(characteristics['fAHP_min_idx'])], v[int(characteristics['fAHP_min_idx'])], 'og', label='fAHP')
         if not characteristics.get('DAP_max_idx') is None:
-            pl.plot(t[int(characteristics['DAP_max_idx'])], v[int(characteristics['DAP_max_idx'])], 'ob',
+            plt.plot(t[int(characteristics['DAP_max_idx'])], v[int(characteristics['DAP_max_idx'])], 'ob',
                     label='DAP_max')
         if not characteristics.get('DAP_width_idx') is None:
-            pl.plot([t[int(characteristics['fAHP_min_idx'])], t[int(characteristics['DAP_width_idx'])]],
+            plt.plot([t[int(characteristics['fAHP_min_idx'])], t[int(characteristics['DAP_width_idx'])]],
                     [v[int(characteristics['fAHP_min_idx'])]
                      - (v[int(characteristics['fAHP_min_idx'])] - characteristics['v_rest']) / 2,
                      v[int(characteristics['DAP_width_idx'])]],
                     '-ob', label='DAP_width')
         if not characteristics.get('slope_start') is None and not characteristics.get('slope_end') is None:
-            pl.plot([t[int(characteristics['slope_start'])], t[int(characteristics['slope_end'])]],
+            plt.plot([t[int(characteristics['slope_start'])], t[int(characteristics['slope_end'])]],
                     [v[int(characteristics['slope_start'])], v[int(characteristics['slope_end'])]],
                     '-oy', label='lin_slope')
 
-            pl.plot(t[int(characteristics['slope_start']): int(characteristics['slope_end'])],
+            plt.plot(t[int(characteristics['slope_start']): int(characteristics['slope_end'])],
                     exp_fit(np.arange(int(characteristics['slope_end'])-int(characteristics['slope_start'])) * dt,
                             characteristics['DAP_exp_slope'],
                             v[int(characteristics['slope_start']):int(characteristics['slope_end'])]), 'y',
                     label='exp_slope')
-    pl.legend()
-    pl.show()
-
-
-if __name__ == "__main__":
-    import pandas as pd
-    import numpy as np
-    import matplotlib.pyplot as pl
-
-    # # test on experimental data
-    data_dir = '../data/2015_08_26b/raw/rampIV/3.0(nA).csv'
-    data = pd.read_csv(data_dir)
-    v_exp = np.array(data.v)
-    i_exp = np.array(data.i)
-    t_exp = np.array(data.t)
-    dt_exp = t_exp[1]-t_exp[0]
-
-    vrest = get_v_rest(v_exp, i_exp)
-    AP_onsets = get_AP_onset_idxs(v_exp, threshold=-30)
-    AP_onset = AP_onsets[0]
-    AP_end = -1
-
-    AP_max = get_AP_max_idx(v_exp, AP_onset, AP_end, interval=1 / dt_exp)
-    fAHP_min = get_fAHP_min_idx(v_exp, AP_max, AP_end, interval=5 / dt_exp)
-    DAP_max = get_DAP_max_idx(v_exp, fAHP_min, AP_end, interval=10 / dt_exp)
-
-    AP_amp = get_AP_amp(v_exp, AP_max, vrest)
-    AP_width = get_AP_width(v_exp, t_exp, AP_onset, AP_max, AP_end, vrest)
-    DAP_amp = get_DAP_amp(v_exp, DAP_max, vrest)
-    DAP_deflection = get_DAP_deflection(v_exp, DAP_max, fAHP_min)
-    DAP_width = get_DAP_width(v_exp, t_exp, fAHP_min, DAP_max, AP_end, vrest)
-    print ('AP amplitude: ' + str(AP_amp) + ' (mV)')
-    print ('AP width: ' + str(AP_width) + ' (ms)')
-    print ('DAP amplitude: ' + str(DAP_amp) + ' (mV)')
-    print ('DAP deflection: ' + str(DAP_deflection) + ' (mV)')
-    print ('DAP width: ' + str(DAP_width) + ' (ms)')
-
-    pl.figure()
-    pl.plot(t_exp, v_exp, 'k', label='V')
-    pl.plot(t_exp[AP_onsets], v_exp[AP_onsets], 'or', label='AP onsets')
-    pl.plot(t_exp[AP_max], v_exp[AP_max], 'ob', label='AP maximum')
-    pl.plot(t_exp[fAHP_min], v_exp[fAHP_min], 'oy', label='fAHP minimum')
-    pl.plot(t_exp[DAP_max], v_exp[DAP_max], 'og', label='DAP maximum')
-    pl.legend()
-    pl.show()
-
-    data_dir = '../data/2015_08_26b/raw/rampIV/3.0(nA).csv'
-    data = pd.read_csv(data_dir)
-    v_step = np.array(data.v)
-    i_step = np.array(data.i)
-    t_step = np.array(data.t)
-    dt_step = t_step[1]-t_step[0]
-
-    rin = get_inputresistance(v_step, i_step)
-    print ('Input resistance: ' + str(rin) + ' (MOhm)')
+    plt.legend()
+    plt.show()
