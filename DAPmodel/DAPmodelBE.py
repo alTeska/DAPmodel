@@ -43,7 +43,7 @@ class DAPBe():
     gbar_nap = 0.01527  # (S/cm2)
     gbar_nat = 0.142    # (S/cm2)
 
-    cm = 0.63      #* 1e-6  # uF
+    cm = 0.63      #* 1e-6  # uF/cm2
     diam = 50.0    * 1e-4  # cm
     L = 100.0      * 1e-4  # cm
     Ra = 100.0
