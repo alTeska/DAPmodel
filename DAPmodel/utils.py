@@ -55,16 +55,15 @@ def obs_params():
 
 
 
-def syn_current(duration=200, dt=0.01, t_on=55, t_off=60, seed=None, on_off=False):
+def syn_current(duration=200, dt=0.01, t_on=55, t_off=60, amp=3.1, seed=None, on_off=False):
     """Simulation of triangular current"""
-    l = duration/dt
     t = np.arange(0, duration+dt, dt)
     I = np.zeros_like(t)
 
     stim = len(I[int(np.round(t_on/dt)):int(np.round(t_off/dt))])
 
-    i_up = np.linspace(0,3.5,(stim/2))
-    i_down = np.linspace(3.5,0,(stim/2))
+    i_up = np.linspace(0, amp, (stim/2))
+    i_down = np.linspace(amp, 0, (stim/2))
 
     I[int(np.round(t_on/dt)):int(np.round(t_off/dt))] = np.append(i_up, i_down)[:]
 

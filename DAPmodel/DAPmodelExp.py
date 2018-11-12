@@ -129,6 +129,7 @@ class DAPExp():
                 (ion_ch['vh'] - V) / ion_ch['vs']))
 
 
+    # currents
     def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
         '''calculates sodium-like ion current'''
         return gbar * m**m_pow * h**h_pow * (V - e_ion)
@@ -138,7 +139,7 @@ class DAPExp():
         return gbar * n**n_pow * (V - e_ion)
 
 
-
+    # condactivities and conductances
     def g_e_na(self, m, h, gbar, m_pow, h_pow, e_ion):
         '''calculates sodium-like ion current'''
         return (gbar) * m**m_pow * h**h_pow * (e_ion)
@@ -147,6 +148,7 @@ class DAPExp():
         '''calculates potasium-like ion current'''
         return (gbar) * n**n_pow * (e_ion)
 
+    # condactivities
     def g_na(self, m, h, gbar, m_pow, h_pow):
         '''calculates sodium-like ion current'''
         return (gbar) * m**m_pow * h**h_pow
@@ -190,7 +192,7 @@ class DAPExp():
         N_kdr[0] = self.x_inf(U[0], self.kdr_n['vh'], self.kdr_n['vs'])
 
         for n in range(0, len(i_inj)-1):
-            # calculate ionic currents
+            # calculate sum of conductances multiplied by potentials
             g_e_nap = self.g_e_na(M_nap[n], H_nap[n], self.gbar_nap,
                               self.nap_m['pow'], self.nap_h['pow'], self.e_nap)
             g_e_nat = self.g_e_na(M_nat[n], H_nat[n], self.gbar_nat,
@@ -201,6 +203,7 @@ class DAPExp():
             g_e_leak = (self.g_leak) * (self.e_leak)
             g_e_sum = g_e_leak + (g_e_nap + g_e_nat + g_e_kdr + g_e_hcn)
 
+            # calculate sum of conductances
             g_nap = self.g_na(M_nap[n], H_nap[n], self.gbar_nap, self.nap_m['pow'], self.nap_h['pow'])
             g_nat = self.g_na(M_nat[n], H_nat[n], self.gbar_nat, self.nat_m['pow'], self.nat_h['pow'])
             g_hcn = self.g_k(N_hcn[n], self.gbar_hcn, self.hcn_n['pow'])
@@ -210,12 +213,11 @@ class DAPExp():
 
 
             # calculate membrane potential
-            V_inf = (g_e_sum + i_inj[n]*1e3) / g_sum
-            tau_v = (self.cm) * 1e3 / g_sum
-            # print(U[n])
+            V_inf = (g_e_sum + i_inj[n] * 1e3) / g_sum
+            tau_v = (self.cm) * 1e4 / g_sum
+
             U[n+1] = V_inf + (U[n] - V_inf) * np.exp(-dt / tau_v)
 
-            # U[n+1] = U[n] + (-i_ion - i_leak + i_inj[n])/(self.cm) * dt
 
             # calculate x_inf
             M_nap_inf = self.x_inf(U[n+1], self.nap_m['vh'], self.nap_m['vs'])

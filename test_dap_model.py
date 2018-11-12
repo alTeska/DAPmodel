@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from DAPmodel import DAP, DAPBe, DAPExp, DAPExp2
 from DAPmodel import obs_params, syn_current
 
-dt = 0.001
+dt = 1e-2
 
 params, labels = obs_params()
 
