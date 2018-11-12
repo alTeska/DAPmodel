@@ -1,6 +1,6 @@
 import numpy as np
 
-class DAP():
+class DAPExp():
     """
     DAP Model based on HH equations for the tests with LFI
     Model conists of 4 types of ion channels: Nap, Nat, Kdr, hcn_slow.
@@ -43,7 +43,7 @@ class DAP():
     gbar_nap = 0.01527  # (S/cm2)
     gbar_nat = 0.142    # (S/cm2)
 
-    cm = 0.63      #* 1e-6  # uF
+    cm = 0.63      #* 1e-6  # uF/cm2
     diam = 50.0    * 1e-4  # cm
     L = 100.0      * 1e-4  # cm
     Ra = 100.0
@@ -113,9 +113,15 @@ class DAP():
         '''steady state values'''
         return 1 / (1 + np.exp((x_vh - V) / x_vs))
 
-    def dx_dt(self, x, x_inf, x_tau):
+    def dx_dt(self, x, x_inf, x_tau, dt):
         '''differential equations for m,h,n'''
         return (x_inf - x) / x_tau
+
+
+    def dx_plus(self, x, x_inf, x_tau, dt):
+        '''differential equations for m,h,n'''
+        return x_inf + (x - x_inf) * np.exp(-dt/x_tau)
+
 
     def x_tau(self, V, xinf, ion_ch):
         return (ion_ch['tau_min'] + (ion_ch['tau_max'] - ion_ch['tau_min']) * \
@@ -125,12 +131,29 @@ class DAP():
 
     def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
         '''calculates sodium-like ion current'''
-        return (gbar ) * m**m_pow * h**h_pow * (V - e_ion)
+        return gbar * m**m_pow * h**h_pow * (V - e_ion)
 
     def i_k(self, V, n, gbar, n_pow, e_ion):
         '''calculates potasium-like ion current'''
-        return (gbar ) * n**n_pow * (V - e_ion)
+        return gbar * n**n_pow * (V - e_ion)
 
+
+
+    def g_e_na(self, m, h, gbar, m_pow, h_pow, e_ion):
+        '''calculates sodium-like ion current'''
+        return (gbar) * m**m_pow * h**h_pow * (e_ion)
+
+    def g_e_k(self, n, gbar, n_pow, e_ion):
+        '''calculates potasium-like ion current'''
+        return (gbar) * n**n_pow * (e_ion)
+
+    def g_na(self, m, h, gbar, m_pow, h_pow):
+        '''calculates sodium-like ion current'''
+        return (gbar) * m**m_pow * h**h_pow
+
+    def g_k(self, n, gbar, n_pow):
+        '''calculates potasium-like ion current'''
+        return (gbar) * n**n_pow
 
 
     def simulate(self, dt, t, i_inj):
@@ -167,47 +190,56 @@ class DAP():
         N_kdr[0] = self.x_inf(U[0], self.kdr_n['vh'], self.kdr_n['vs'])
 
         for n in range(0, len(i_inj)-1):
-            # calculate x_inf
-            M_nap_inf = self.x_inf(U[n], self.nap_m['vh'], self.nap_m['vs'])
-            M_nat_inf = self.x_inf(U[n], self.nat_m['vh'], self.nat_m['vs'])
-            H_nap_inf = self.x_inf(U[n], self.nap_h['vh'], self.nap_h['vs'])
-            H_nat_inf = self.x_inf(U[n], self.nat_h['vh'], self.nat_h['vs'])
-            N_hcn_inf = self.x_inf(U[n], self.hcn_n['vh'], self.hcn_n['vs'])
-            N_kdr_inf = self.x_inf(U[n], self.kdr_n['vh'], self.kdr_n['vs'])
-
-            # calcualte  time constants
-            tau_m_nap = self.x_tau(U[n], M_nap_inf, self.nap_m)
-            tau_h_nap = self.x_tau(U[n], H_nap_inf, self.nap_h)
-            tau_m_nat = self.x_tau(U[n], M_nat_inf, self.nat_m)
-            tau_h_nat = self.x_tau(U[n], H_nat_inf, self.nat_h)
-            tau_n_hcn = self.x_tau(U[n], N_hcn_inf, self.hcn_n)
-            tau_n_kdr = self.x_tau(U[n], N_kdr_inf, self.kdr_n)
-
-            # calculate all steady states
-            M_nap[n+1] = M_nap[n] + self.dx_dt(M_nap[n], M_nap_inf, tau_m_nap) * dt
-            M_nat[n+1] = M_nat[n] + self.dx_dt(M_nat[n], M_nat_inf, tau_m_nat) * dt
-            H_nap[n+1] = H_nap[n] + self.dx_dt(H_nap[n], H_nap_inf, tau_h_nap) * dt
-            H_nat[n+1] = H_nat[n] + self.dx_dt(H_nat[n], H_nat_inf, tau_h_nat) * dt
-            N_hcn[n+1] = N_hcn[n] + self.dx_dt(N_hcn[n], N_hcn_inf, tau_n_hcn) * dt
-            N_kdr[n+1] = N_kdr[n] + self.dx_dt(N_kdr[n], N_kdr_inf, tau_n_kdr) * dt
-
-
             # calculate ionic currents
-            i_nap = self.i_na(U[n], M_nap[n+1], H_nap[n+1], self.gbar_nap,
+            g_e_nap = self.g_e_na(M_nap[n], H_nap[n], self.gbar_nap,
                               self.nap_m['pow'], self.nap_h['pow'], self.e_nap)
-            i_nat = self.i_na(U[n], M_nat[n+1], H_nat[n+1], self.gbar_nat,
+            g_e_nat = self.g_e_na(M_nat[n], H_nat[n], self.gbar_nat,
                               self.nat_m['pow'], self.nat_h['pow'], self.e_nat)
-            i_hcn = self.i_k(U[n], N_hcn[n+1], self.gbar_hcn, self.hcn_n['pow'],
-                             self.e_hcn)
-            i_kdr = self.i_k(U[n], N_kdr[n+1], self.gbar_kdr, self.kdr_n['pow'],
-                             self.e_kdr)
+            g_e_hcn = self.g_e_k(N_hcn[n], self.gbar_hcn, self.hcn_n['pow'], self.e_hcn)
+            g_e_kdr = self.g_e_k(N_kdr[n], self.gbar_kdr, self.kdr_n['pow'], self.e_kdr)
 
-            i_ion = (i_nap + i_nat + i_kdr + i_hcn) * 1e3
-            i_leak = (self.g_leak) * (U[n] - self.e_leak) * 1e3
+            g_e_leak = (self.g_leak) * (self.e_leak)
+            g_e_sum = g_e_leak + (g_e_nap + g_e_nat + g_e_kdr + g_e_hcn)
+
+            g_nap = self.g_na(M_nap[n], H_nap[n], self.gbar_nap, self.nap_m['pow'], self.nap_h['pow'])
+            g_nat = self.g_na(M_nat[n], H_nat[n], self.gbar_nat, self.nat_m['pow'], self.nat_h['pow'])
+            g_hcn = self.g_k(N_hcn[n], self.gbar_hcn, self.hcn_n['pow'])
+            g_kdr = self.g_k(N_kdr[n], self.gbar_kdr, self.kdr_n['pow'])
+
+            g_sum = (g_nap + g_nat + g_hcn + g_kdr + self.g_leak)
+
 
             # calculate membrane potential
-            U[n+1] = U[n] + (-i_ion - i_leak + i_inj[n])/(self.cm) * dt
+            V_inf = (g_e_sum + i_inj[n]*1e3) / g_sum
+            tau_v = (self.cm) * 1e3 / g_sum
+            # print(U[n])
+            U[n+1] = V_inf + (U[n] - V_inf) * np.exp(-dt / tau_v)
 
+            # U[n+1] = U[n] + (-i_ion - i_leak + i_inj[n])/(self.cm) * dt
+
+            # calculate x_inf
+            M_nap_inf = self.x_inf(U[n+1], self.nap_m['vh'], self.nap_m['vs'])
+            M_nat_inf = self.x_inf(U[n+1], self.nat_m['vh'], self.nat_m['vs'])
+            H_nap_inf = self.x_inf(U[n+1], self.nap_h['vh'], self.nap_h['vs'])
+            H_nat_inf = self.x_inf(U[n+1], self.nat_h['vh'], self.nat_h['vs'])
+            N_hcn_inf = self.x_inf(U[n+1], self.hcn_n['vh'], self.hcn_n['vs'])
+            N_kdr_inf = self.x_inf(U[n+1], self.kdr_n['vh'], self.kdr_n['vs'])
+
+            # calcualte  time constants
+            tau_m_nap = self.x_tau(U[n+1], M_nap_inf, self.nap_m)
+            tau_h_nap = self.x_tau(U[n+1], H_nap_inf, self.nap_h)
+            tau_m_nat = self.x_tau(U[n+1], M_nat_inf, self.nat_m)
+            tau_h_nat = self.x_tau(U[n+1], H_nat_inf, self.nat_h)
+            tau_n_hcn = self.x_tau(U[n+1], N_hcn_inf, self.hcn_n)
+            tau_n_kdr = self.x_tau(U[n+1], N_kdr_inf, self.kdr_n)
+
+            # calculate all steady states
+            M_nap[n+1] = self.dx_plus(M_nap[n], M_nap_inf, tau_m_nap, dt)
+            M_nat[n+1] = self.dx_plus(M_nat[n], M_nat_inf, tau_m_nat, dt)
+            H_nap[n+1] = self.dx_plus(H_nap[n], H_nap_inf, tau_h_nap, dt)
+            H_nat[n+1] = self.dx_plus(H_nat[n], H_nat_inf, tau_h_nat, dt)
+            N_hcn[n+1] = self.dx_plus(N_hcn[n], N_hcn_inf, tau_n_hcn, dt)
+            N_kdr[n+1] = self.dx_plus(N_kdr[n], N_kdr_inf, tau_n_kdr, dt)
 
         # return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)
         return U.reshape(-1,1), M_nap, M_nat, H_nap
