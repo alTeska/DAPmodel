@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from .DAP_model import DAP
 from .DAPmodelBE import DAPBe
+from .DAPmodelBE2 import DAPBe2
 from .DAPmodelExp import DAPExp
 from .DAPmodelExp2 import DAPExp2
 from .hh_model import Hodgkin_Huxley_Model
