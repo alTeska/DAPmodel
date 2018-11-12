@@ -8,14 +8,14 @@ dt = 1e-2
 
 params, labels = obs_params()
 
-params = np.array([2, 0.4])  # for stability test
+params = np.array([16, 0.4])  # for stability test
 I, t, t_on, t_off = syn_current(duration=150, dt=dt)
 
 # define model
 dap = DAP(-75, params)
 dap_exp = DAPExp(-75, params)
 dap_exp2 = DAPExp2(-75, params)
-dap_be = DAPBe2(-75, params)
+dap_be = DAPBe(-75, params)
 
 # run model
 UDap, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr = dap.simulate(dt, t, I)

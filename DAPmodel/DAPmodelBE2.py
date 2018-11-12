@@ -171,6 +171,30 @@ class DAPBe2():
 
         return V_new
 
+    def x_func(self, x_new, x_old, x_inf, tau_x, dt):
+        """ The function f(x) we want the root of."""
+        return x_new - x_old - dt*(x_inf - x_new)/tau_x
+
+    def x_dfuncdx(self, tau_x, dt):
+        """ The derivative of f(x) with respect to V_new."""
+        return 1 + dt/tau_x
+
+    def x_newton(self, x_old, x_inf, tau_x, dt, precision=1e-12):
+        """ Takes values x_old and t_new, and finds the root of the
+        function f(x_new), returning x_new. """
+
+        # initial guess:
+        x_new = x_old
+        f = self.x_func(x_new, x_old, x_inf, tau_x, dt)
+        dfdx = self.x_dfuncdx(tau_x, dt)
+
+        while abs(f/dfdx) > precision:
+            x_new = x_new - f/dfdx
+            f = self.x_func(x_new, x_old, x_inf, tau_x, dt)
+            dfdx = self.x_dfuncdx(tau_x, dt)
+
+        return x_new
+
 
     def simulate(self, dt, t, i_inj):
         """run simulation of DAP model given the injection current
@@ -223,12 +247,13 @@ class DAPBe2():
             tau_n_kdr = self.x_tau(U[n], N_kdr_inf, self.kdr_n)
 
             # calculate all steady states
-            M_nap[n+1] = self.dx_plus(M_nap[n], M_nap_inf, tau_m_nap, dt)
-            M_nat[n+1] = self.dx_plus(M_nat[n], M_nat_inf, tau_m_nat, dt)
-            H_nap[n+1] = self.dx_plus(H_nap[n], H_nap_inf, tau_h_nap, dt)
-            H_nat[n+1] = self.dx_plus(H_nat[n], H_nat_inf, tau_h_nat, dt)
-            N_hcn[n+1] = self.dx_plus(N_hcn[n], N_hcn_inf, tau_n_hcn, dt)
-            N_kdr[n+1] = self.dx_plus(N_kdr[n], N_kdr_inf, tau_n_kdr, dt)
+            # self.x_newton(x_old, x_inf, tau_x, dt)
+            M_nap[n+1] = self.x_newton(M_nap[n], M_nap_inf, tau_m_nap, dt)
+            M_nat[n+1] = self.x_newton(M_nat[n], M_nat_inf, tau_m_nat, dt)
+            H_nap[n+1] = self.x_newton(H_nap[n], H_nap_inf, tau_h_nap, dt)
+            H_nat[n+1] = self.x_newton(H_nat[n], H_nat_inf, tau_h_nat, dt)
+            N_hcn[n+1] = self.x_newton(N_hcn[n], N_hcn_inf, tau_n_hcn, dt)
+            N_kdr[n+1] = self.x_newton(N_kdr[n], N_kdr_inf, tau_n_kdr, dt)
 
 
             # calculate sum of conductances
