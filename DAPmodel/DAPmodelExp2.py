@@ -215,4 +215,4 @@ class DAPExp2():
 
 
         # return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)
-        return U.reshape(-1,1), M_nap, M_nat, H_nap
+        return U.reshape(-1,1), M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr

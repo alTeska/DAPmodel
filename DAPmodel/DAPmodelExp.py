@@ -142,20 +142,20 @@ class DAPExp():
     # condactivities and conductances
     def g_e_na(self, m, h, gbar, m_pow, h_pow, e_ion):
         '''calculates sodium-like ion current'''
-        return (gbar) * m**m_pow * h**h_pow * (e_ion)
+        return gbar * m**m_pow * h**h_pow * (e_ion)
 
     def g_e_k(self, n, gbar, n_pow, e_ion):
         '''calculates potasium-like ion current'''
-        return (gbar) * n**n_pow * (e_ion)
+        return gbar * n**n_pow * (e_ion)
 
     # condactivities
     def g_na(self, m, h, gbar, m_pow, h_pow):
         '''calculates sodium-like ion current'''
-        return (gbar) * m**m_pow * h**h_pow
+        return gbar * m**m_pow * h**h_pow
 
     def g_k(self, n, gbar, n_pow):
         '''calculates potasium-like ion current'''
-        return (gbar) * n**n_pow
+        return gbar * n**n_pow
 
 
     def simulate(self, dt, t, i_inj):
@@ -213,8 +213,8 @@ class DAPExp():
 
 
             # calculate membrane potential
-            V_inf = (g_e_sum + i_inj[n] * 1e3) / g_sum
-            tau_v = (self.cm) * 1e4 / g_sum
+            V_inf = (g_e_sum + i_inj[n] * 1e-3) / g_sum
+            tau_v = (self.cm)* 1e-3  / g_sum
 
             U[n+1] = V_inf + (U[n] - V_inf) * np.exp(-dt / tau_v)
 
@@ -244,4 +244,4 @@ class DAPExp():
             N_kdr[n+1] = self.dx_plus(N_kdr[n], N_kdr_inf, tau_n_kdr, dt)
 
         # return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)
-        return U.reshape(-1,1), M_nap, M_nat, H_nap
+        return U.reshape(-1,1), M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr
