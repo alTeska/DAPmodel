@@ -1,6 +1,7 @@
 import numpy as np
 from .DAPbase import DAPBase
 
+
 class DAPFeExp(DAPBase):
     """
     DAP Model based on HH equations for the tests with LFI
@@ -16,9 +17,6 @@ class DAPFeExp(DAPBase):
 
 
 
-    def temp_corr(self, temp):
-        '''temperature correction'''
-        return 3**(0.1*(temp-6.3))
 
     def x_inf(self, V, x_vh, x_vs):
         '''steady state values'''
@@ -82,7 +80,6 @@ class DAPFeExp(DAPBase):
             Numpy array with the input I
         """
         nois_fact_obs = 0.00001
-
 
         U = np.zeros_like(t)
         i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)

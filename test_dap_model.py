@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 from DAPmodel import DAP, DAPBe, DAPExp, DAPFeExp
 from DAPmodel import obs_params, syn_current
 
+
+time_start = time.clock()
+
 dt = 1e-2
-
 params, labels = obs_params()
+#   params = np.array([16, 0.4])  # for stability test
 
-#params = np.array([16, 0.4])  # for stability test
 I, t, t_on, t_off = syn_current(duration=150, dt=dt)
 
 # define model
@@ -22,6 +24,9 @@ UDap, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr = dap.simulate(dt, t, I)
 UDapExp, M_nap_exp, M_nat_exp, H_nap_exp, H_nat_exp, N_hcn_exp, N_kdr_exp = dap_exp.simulate(dt, t, I)
 UDapFeExp, M_nap_feexp, M_nat_feexp, H_nap_feexp, H_nat_feexp, N_hcn_feexp, N_kdr_feexp = dap_feexp.simulate(dt, t, I)
 UDapBe, M_napBe, M_natBe, H_napBe, H_natBe, N_hcnBe, N_kdrBe = dap_be.simulate(dt, t, I)
+
+time_end = time.clock()
+print('time elapsed:', time_end - time_start)
 
 # plot voltage trace
 fig, ax = plt.subplots(ncols=2, nrows=5, figsize=(20, 10));

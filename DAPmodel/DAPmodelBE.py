@@ -1,6 +1,7 @@
 import numpy as np
 from .DAPbase import DAPBase
 
+
 class DAPBe(DAPBase):
     """
     DAP Model based on HH equations for the tests with LFI
@@ -14,10 +15,6 @@ class DAPBe(DAPBase):
         super().__init__(state=state, params=params,
                          seed=seed, **kwargs)
 
-
-    def temp_corr(self, temp):
-        '''temperature correction'''
-        return 3**(0.1*(temp-6.3))
 
     def x_inf(self, V, x_vh, x_vs):
         '''steady state values'''
@@ -40,11 +37,11 @@ class DAPBe(DAPBase):
     # currents
     def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
         '''calculates sodium-like ion current'''
-        return (gbar ) * m**m_pow * h**h_pow * (V - e_ion)
+        return gbar * m**m_pow * h**h_pow * (V - e_ion)
 
     def i_k(self, V, n, gbar, n_pow, e_ion):
         '''calculates potasium-like ion current'''
-        return (gbar ) * n**n_pow * (V - e_ion)
+        return gbar * n**n_pow * (V - e_ion)
 
     # condactivities
     def g_na(self, m, h, gbar, m_pow, h_pow):
@@ -189,7 +186,6 @@ class DAPBe(DAPBase):
             i_leak = (self.g_leak) * (U[n] - self.e_leak) * 1e3
 
             # calculate membrane potential
-            # U[n+1] = U[n] + (-i_ion - i_leak + i_inj[n])/(self.cm) * dt
             U[n+1] = self.newton(U[n], i_ion, i_leak, i_inj[n], self.cm, g_sum, dt)
 
 

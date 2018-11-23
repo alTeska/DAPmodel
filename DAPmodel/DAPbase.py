@@ -1,6 +1,7 @@
 import abc
 import numpy as np
 
+
 # class DAPBase(metaclass=abc.ABCMeta):
 class DAPBase(object):
     __metaclass__ = abc.ABCMeta
@@ -11,7 +12,7 @@ class DAPBase(object):
     i_inj = nA
 
     Base class initiates all of the parameters of the DAP model and provides access to parametrs setu.abc
-    
+
     """
 
     def __init__(self, state, params, seed=None, **kwargs):
@@ -37,33 +38,6 @@ class DAPBase(object):
             'tau_max': 13.659,     # ms  # 13.659 param s[2]
             'tau_delta': params[1],# ms
             }
-
-        self.gbar_kdr = 0.00313  # (S/cm2)
-        self.gbar_hcn = 5e-05    # (S/cm2)
-        self.gbar_nap = 0.01527  # (S/cm2)
-        self.gbar_nat = 0.142    # (S/cm2)
-
-        self.cm = 0.63      #* 1e-6  # uF/cm2
-        self.diam = 50.0    * 1e-4  # cm
-        self.L = 100.0      * 1e-4  # cm
-        self.Ra = 100.0
-        self.cell_area = self.diam * self.L * np.pi
-
-        self.gbar_kdr = self.gbar_kdr * self.cell_area  # S
-        self.gbar_hcn = self.gbar_hcn * self.cell_area  # S
-        self.gbar_nap = self.gbar_nap * self.cell_area  # S
-        self.gbar_nat = self.gbar_nat * self.cell_area  # S
-
-        self.cm = self.cm * self.cell_area  # uF
-
-        self.e_hcn = -29.46    # mV
-        self.e_nap = 60.0      # mV
-        self.e_nat = 60.0      # mV
-        self.e_leak = -86.53   # mV
-        self.e_kdr = -110.0    # mV
-        self.g_leak = 0.000430
-        self.g_leak = self.g_leak * self.cell_area
-
         self.kdr_n = {
             'pow': 4,
             'vh': -68.29,         # mV
@@ -100,11 +74,43 @@ class DAPBase(object):
             'tau_delta': 0.44,  # ms
         }
 
+
+        self.gbar_kdr = 0.00313  # (S/cm2)
+        self.gbar_hcn = 5e-05    # (S/cm2)
+        self.gbar_nap = 0.01527  # (S/cm2)
+        self.gbar_nat = 0.142    # (S/cm2)
+
+        self.cm = 0.63      #* 1e-6  # uF/cm2
+        self.diam = 50.0    * 1e-4  # cm
+        self.L = 100.0      * 1e-4  # cm
+        self.Ra = 100.0
+        self.cell_area = self.diam * self.L * np.pi
+
+        self.gbar_kdr = self.gbar_kdr * self.cell_area  # S
+        self.gbar_hcn = self.gbar_hcn * self.cell_area  # S
+        self.gbar_nap = self.gbar_nap * self.cell_area  # S
+        self.gbar_nat = self.gbar_nat * self.cell_area  # S
+
+        self.cm = self.cm * self.cell_area  # uF
+
+        self.e_hcn = -29.46    # mV
+        self.e_nap = 60.0      # mV
+        self.e_nat = 60.0      # mV
+        self.e_leak = -86.53   # mV
+        self.e_kdr = -110.0    # mV
+        self.g_leak = 0.000430
+        self.g_leak = self.g_leak * self.cell_area
+
+
         self.seed = seed
         if seed is not None:
             self.rng = np.random.RandomState(seed=seed)
         else:
             self.rng = np.random.RandomState()
+
+    def temp_corr(self, temp):
+        '''temperature correction'''
+        return 3**(0.1*(temp-6.3))
 
     @abc.abstractmethod
     def simulate(self, dt, t, i_inj):
