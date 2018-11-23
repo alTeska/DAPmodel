@@ -16,18 +16,6 @@ class DAPBe(DAPBase):
                          seed=seed, **kwargs)
 
 
-    def x_inf(self, V, x_vh, x_vs):
-        '''steady state values'''
-        return 1 / (1 + np.exp((x_vh - V) / x_vs))
-
-    def dx_dt(self, x, x_inf, x_tau):
-        '''differential equations for m,h,n'''
-        return (x_inf - x) / x_tau
-
-    def dx_plus(self, x, x_inf, x_tau, dt):
-        '''differential equations for m,h,n'''
-        return x_inf + (x - x_inf) * np.exp(-dt/x_tau)
-
 
     def x_tau(self, V, xinf, ion_ch):
         return (ion_ch['tau_min'] + (ion_ch['tau_max'] - ion_ch['tau_min']) * \

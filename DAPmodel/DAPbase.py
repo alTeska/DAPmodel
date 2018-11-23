@@ -112,6 +112,11 @@ class DAPBase(object):
         '''temperature correction'''
         return 3**(0.1*(temp-6.3))
 
+    def x_inf(self, V, x_vh, x_vs):
+        '''steady state values'''
+        return 1 / (1 + np.exp((x_vh - V) / x_vs))
+
+
     @abc.abstractmethod
     def simulate(self, dt, t, i_inj):
         pass

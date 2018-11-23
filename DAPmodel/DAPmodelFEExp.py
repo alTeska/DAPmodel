@@ -18,16 +18,7 @@ class DAPFeExp(DAPBase):
 
 
 
-    def x_inf(self, V, x_vh, x_vs):
-        '''steady state values'''
-        return 1 / (1 + np.exp((x_vh - V) / x_vs))
-
-    def dx_dt(self, x, x_inf, x_tau, dt):
-        '''differential equations for m,h,n'''
-        return (x_inf - x) / x_tau
-
-
-    def dx_plus(self, x, x_inf, x_tau, dt):
+    def dx_dt_exp(self, x, x_inf, x_tau, dt):
         '''differential equations for m,h,n'''
         return x_inf + (x - x_inf) * np.exp(-dt/x_tau)
 
@@ -144,12 +135,12 @@ class DAPFeExp(DAPBase):
             tau_n_kdr = self.x_tau(U[n+1], N_kdr_inf, self.kdr_n)
 
             # calculate all steady states
-            M_nap[n+1] = self.dx_plus(M_nap[n], M_nap_inf, tau_m_nap, dt)
-            M_nat[n+1] = self.dx_plus(M_nat[n], M_nat_inf, tau_m_nat, dt)
-            H_nap[n+1] = self.dx_plus(H_nap[n], H_nap_inf, tau_h_nap, dt)
-            H_nat[n+1] = self.dx_plus(H_nat[n], H_nat_inf, tau_h_nat, dt)
-            N_hcn[n+1] = self.dx_plus(N_hcn[n], N_hcn_inf, tau_n_hcn, dt)
-            N_kdr[n+1] = self.dx_plus(N_kdr[n], N_kdr_inf, tau_n_kdr, dt)
+            M_nap[n+1] = self.dx_dt_exp(M_nap[n], M_nap_inf, tau_m_nap, dt)
+            M_nat[n+1] = self.dx_dt_exp(M_nat[n], M_nat_inf, tau_m_nat, dt)
+            H_nap[n+1] = self.dx_dt_exp(H_nap[n], H_nap_inf, tau_h_nap, dt)
+            H_nat[n+1] = self.dx_dt_exp(H_nat[n], H_nat_inf, tau_h_nat, dt)
+            N_hcn[n+1] = self.dx_dt_exp(N_hcn[n], N_hcn_inf, tau_n_hcn, dt)
+            N_kdr[n+1] = self.dx_dt_exp(N_kdr[n], N_kdr_inf, tau_n_kdr, dt)
 
         # return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)
         return U.reshape(-1,1), M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr
