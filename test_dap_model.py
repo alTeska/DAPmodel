@@ -8,7 +8,7 @@ dt = 1e-2
 
 params, labels = obs_params()
 
-params = np.array([16, 0.4])  # for stability test
+#params = np.array([16, 0.4])  # for stability test
 I, t, t_on, t_off = syn_current(duration=150, dt=dt)
 
 # define model

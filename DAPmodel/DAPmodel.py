@@ -1,108 +1,17 @@
 import numpy as np
+from .DAPbase import DAPBase
 
-class DAP():
+class DAP(DAPBase):
     """
     DAP Model based on HH equations for the tests with LFI
     Model conists of 4 types of ion channels: Nap, Nat, Kdr, hcn_slow.
     i_inj = nA
     """
 
-    def __init__(self, init, params, seed=None):
-        self.state = np.asarray(init)
-        self.params = np.asarray(params)
+    def __init__(self, state, params, seed=None, **kwargs):
+        super().__init__(state=state, params=params,
+                         seed=seed, **kwargs)
 
-        # Nap
-        self.nap_m = {
-            'pow': 3,
-            'vs': 16.11,      # mV # 16.11 params[1]
-            'vh': -52.82,         # mV
-            'tau_min': 0.036,     # ms
-            'tau_max': params[0], # ms # 15.332
-            'tau_delta': 0.505,   # ms
-            }
-
-        self.nap_h = {
-            'pow': 1,
-            'vs': -19.19,          # mV
-            'vh': -82.54,          # mV
-            'tau_min': 0.336,      # ms
-            'tau_max': 13.659,  # ms  # 13.659 params[2]
-            'tau_delta': params[1],    # ms
-            }
-
-
-        self.seed = seed
-        if seed is not None:
-            self.rng = np.random.RandomState(seed=seed)
-        else:
-            self.rng = np.random.RandomState()
-
-
-    gbar_kdr = 0.00313  # (S/cm2)
-    gbar_hcn = 5e-05    # (S/cm2)
-    gbar_nap = 0.01527  # (S/cm2)
-    gbar_nat = 0.142    # (S/cm2)
-
-    cm = 0.63      #* 1e-6  # uF/cm2
-    diam = 50.0    * 1e-4  # cm
-    L = 100.0      * 1e-4  # cm
-    Ra = 100.0
-    cell_area = diam * L * np.pi
-
-    gbar_kdr = gbar_kdr * cell_area  # S
-    gbar_hcn = gbar_hcn * cell_area  # S
-    gbar_nap = gbar_nap * cell_area  # S
-    gbar_nat = gbar_nat * cell_area  # S
-
-    cm = cm * cell_area  # uF
-
-
-    e_hcn = -29.46    # mV
-    e_nap = 60.0      # mV
-    e_nat = 60.0      # mV
-    e_leak = -86.53   # mV
-    e_kdr = -110.0    # mV
-    g_leak = 0.000430
-    g_leak = g_leak * cell_area
-
-
-    kdr_n = {
-        'pow': 4,
-        'vh': -68.29,         # mV
-        'vs': 18.84,          # mV
-        'tau_min': 0.286,     # ms
-        'tau_max': 21.286,    # ms
-        'tau_delta': 0.746,   # ms
-    }
-
-    hcn_n = {
-        'pow': 1,
-        'vh': -77.9,         # mV
-        'vs': -20.54,        # mV
-        'tau_min': 2.206,    # ms
-        'tau_max': 137.799,  # ms
-        'tau_delta': 0.21,   # ms
-    }
-
-    # Nat
-
-    nat_m = {
-        'pow': 3,
-        'vs': 11.99,         # mV
-        'vh': -30.94,        # mV
-        'tau_min': 0,        # ms
-        'tau_max': 0.193,    # ms
-        'tau_delta': 0.187,  # ms
-    }
-
-    nat_h = {
-        'pow': 1,
-        'vs': -13.17,       # mV
-        'vh': -60.44,       # mV
-        'tau_min': 0.001,   # ms
-        'tau_max': 8.743,   # ms
-        'tau_delta': 0.44,  # ms
-    }
 
 
     def temp_corr(self, temp):
