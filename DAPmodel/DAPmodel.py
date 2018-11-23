@@ -16,18 +16,11 @@ class DAP(DAPBase):
                          seed=seed, **kwargs)
 
 
-
     def dx_dt(self, x, x_inf, x_tau):
         '''differential equations for m,h,n'''
         return (x_inf - x) / x_tau
 
-    def x_tau(self, V, xinf, ion_ch):
-        return (ion_ch['tau_min'] + (ion_ch['tau_max'] - ion_ch['tau_min']) * \
-                xinf * np.exp(ion_ch['tau_delta'] * \
-                (ion_ch['vh'] - V) / ion_ch['vs']))
-
-
-    def simulate(self, dt, t, i_inj):
+    def simulate(self, dt, t, i_inj, channels=False):
         """run simulation of DAP model given the injection current
 
         Parameters
@@ -103,5 +96,15 @@ class DAP(DAPBase):
             U[n+1] = U[n] + (-i_ion - i_leak + i_inj[n])/(self.cm) * dt
 
 
-        # return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)
-        return U.reshape(-1,1), M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr
+        if channels:
+            return {
+                    'U': U.reshape(-1,1),
+                    'M_nap': M_nap,
+                    'M_nat': M_nat,
+                    'H_nap': H_nap,
+                    'H_nat': H_nat,
+                    'N_hcn': N_hcn,
+                    'N_kdr': N_kdr,
+                    }
+        else:
+            return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)

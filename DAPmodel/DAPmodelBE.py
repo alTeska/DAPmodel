@@ -17,19 +17,6 @@ class DAPBe(DAPBase):
 
 
 
-    def x_tau(self, V, xinf, ion_ch):
-        return (ion_ch['tau_min'] + (ion_ch['tau_max'] - ion_ch['tau_min']) * \
-                xinf * np.exp(ion_ch['tau_delta'] * \
-                (ion_ch['vh'] - V) / ion_ch['vs']))
-
-    # currents
-    def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
-        '''calculates sodium-like ion current'''
-        return gbar * m**m_pow * h**h_pow * (V - e_ion)
-
-    def i_k(self, V, n, gbar, n_pow, e_ion):
-        '''calculates potasium-like ion current'''
-        return gbar * n**n_pow * (V - e_ion)
 
     # condactivities
     def g_na(self, m, h, gbar, m_pow, h_pow):
@@ -40,7 +27,7 @@ class DAPBe(DAPBase):
         '''calculates potasium-like ion current'''
         return gbar * n**n_pow
 
-
+    # integration
     def func(self, V_new, V_old, i_ion, i_leak, i_inj, cm,  dt):
         """ The function f(x) we want the root of."""
         return V_new - V_old - dt*(-i_ion - i_leak + i_inj)/cm
@@ -84,6 +71,7 @@ class DAPBe(DAPBase):
         f = self.x_func(x_new, x_old, x_inf, tau_x, dt)
         dfdx = self.x_dfuncdx(tau_x, dt)
 
+        # update guess, till desired precisions:
         while abs(f/dfdx) > precision:
             x_new = x_new - f/dfdx
             f = self.x_func(x_new, x_old, x_inf, tau_x, dt)
@@ -92,7 +80,7 @@ class DAPBe(DAPBase):
         return x_new
 
 
-    def simulate(self, dt, t, i_inj):
+    def simulate(self, dt, t, i_inj, channels=False):
         """run simulation of DAP model given the injection current
 
         Parameters
@@ -178,6 +166,15 @@ class DAPBe(DAPBase):
             U[n+1] = self.newton(U[n], i_ion, i_leak, i_inj[n], self.cm, g_sum, dt)
 
 
-
-        # return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)
-        return U.reshape(-1,1), M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr
+        if channels:
+            return {
+                    'U': U.reshape(-1,1),
+                    'M_nap': M_nap,
+                    'M_nat': M_nat,
+                    'H_nap': H_nap,
+                    'H_nat': H_nat,
+                    'N_hcn': N_hcn,
+                    'N_kdr': N_kdr,
+                    }
+        else:
+            return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)

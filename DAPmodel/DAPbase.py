@@ -112,9 +112,15 @@ class DAPBase(object):
         '''temperature correction'''
         return 3**(0.1*(temp-6.3))
 
+    # model integration
     def x_inf(self, V, x_vh, x_vs):
         '''steady state values'''
         return 1 / (1 + np.exp((x_vh - V) / x_vs))
+
+    def x_tau(self, V, xinf, ion_ch):
+        return (ion_ch['tau_min'] + (ion_ch['tau_max'] - ion_ch['tau_min']) * \
+                xinf * np.exp(ion_ch['tau_delta'] * \
+                (ion_ch['vh'] - V) / ion_ch['vs']))
 
     # currents
     def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
@@ -127,5 +133,5 @@ class DAPBase(object):
 
 
     @abc.abstractmethod
-    def simulate(self, dt, t, i_inj):
+    def simulate(self, dt, t, i_inj, channels=False):
         pass
