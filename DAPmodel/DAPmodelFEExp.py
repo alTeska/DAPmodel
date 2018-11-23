@@ -17,7 +17,6 @@ class DAPFeExp(DAPBase):
 
 
 
-
     def dx_dt_exp(self, x, x_inf, x_tau, dt):
         '''differential equations for m,h,n'''
         return x_inf + (x - x_inf) * np.exp(-dt/x_tau)
@@ -28,15 +27,6 @@ class DAPFeExp(DAPBase):
                 xinf * np.exp(ion_ch['tau_delta'] * \
                 (ion_ch['vh'] - V) / ion_ch['vs']))
 
-
-    # currents
-    def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
-        '''calculates sodium-like ion current'''
-        return gbar * m**m_pow * h**h_pow * (V - e_ion)
-
-    def i_k(self, V, n, gbar, n_pow, e_ion):
-        '''calculates potasium-like ion current'''
-        return gbar * n**n_pow * (V - e_ion)
 
 
     # condactivities and conductances

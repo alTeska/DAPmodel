@@ -116,6 +116,15 @@ class DAPBase(object):
         '''steady state values'''
         return 1 / (1 + np.exp((x_vh - V) / x_vs))
 
+    # currents
+    def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
+        '''calculates sodium-like ion current'''
+        return gbar * m**m_pow * h**h_pow * (V - e_ion)
+
+    def i_k(self, V, n, gbar, n_pow, e_ion):
+        '''calculates potasium-like ion current'''
+        return gbar * n**n_pow * (V - e_ion)
+
 
     @abc.abstractmethod
     def simulate(self, dt, t, i_inj):

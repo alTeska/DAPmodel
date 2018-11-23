@@ -59,6 +59,7 @@ class DAPBe(DAPBase):
         f = self.func(V_new, V_old, i_ion, i_leak, i_inj, cm, dt)
         dfdx = self.dfuncdx(g_sum, dt)
 
+        # update guess, till desired precisions:
         while abs(f/dfdx) > precision:
             V_new = V_new - f/dfdx
             f = self.func(V_new, V_old, i_ion, i_leak, i_inj, cm, dt)

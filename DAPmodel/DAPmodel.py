@@ -16,10 +16,6 @@ class DAP(DAPBase):
                          seed=seed, **kwargs)
 
 
-    
-    def x_inf(self, V, x_vh, x_vs):
-        '''steady state values'''
-        return 1 / (1 + np.exp((x_vh - V) / x_vs))
 
     def dx_dt(self, x, x_inf, x_tau):
         '''differential equations for m,h,n'''
@@ -29,16 +25,6 @@ class DAP(DAPBase):
         return (ion_ch['tau_min'] + (ion_ch['tau_max'] - ion_ch['tau_min']) * \
                 xinf * np.exp(ion_ch['tau_delta'] * \
                 (ion_ch['vh'] - V) / ion_ch['vs']))
-
-
-    def i_na(self, V, m, h, gbar, m_pow, h_pow, e_ion):
-        '''calculates sodium-like ion current'''
-        return (gbar ) * m**m_pow * h**h_pow * (V - e_ion)
-
-    def i_k(self, V, n, gbar, n_pow, e_ion):
-        '''calculates potasium-like ion current'''
-        return (gbar ) * n**n_pow * (V - e_ion)
-
 
 
     def simulate(self, dt, t, i_inj):
