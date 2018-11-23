@@ -6,6 +6,9 @@ class DAP(DAPBase):
     DAP Model based on HH equations for the tests with LFI
     Model conists of 4 types of ion channels: Nap, Nat, Kdr, hcn_slow.
     i_inj = nA
+
+    Integrated with Forward(explicit) Euler method.
+
     """
 
     def __init__(self, state, params, seed=None, **kwargs):

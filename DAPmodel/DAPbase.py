@@ -9,6 +9,9 @@ class DAPBase(object):
     DAP Model based on HH equations. Model conists of 4 types of ion channels:
     Nap, Nat, Kdr, hcn_slow.
     i_inj = nA
+
+    Base class initiates all of the parameters of the DAP model and provides access to parametrs setu.abc
+    
     """
 
     def __init__(self, state, params, seed=None, **kwargs):
