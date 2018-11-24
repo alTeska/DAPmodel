@@ -23,7 +23,7 @@ class DAPBase(object):
         # Nap
         self.nap_m = {
             'pow': 3,
-            'vs': 16.11,          # mV # 16.11 params[1]
+            'vs': 16.11,          # mV
             'vh': -52.82,         # mV
             'tau_min': 0.036,     # ms
             'tau_max': params[0], # ms # 15.332
