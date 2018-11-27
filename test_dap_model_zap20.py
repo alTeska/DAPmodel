@@ -6,7 +6,31 @@ from DAPmodel import obs_params, syn_current
 from cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
                                     get_v_and_t_from_heka, shift_v_rest, get_i_inj_zap)
 
-from test_dap_model_iinj import load_current
+# from test_dap_model_iinj import load_current
+
+def load_current(data_dir, protocol='rampIV', ramp_amp=3.1):
+    '''
+    ramp_amp:  optimal=3.1, steps of 0.05 -0.15
+    protocol: 'rampIV', 'IV', 'Zap20'
+
+    '''
+    v_shift = -16  # shift for accounting for the liquid junction potential
+
+    if protocol == 'Zap20':
+        sweep_idx = 0
+    else:
+        sweep_idx = get_sweep_index_for_amp(ramp_amp, protocol)
+
+    v, t = get_v_and_t_from_heka(data_dir, protocol, sweep_idxs=[sweep_idx])
+    v = shift_v_rest(v[0], v_shift)
+    t = t[0]
+    dt = t[1] - t[0]
+
+    I, _ = get_i_inj_from_function(protocol, [sweep_idx], t[-1], dt,
+                                              return_discontinuities=True)
+    I = I[0]
+
+    return I, t, dt
 
 data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
 # data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
@@ -17,6 +41,8 @@ time_start = time.clock()
 I, t, dt = load_current(data_dir, protocol='Zap20', ramp_amp=3.1)
 params, labels = obs_params()
 
+plt.plot(t,I)
+plt.show()
 
 # define models
 dap = DAP(-75, params)

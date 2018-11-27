@@ -20,10 +20,10 @@ dap_feexp = DAPFeExp(-75, params)
 dap_be = DAPBe(-75, params)
 
 # run models
-DAPdict = dap.simulate(dt, t, I, channels=True)
-DAPexpDict = dap_exp.simulate(dt, t, I, channels=True)
-DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True)
-DAPbeDict = dap_be.simulate(dt, t, I, channels=True)
+DAPdict = dap.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
+DAPexpDict = dap_exp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
+DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
+DAPbeDict = dap_be.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
 
 
 time_end = time.clock()
