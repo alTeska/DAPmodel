@@ -39,7 +39,7 @@ class DAPExp(DAPBase):
         return gbar * n**n_pow
 
 
-    def simulate(self, dt, t, i_inj, channels=False):
+    def simulate(self, dt, t, i_inj, channels=False, noise=False, noise_fact=1e-3):
         """Run simulation of DAP model given the injection current
 
         Parameters
@@ -47,6 +47,9 @@ class DAPExp(DAPBase):
         dt (float): Timestep
         t  (array): array with time course
         i_inj (array): array with the input I
+        channels (bool): decides if activation channels should be returned
+        noise (bool): decides about adding noise to the voltage trace
+        noise_fact (float): size of the added noise
 
         Returns:
         U (array): array with voltage trace
@@ -60,7 +63,6 @@ class DAPExp(DAPBase):
             'N_hcn': N_hcn,
             'N_kdr': N_kdr,
         """
-        nois_fact_obs = 1e-5
         i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
 
         U = np.zeros_like(t)
@@ -131,6 +133,10 @@ class DAPExp(DAPBase):
             N_hcn[n+1] = self.dx_dt_exp(N_hcn[n], N_hcn_inf, tau_n_hcn, dt)
             N_kdr[n+1] = self.dx_dt_exp(N_kdr[n], N_kdr_inf, tau_n_kdr, dt)
 
+
+        if noise:
+            U = U + noise_fact*self.rng.randn(1, t.shape[0])
+
         if channels:
             return {
                     'U': U.reshape(-1,1),
@@ -142,4 +148,4 @@ class DAPExp(DAPBase):
                     'N_kdr': N_kdr,
                     }
         else:
-            return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)
+            return U.reshape(-1,1)
