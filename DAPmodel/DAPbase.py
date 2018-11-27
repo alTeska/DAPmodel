@@ -12,7 +12,6 @@ class DAPBase(object):
     i_inj = nA
 
     Base class initiates all of the parameters of the DAP model and provides access to parametrs setu.abc
-
     """
 
     def __init__(self, state, params, seed=None, **kwargs):
@@ -134,4 +133,55 @@ class DAPBase(object):
 
     @abc.abstractmethod
     def simulate(self, dt, t, i_inj, channels=False):
-        pass
+        """Run simulation of DAP model given the injection current
+
+        Parameters
+        ----------
+        dt (float): Timestep
+        t  (array): array with time course
+        i_inj (array): array with the input I
+
+        Returns:
+        U (array): array with voltage trace
+
+        if channels=True: dictionary with arrays contatining voltage trace and activation gates:
+            'U': U.reshape(-1,1),
+            'M_nap': M_nap,
+            'M_nat': M_nat,
+            'H_nap': H_nap,
+            'H_nat': H_nat,
+            'N_hcn': N_hcn,
+            'N_kdr': N_kdr,
+        """
+
+        nois_fact_obs = 1e-5
+        i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
+
+        U = np.zeros_like(t)
+        M_nap = np.zeros_like(t)
+        M_nat = np.zeros_like(t)
+        H_nap = np.zeros_like(t)
+        H_nat = np.zeros_like(t)
+        N_hcn = np.zeros_like(t)
+        N_kdr = np.zeros_like(t)
+
+        U[0] = self.state
+        M_nap[0] = self.x_inf(U[0], self.nap_m['vh'], self.nap_m['vs'])
+        M_nat[0] = self.x_inf(U[0], self.nat_m['vh'], self.nat_m['vs'])
+        H_nap[0] = self.x_inf(U[0], self.nap_h['vh'], self.nap_h['vs'])
+        H_nat[0] = self.x_inf(U[0], self.nat_h['vh'], self.nat_h['vs'])
+        N_hcn[0] = self.x_inf(U[0], self.hcn_n['vh'], self.hcn_n['vs'])
+        N_kdr[0] = self.x_inf(U[0], self.kdr_n['vh'], self.kdr_n['vs'])
+
+        if channels:
+            return {
+                    'U': U.reshape(-1,1),
+                    'M_nap': M_nap,
+                    'M_nat': M_nat,
+                    'H_nap': H_nap,
+                    'H_nat': H_nat,
+                    'N_hcn': N_hcn,
+                    'N_kdr': N_kdr,
+                    }
+        else:
+            return U.reshape(-1,1) #+ nois_fact_obs*self.rng.randn(t.shape[0],1)

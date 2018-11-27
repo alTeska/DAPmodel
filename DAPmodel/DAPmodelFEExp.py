@@ -40,22 +40,30 @@ class DAPFeExp(DAPBase):
 
 
     def simulate(self, dt, t, i_inj, channels=False):
-        """run simulation of DAP model given the injection current
+        """Run simulation of DAP model given the injection current
 
         Parameters
         ----------
-        dt : float
-            Timestep
-        t : float
-            Numpy array with time course
-        i_inj : array
-            Numpy array with the input I
-        """
-        nois_fact_obs = 0.00001
+        dt (float): Timestep
+        t  (array): array with time course
+        i_inj (array): array with the input I
 
-        U = np.zeros_like(t)
+        Returns:
+        U (array): array with voltage trace
+
+        if channels=True: dictionary with arrays contatining voltage trace and activation gates:
+            'U': U.reshape(-1,1),
+            'M_nap': M_nap,
+            'M_nat': M_nat,
+            'H_nap': H_nap,
+            'H_nat': H_nat,
+            'N_hcn': N_hcn,
+            'N_kdr': N_kdr,
+        """
+        nois_fact_obs = 1e-5
         i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
 
+        U = np.zeros_like(t)
         M_nap = np.zeros_like(t)
         M_nat = np.zeros_like(t)
         H_nap = np.zeros_like(t)

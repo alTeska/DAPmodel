@@ -33,9 +33,9 @@ class DAPBe(DAPBase):
         """ The derivative of f(x) with respect to steady state calculation [dfucn/dt]"""
         return 1 + dt/tau
 
-    def Ufunc(self, old, new, i_ion, i_leak, i_inj, cm, g_sum, dt):
+    def Ufunc(self, old, new, i_ion, i_leak, i_inj, g_sum, dt):
         """ The function f(x) we want the root of the voltage (U)."""
-        return new - old - dt*(-i_ion - i_leak + i_inj)/cm
+        return new - old - dt*(-i_ion - i_leak + i_inj)/self.cm
 
     def dUfuncdx(self, g_sum, dt):
         """ The derivative of f(x) with respect to voltage (U) calculations.[dUfucn/dt]"""
@@ -47,39 +47,46 @@ class DAPBe(DAPBase):
         Takes values old and t_new, and finds the root of the function f(new), returns new.
         Looks for given precision of new. """
 
-        precision=1e-12
-
         # initial guess:
         new = old
         f = func(old, new, *args)
         dfdx = dfuncdx(args[-2], args[-1])
 
         # update guess, till desired precisions:
-        while abs(f/dfdx) > precision:
+        while abs(f/dfdx) > self.precision:
             new = new - f/dfdx
             f = func(old, new, *args)
             dfdx = dfuncdx(args[-2], args[-1])
 
         return new
 
-    def simulate(self, dt, t, i_inj, channels=False):
-        """run simulation of DAP model given the injection current
+    def simulate(self, dt, t, i_inj, channels=False, precision=1e-12):
+        """Run simulation of DAP model given the injection current
 
         Parameters
         ----------
-        dt : float
-            Timestep
-        t : float
-            Numpy array with time course
-        i_inj : array
-            Numpy array with the input I
+        dt (float): Timestep
+        t  (array): array with time course
+        i_inj (array): array with the input I
+
+        Returns:
+        U (array): array with voltage trace
+
+        if channels=True: dictionary with arrays contatining voltage trace and activation gates:
+            'U': U.reshape(-1,1),
+            'M_nap': M_nap,
+            'M_nat': M_nat,
+            'H_nap': H_nap,
+            'H_nat': H_nat,
+            'N_hcn': N_hcn,
+            'N_kdr': N_kdr,
         """
-        nois_fact_obs = 0.00001
+        self.precision = precision
 
-
-        U = np.zeros_like(t)
+        nois_fact_obs = 1e-5
         i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
 
+        U = np.zeros_like(t)
         M_nap = np.zeros_like(t)
         M_nat = np.zeros_like(t)
         H_nap = np.zeros_like(t)
@@ -145,7 +152,7 @@ class DAPBe(DAPBase):
 
             # calculate membrane potential
             U[n+1] = self.newton_uni(U[n], self.Ufunc, self.dUfuncdx, i_ion,
-                                     i_leak, i_inj[n], self.cm, g_sum, dt)
+                                     i_leak, i_inj[n], g_sum, dt)
 
 
         if channels:
