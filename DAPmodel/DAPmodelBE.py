@@ -197,7 +197,8 @@ class DAPBe(DAPBase):
             # U[n+1] = self.newton(U[n], i_ion, i_leak, i_inj[n], self.cm, g_sum, dt)
 
             # x = newton_uni(old, Ufunc, dUfuncdx, i_ion, i_leak, i_inj, cm, g_sum, dt)
-            U[n+1] = self.newton_uni(U[n], self.Ufunc, self.dUfuncdx, i_ion, i_leak, i_inj[n], self.cm, g_sum, dt)
+            U[n+1] = self.newton_uni(U[n], self.Ufunc, self.dUfuncdx, i_ion,
+                                     i_leak, i_inj[n], self.cm, g_sum, dt)
 
 
         if channels:
