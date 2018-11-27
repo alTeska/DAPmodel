@@ -2,7 +2,7 @@
 import numpy as np
 
 from delfi.simulator.BaseSimulator import BaseSimulator
-from DAPmodel import DAP
+from DAPmodel import DAP, DAPExp, DAPBe, DAPFeExp
 
 def param_transform(prior_log, x):
     if prior_log:
@@ -35,19 +35,19 @@ class DAPSimulator(BaseSimulator):
         self.I = I
         self.dt = dt
         self.t = np.linspace(0, len(I), len(I))*self.dt
-        # print(self.t)
 
         self.prior_log = prior_log
         self.init = [V0]
 
 
-    def gen_single(self, params):
+    def gen_single(self, params, integration='Backward'):
         """Forward model for simulator for single parameter set
 
         Parameters
         ----------
         params : list or np.array, 1d of length dim_param
             Parameter vector
+        integration : string deciding on the type of integration used
 
         Returns
         -------
@@ -60,7 +60,17 @@ class DAPSimulator(BaseSimulator):
 
         dap_seed = self.gen_newseed()
 
-        dap = DAP(self.init, params, seed=dap_seed)
+        if integration == 'Backward':
+            dap = DAPBe(self.init, params, seed=dap_seed)
+        elif integration == 'Forward':
+            dap = DAP(self.init, params, seed=dap_seed)
+        elif integration == 'Exponential':
+            dap = DAPExp(self.init, params, seed=dap_seed)
+        elif integration == 'ForwardExponential':
+            dap = DAPFeExp(self.init, params, seed=dap_seed)
+        else:
+            ValueError("No such integration avalibe, try Backward")
+
         states = dap.simulate(self.dt, self.t, self.I)
 
         return {'data': states.reshape(-1),

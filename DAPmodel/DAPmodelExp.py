@@ -101,7 +101,6 @@ class DAPExp(DAPBase):
 
             g_sum = (g_nap + g_nat + g_hcn + g_kdr + self.g_leak)
 
-
             # calculate membrane potential
             V_inf = (g_e_sum + i_inj[n] * 1e-3) / g_sum
             tau_v = (self.cm)* 1e-3  / g_sum
