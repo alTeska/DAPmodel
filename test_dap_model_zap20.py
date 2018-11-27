@@ -3,15 +3,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 from DAPmodel import DAP, DAPBe, DAPExp, DAPFeExp
 from DAPmodel import obs_params, syn_current
+from cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
+                                    get_v_and_t_from_heka, shift_v_rest, get_i_inj_zap)
 
+from test_dap_model_iinj import load_current
+
+data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
+# data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
 
 time_start = time.clock()
 
-dt = 1e-2
+# load the data
+I, t, dt = load_current(data_dir, protocol='Zap20', ramp_amp=3.1)
 params, labels = obs_params()
-# params = np.array([5, 0.4])  # for stability test
 
-I, t, t_on, t_off = syn_current(duration=150, dt=dt)
 
 # define models
 dap = DAP(-75, params)
@@ -19,12 +24,11 @@ dap_exp = DAPExp(-75, params)
 dap_feexp = DAPFeExp(-75, params)
 dap_be = DAPBe(-75, params)
 
-# run models
+# run model
 DAPdict = dap.simulate(dt, t, I, channels=True)
 DAPexpDict = dap_exp.simulate(dt, t, I, channels=True)
 DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True)
 DAPbeDict = dap_be.simulate(dt, t, I, channels=True)
-
 
 time_end = time.clock()
 print('time elapsed:', time_end - time_start)
@@ -48,7 +52,6 @@ ax[3][0].set_title('Backward Euler')
 ax[3][0].grid()
 
 ax[4][0].plot(t, I);
-
 
 # plot activation functions
 ax[0][1].plot(t, DAPdict['M_nap'], label='M_nap');
