@@ -5,31 +5,34 @@ from DAPmodel.analyze_APs import get_spike_characteristics,  get_spike_character
 from delfi.summarystats.BaseSummaryStats import BaseSummaryStats
 
 
-class DAPSummaryStats(BaseSummaryStats):
+class DAPSummaryStatsNoAP(BaseSummaryStats):
     """SummaryStats class for the DAP model
 
     Calculates summary statistics of AP/DAP:
     AP_amp, AP_width, DAP_amp, DAP_width, DAP_deflection, DAP_time
+
+    Version excluding the analyze_APs file, recalculates the values
     """
     def __init__(self, t_on, t_off, n_summary=6, seed=None):
         """See SummaryStats.py for docstring"""
-        super(DAPSummaryStats, self).__init__(seed=seed)
+        super(DAPSummaryStatsNoAP, self).__init__(seed=seed)
         self.t_on = t_on
         self.t_off = t_off
         self.n_summary = n_summary
 
-            data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
-            protocol = 'rampIV' # 'IV' # 'rampIV' # 'Zap20'
-            ramp_amp = 3.1 # steps of 0.05 -0.15
-            v_shift = -16  # shift for accounting for the liquid junction potential
+        data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
+        protocol = 'rampIV' # 'IV' # 'rampIV' # 'Zap20'
+        ramp_amp = 3.1 # steps of 0.05 -0.15
+        v_shift = -16  # shift for accounting for the liquid junction potential
 
-            if protocol == 'Zap20':
-                sweep_idx = 0
-            else:
-                sweep_idx = get_sweep_index_for_amp(ramp_amp, protocol)
+        if protocol == 'Zap20':
+            sweep_idx = 0
+        else:
+            sweep_idx = get_sweep_index_for_amp(ramp_amp, protocol)
 
-            self.v0, self.t = get_v_and_t_from_heka(data_dir, protocol, sweep_idxs=[sweep_idx])
-            self.v0 = shift_v_rest(self.v0[0], v_shift)
+        self.v0, self.t = get_v_and_t_from_heka(data_dir, protocol, sweep_idxs=[sweep_idx])
+        self.v0 = shift_v_rest(self.v0[0], v_shift)
+
 
     def calc(self, repetition_list):
         """Calculate summary statistics
@@ -56,33 +59,35 @@ class DAPSummaryStats(BaseSummaryStats):
             # initialise array of spike counts
             v = np.array(x['data'])
 
-            return_characteristics = ['AP_amp', 'AP_width', 'DAP_amp', 'DAP_width',
-                                      'DAP_deflection', 'DAP_time']
-            spike_characteristics_dict = get_spike_characteristics_dict(for_data=True)  # standard parameters to use
-
-            characteristics = get_spike_characteristics(v, t, return_characteristics,
-                                                        v_rest=v[0], std_idx_times=(0, 1)
-                                                        ,**spike_characteristics_dict)
-
             # resting potential
-            rest_pot = np.mean(x['data'][t < t_on])
+            rest_pot = np.mean(x['data'][t<t_on])
+            rest_pot_std = np.std(x['data'][int(.9*t_on/dt):int(t_on/dt)])
 
             # RMSE
             n = len(self.v0)
             rmse = np.linalg.norm(v - self.v0) / np.sqrt(n)
 
+            # Action potential #TODO
+            # threshold = -30
+            # AP_onset = np.where(v > threshold)[0][0]
+            # print(AP_onset)
+            # v[AP_onset]
+            # print(np.nonzero(np.diff(np.sign(v-threshold)) == 2)[0])
+
             sum_stats_vec = np.array([
                             rest_pot,
                             rmse,
-                            characteristics['AP_amp'],
-                            characteristics['AP_width'],
-                            characteristics['DAP_amp'],
-                            characteristics['DAP_width'],
-                            characteristics['DAP_deflection'],
-                            characteristics['DAP_time']
+                            # rest_pot_std, # should it be included?
+                            # AP_amp,
+                            # AP_width,
+                            # DAP_amp,
+                            # DAP_width,
+                            # DAP_deflection,
+                            # DAP_time
                             ])
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
+            print('sum_stats_vec', sum_stats_vec)
             stats.append(sum_stats_vec)
 
         return np.asarray(stats)

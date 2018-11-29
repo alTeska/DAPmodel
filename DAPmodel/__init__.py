@@ -7,7 +7,8 @@ from .DAPmodelFEExp import DAPFeExp
 
 from .DAPsimulator import DAPSimulator
 from .DAPsumstats import DAPSummaryStats
-from .DAPSumStats import DAPSummaryStatsNoAP
+from .DAPSumStatsNoAp import DAPSummaryStatsNoAP
+from .DAPSumStats import DAPSummaryStatsA
 
 from .hh_model import Hodgkin_Huxley_Model
 
