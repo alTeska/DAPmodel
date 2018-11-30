@@ -416,6 +416,10 @@ def get_spike_characteristics(v, t, return_characteristics, v_rest, AP_threshold
     # TODO:fix me, so there is everything returned anyway somehow
     if AP_max_idx is None:
         AP_onset, AP_end = get_AP_start_end(v, AP_threshold)
+        # print('AP_threshold', AP_threshold)
+        # print('AP_onset', AP_onset)
+        # print('AP_end', AP_end)
+        # print('v', v)
         if AP_onset is None or AP_end is None:
             print ('No AP found!')
             for k in return_characteristics:

@@ -2,7 +2,7 @@ import argparse, os, sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-from DAPmodel import DAPSummaryStats, DAPSummaryStatsNoAP
+from DAPmodel import DAPSummaryStats, DAPSummaryStatsNoAP, DAPSummaryStatsA
 from DAPmodel import DAPSimulator
 
 from DAPmodel import obs_params, syn_obs_data, prior, syn_obs_stats
@@ -79,11 +79,11 @@ params = np.array([13, 0.3])
 prior = prior(params, prior_log=False, prior_uniform=False)
 
 S = syn_obs_stats(x_o['I'], params=params, dt=x_o['dt'], t_on=t_on, t_off=t_off,
-                  n_summary=2, summary_stats=4, data=x_o)
+                  n_summary=8, summary_stats=5, data=x_o)
 
 M = DAPSimulator(x_o['I'], x_o['dt'], -75)
 
-sum_stats = DAPSummaryStatsNoAP(t_on, t_off, n_summary=2)
+sum_stats = DAPSummaryStatsA(t_on, t_off, n_summary=8)
 
 G = Default(model=M, prior=prior, summary=sum_stats)  # Generator
 

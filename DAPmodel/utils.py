@@ -5,6 +5,7 @@ from delfi.summarystats import Identity
 
 from DAPmodel import DAP, DAPSimulator
 from .DAPsumstats import DAPSummaryStats
+from .DAPSumStats import DAPSummaryStatsA
 
 from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
 from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
@@ -94,6 +95,8 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1
         s = HodgkinHuxleyStatsSpikes_mf(t_on, t_off, n_summary=n_summary)
     elif summary_stats == 4:
         s = DAPSummaryStats(t_on, t_off, n_summary=n_summary)
+    elif summary_stats == 5:
+        s=DAPSummaryStatsA(t_on, t_off, n_summary=n_summary)
     return s.calc([data])
 
 

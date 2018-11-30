@@ -18,18 +18,18 @@ class DAPSummaryStats(BaseSummaryStats):
         self.t_off = t_off
         self.n_summary = n_summary
 
-            data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
-            protocol = 'rampIV' # 'IV' # 'rampIV' # 'Zap20'
-            ramp_amp = 3.1 # steps of 0.05 -0.15
-            v_shift = -16  # shift for accounting for the liquid junction potential
+        data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
+        protocol = 'rampIV' # 'IV' # 'rampIV' # 'Zap20'
+        ramp_amp = 3.1 # steps of 0.05 -0.15
+        v_shift = -16  # shift for accounting for the liquid junction potential
 
-            if protocol == 'Zap20':
-                sweep_idx = 0
-            else:
-                sweep_idx = get_sweep_index_for_amp(ramp_amp, protocol)
+        if protocol == 'Zap20':
+            sweep_idx = 0
+        else:
+            sweep_idx = get_sweep_index_for_amp(ramp_amp, protocol)
 
-            self.v0, self.t = get_v_and_t_from_heka(data_dir, protocol, sweep_idxs=[sweep_idx])
-            self.v0 = shift_v_rest(self.v0[0], v_shift)
+        self.v0, self.t = get_v_and_t_from_heka(data_dir, protocol, sweep_idxs=[sweep_idx])
+        self.v0 = shift_v_rest(self.v0[0], v_shift)
 
     def calc(self, repetition_list):
         """Calculate summary statistics

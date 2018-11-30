@@ -1,11 +1,13 @@
 import numpy as np
+from scipy.signal import argrelmin, argrelmax
+
 from cell_fitting.read_heka import get_sweep_index_for_amp, get_i_inj_from_function, get_v_and_t_from_heka, shift_v_rest
 from DAPmodel.analyze_APs import get_spike_characteristics,  get_spike_characteristics_dict
 
 from delfi.summarystats.BaseSummaryStats import BaseSummaryStats
 
 
-class DAPSummaryStatsNoAP(BaseSummaryStats):
+class DAPSummaryStatsA(BaseSummaryStats):
     """SummaryStats class for the DAP model
 
     Calculates summary statistics of AP/DAP:
@@ -15,7 +17,7 @@ class DAPSummaryStatsNoAP(BaseSummaryStats):
     """
     def __init__(self, t_on, t_off, n_summary=6, seed=None):
         """See SummaryStats.py for docstring"""
-        super(DAPSummaryStatsNoAP, self).__init__(seed=seed)
+        super(DAPSummaryStatsA, self).__init__(seed=seed)
         self.t_on = t_on
         self.t_off = t_off
         self.n_summary = n_summary
@@ -61,33 +63,55 @@ class DAPSummaryStatsNoAP(BaseSummaryStats):
 
             # resting potential
             rest_pot = np.mean(x['data'][t<t_on])
-            rest_pot_std = np.std(x['data'][int(.9*t_on/dt):int(t_on/dt)])
+            # rest_pot_std = np.std(x['data'][int(.9*t_on/dt):int(t_on/dt)])   # TODO: add if needed
 
             # RMSE
             n = len(self.v0)
             rmse = np.linalg.norm(v - self.v0) / np.sqrt(n)
 
-            # Action potential #TODO
-            # threshold = -30
-            # AP_onset = np.where(v > threshold)[0][0]
-            # print(AP_onset)
-            # v[AP_onset]
-            # print(np.nonzero(np.diff(np.sign(v-threshold)) == 2)[0])
+            # Action potential
+            threshold = -30
+            AP_onsets = np.where(v > threshold)[0]
+            AP_start = AP_onsets[0]
+            AP_end = AP_onsets[-1]
+            AP_max_idx = AP_start + np.argmax(v[AP_start:AP_end])
+            AP_max = v[AP_max_idx]
+            AP_amp = AP_max - rest_pot
+
+            # AP width
+            AP_onsets_half_max = np.where(v > AP_max+rest_pot/2)[0]
+            AP_width = t[AP_onsets_half_max[-1]] - t[AP_onsets_half_max[0]]
+
+            # DAP: fAHP
+            fAHP_idx = argrelmin(v)[0][1]
+            fAHP = v[fAHP_idx] - rest_pot
+
+            # DAP amplitude
+            DAP_max_idx = argrelmax(v)[0][1]
+            DAP_max = v[DAP_max_idx]
+            DAP_amp = DAP_max - rest_pot
+
+            DAP_deflection = DAP_amp - fAHP
+            DAP_time = t[DAP_max_idx] - t[AP_max_idx]    # Time between AP and DAP maximum
+
+            # Width of DAP: between fAHP and halfsize of fAHP after DAP max
+            vnorm = v[fAHP_idx:-1]  - rest_pot
+            half_max = np.where((vnorm < fAHP/2))[0]
+            DAP_width = half_max[0] * dt
 
             sum_stats_vec = np.array([
                             rest_pot,
                             rmse,
+                            AP_amp,
+                            AP_width,
+                            DAP_amp,
+                            DAP_width,
+                            DAP_deflection,
+                            DAP_time
                             # rest_pot_std, # should it be included?
-                            # AP_amp,
-                            # AP_width,
-                            # DAP_amp,
-                            # DAP_width,
-                            # DAP_deflection,
-                            # DAP_time
                             ])
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
-            print('sum_stats_vec', sum_stats_vec)
             stats.append(sum_stats_vec)
 
         return np.asarray(stats)

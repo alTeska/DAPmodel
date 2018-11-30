@@ -3,10 +3,9 @@ import argparse, os, sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-from DAPmodel import DAPSummaryStats, DAPSummaryStatsNoAP
+from DAPmodel import DAPSummaryStats, DAPSummaryStatsNoAP, DAPSummaryStatsA
 from DAPmodel import obs_params, syn_current, syn_obs_data, prior, syn_obs_stats
 from DAPmodel.utils_analysis import simulate_data_distr
-from lfimodels.hodgkinhuxley import utils
 
 from cell_fitting.read_heka import get_sweep_index_for_amp, get_i_inj_from_function, get_v_and_t_from_heka, shift_v_rest
 from DAPmodel import DAP, DAPSimulator
@@ -40,17 +39,22 @@ x_o =  {'data': v,
         'dt': t[1]-t[0],
         'I': i_inj[0]}
 
-sum_stats = DAPSummaryStats(t_on, t_off, n_summary=2)
-sum_stats_no_AP = DAPSummaryStatsNoAP(t_on, t_off, n_summary=2)
+sum_stats = DAPSummaryStats(t_on, t_off, n_summary=8)
+sum_stats_A = DAPSummaryStatsA(t_on, t_off, n_summary=8)
+# sum_stats_no_AP = DAPSummaryStatsNoAP(t_on, t_off, n_summary=2)
 
+# print('summary stats no AP file:', sum_stats_no_AP.calc([x_o]))
 print('summary stats:', sum_stats.calc([x_o]))
-print('summary stats no AP file:', sum_stats_no_AP.calc([x_o]))
+print('summary stats A:', sum_stats_A.calc([x_o]), '\n')
+print('ss diff:', sum_stats.calc([x_o]) - sum_stats_A.calc([x_o]), '\n')
 
 # Print summary statistics for alternative values
-params = np.array([14])
+params, labels = obs_params()
 x_1 = syn_obs_data(i_inj[0], 0.01, params)
-print(x_1)
-print('summary stats no AP file:', sum_stats_no_AP.calc([x_1]))
+# print(x_1)
+print('summary stats:', sum_stats.calc([x_1]))
+print('summary stats A:', sum_stats_A.calc([x_1]), '\n')
+print('ss diff:', sum_stats.calc([x_1]) - sum_stats_A.calc([x_1]), '\n')
 
 # plot voltage trace
 fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(20, 10));
@@ -60,4 +64,4 @@ ax.set_xlabel('t (ms)')
 ax.plot(x_1['time'], x_1['data'], label='DAP');
 plt.plot()
 
-plt.show()
+# plt.show()
