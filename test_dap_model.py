@@ -1,10 +1,11 @@
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from DAPmodel import DAP, DAPBe, DAPExp, DAPFeExp
-from DAPmodel import obs_params, syn_current
-from DAPmodel import DAPSummaryStats, DAPSummaryStatsA
 
+from DAPmodel import DAP, DAPBe, DAPExp, DAPFeExp
+from DAPmodel.utils import obs_params, syn_current
+from DAPmodel.DAPsumstats import DAPSummaryStats
+from DAPmodel.DAPSumStats import DAPSummaryStatsA
 
 time_start = time.clock()
 

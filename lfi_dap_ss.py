@@ -2,11 +2,14 @@ import argparse, os, sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-from DAPmodel import DAPSummaryStats, DAPSummaryStatsNoAP, DAPSummaryStatsA
-from DAPmodel import DAPSimulator
+from DAPmodel.DAPsumstats import DAPSummaryStats
+from DAPmodel.DAPSumStatsNoAP import DAPSummaryStatsNoAP
+from DAPmodel.DAPSumStats import DAPSummaryStatsA
+from DAPmodel.DAPsimulator import DAPSimulator
 
-from DAPmodel import obs_params, syn_obs_data, prior, syn_obs_stats
-from DAPmodel.utils_analysis import plot_distr, plot_distr_multiple, simulate_data_distr
+from DAPmodel.utils import obs_params, syn_obs_data, prior, syn_obs_stats
+from DAPmodel.utils_analysis import (plot_distr, plot_distr_multiple,
+                                     simulate_data_distr)
 
 from delfi.inference import SNPE
 from delfi.generator import Default

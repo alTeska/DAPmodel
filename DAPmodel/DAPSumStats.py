@@ -63,7 +63,7 @@ class DAPSummaryStatsA(BaseSummaryStats):
 
             # resting potential
             rest_pot = np.mean(x['data'][t<t_on])
-            # rest_pot_std = np.std(x['data'][int(.9*t_on/dt):int(t_on/dt)])   # TODO: add if needed
+            rest_pot_std = np.std(x['data'][int(.9*t_on/dt):int(t_on/dt)])   # TODO: add if needed
 
             # RMSE
             n = len(self.v0)
@@ -107,8 +107,8 @@ class DAPSummaryStatsA(BaseSummaryStats):
                             DAP_amp,
                             DAP_width,
                             DAP_deflection,
-                            DAP_time
-                            # rest_pot_std, # should it be included?
+                            DAP_time,
+                            rest_pot_std,  # TODO: decide about keeping it
                             ])
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]

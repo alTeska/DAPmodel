@@ -1,8 +1,9 @@
 import time
-import numpy as np
 import matplotlib.pyplot as plt
-from DAPmodel import DAPSimulator
-from DAPmodel import obs_params, syn_current
+
+from DAPmodel.DAPsimulator import DAPSimulator
+from DAPmodel.utils import obs_params, syn_current
+
 from lfimodels.hodgkinhuxley.HodgkinHuxley import HodgkinHuxley
 from lfimodels.hodgkinhuxley.HodgkinHuxleyBioPhys import HH
 
