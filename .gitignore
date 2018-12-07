@@ -2,3 +2,8 @@ DAPmodel/__pycache__/
 pickle/
 plots/
 other/
+build/
+__pycache__/
+
+.ipynb_checkpoints/
+.ropeproject/
