@@ -6,7 +6,10 @@ from setuptools import Extension, setup, find_packages
 
 extensions = [Extension('DAPmodel.DAPbaseC',
                         ['DAPmodel/DAPbaseC.pyx'],
-                        include_dirs = [np.get_include()])]
+                        include_dirs = [np.get_include()]),
+              Extension('DAPmodel.dap_cython',
+                       ['DAPmodel/dap_cython.pyx'],
+                       include_dirs = [np.get_include()]),]
 
 
 setup(

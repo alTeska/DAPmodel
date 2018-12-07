@@ -1,28 +1,21 @@
 import timeit
 import numpy as np
+# import matplotlib.pyplot as plt
 
-from DAPmodel.DAPbase import DAPBase
-from DAPmodel.DAPbaseC import DAPBaseC
-
-states = -75
-params = np.array([5, 0.4])
-
-
-DAP_C = DAPBaseC(states, params)
-DAP = DAPBase(states, params)
+from DAPmodel import DAP
+from DAPmodel.DAPcython import DAPcython
+from DAPmodel.DAPbaseC import DAPCython
+from DAPmodel.utils import obs_params, syn_current
 
 
-DAP_C.x_inf(1, 2, 3)
-DAP.x_inf(1, 2, 3)
+dt = 1e-2
+params, labels = obs_params()
 
-def run_DAP_C():
-    DAP_C.x_inf(1, 2, 3)
-    pass
+I, t, t_on, t_off = syn_current(duration=10, dt=dt)
 
-def run_DAP():
-    DAP.x_inf(1, 2, 3)
-    pass
+dap_cython = DAPcython(-75, params)
+dap_cython.simulate(dt, t, I)
 
 
-print(timeit.timeit(lambda: run_DAP_C(), number=1))
-print(timeit.timeit(lambda: run_DAP(), number=1))
+# print(timeit.timeit(lambda: DAP_C.x_inf(1, 2, 3), number=int(1e5)))
+# print(timeit.timeit(lambda: DAP.x_inf(1, 2, 3)  , number=int(1e5)))
