@@ -1,8 +1,10 @@
 import numpy as np
 
-from . import dap_cython
+# from . import dap_cython
+from . import dap_cython_be
 
 # solver = dap_cython.forwardeuler
+solver = dap_cython_be.backwardeuler
 
 # def solver(t, I, V, m, n, h, p, q, r, u, dt, r_mat)
 # t: array of time steps
@@ -15,7 +17,7 @@ from . import dap_cython
 # The arrays must have the same size. The simulation runs until V is exhausted.
 
 class DAPcython(object):
-    def __init__(self, state, params, seed=None):
+    def __init__(self, state, params, seed=None, solver=2):
         self.state = np.asarray(state)
         self.params = np.asarray(params)
 
@@ -113,6 +115,13 @@ class DAPcython(object):
                 self.rng = np.random.RandomState()
 
 
+            if solver == 1:
+                solver = dap_cython.forwardeuler
+            else:
+                solver = dap_cython_be.backwardeuler
+
+
+
     def simulate(self, dt, t, i_inj, channels=False, noise=False, noise_fact=1e-3):
         """Run simulation of DAP model given the injection current - CYTHON"""
 
@@ -128,7 +137,9 @@ class DAPcython(object):
 
         U[0] = self.state
 
-        dap_cython.forwardeuler(t, i_inj, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr, dt)
+
+        solver(t, i_inj, U, M_nap, M_nat, H_nap, H_nat, N_hcn,
+                                N_kdr, dt)
 
         if noise:
             U = U + noise_fact*self.rng.randn(1, t.shape[0])

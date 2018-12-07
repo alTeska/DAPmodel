@@ -7,6 +7,7 @@ cimport cython
 
 ###################PARAMETERS#############################
 
+cdef double precision = 1e-12
 
 cdef struct channel:
     int pow
@@ -72,16 +73,62 @@ cdef double i_k(double V, double n, double gbar, double n_pow, double e_ion):
     '''calculates potasium-like ion current'''
     return gbar * n**n_pow * (V - e_ion)
 
+# condactivities
+cdef double g_na(double m, double h, double gbar, double m_pow, double h_pow):
+    '''calculates sodium-like ion current'''
+    return gbar * m**m_pow * h**h_pow
+
+cdef double g_k(double n, double gbar, double n_pow):
+    '''calculates potasium-like ion current'''
+    return gbar * n**n_pow
+
+# integration
 @cython.cdivision(True)
-cdef double dx_dt(double x, double x_inf, double x_tau):
-    '''differential equations for m,h,n'''
-    return (x_inf - x) / x_tau
+cdef double func(double old, double new, double inf, double tau, double dt):
+    """ The function f(x) we want the root of steady states."""
+    return new - old - dt*(inf - new)/tau
+
+@cython.cdivision(True)
+cdef double dfuncdx(double tau, double dt):
+    """ The derivative of f(x) with respect to steady state calculation [dfucn/dt]"""
+    return 1 + dt/tau
+
+@cython.cdivision(True)
+cdef double Ufunc(double old, double new, double i_ion, double i_leak, double i_inj, double g_sum, double dt):
+    """ The function f(x) we want the root of the voltage (U)."""
+    return new - old - dt*(-i_ion - i_leak + i_inj)/cm
+
+def dUfuncdx(double g_sum, double dt):
+    """ The derivative of f(x) with respect to voltage (U) calculations.[dUfucn/dt]"""
+    return 1 + dt * g_sum
+
+# python connected functions
+@cython.cdivision(True)
+def newton_uni(double old, func, dfuncdx, *args):
+    """
+    Function solves the problem of same value in implicit Euler, by calculation of newton roots.
+    Takes values old and t_new, and finds the root of the function f(new), returns new.
+    Looks for given precision of new. """
+    cdef double new, f, dfdx
+    # initial guess:
+    new = old
+    f = func(old, new, *args)
+    dfdx = dfuncdx(args[-2], args[-1])
+
+    # update guess, till desired precisions:
+    while abs(f/dfdx) > precision:
+        new = new - f/dfdx
+        f = func(old, new, *args)
+        dfdx = dfuncdx(args[-2], args[-1])
+
+    return new
+
 
 
 @cython.cdivision(True)
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
-cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat,np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, int n):
+cdef void udapte_backwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat,np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, int n):
 
     cdef double u = U[n-1]
     cdef double m_nap = M_nap[n-1]
@@ -109,13 +156,22 @@ cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double
     tau_n_hcn = x_tau(u, n_hcn_inf, hcn_n)
     tau_n_kdr = x_tau(u, n_kdr_inf, kdr_n)
 
-    # calculate all steady states
-    m_nap = m_nap + dx_dt(m_nap, m_nap_inf, tau_m_nap) * dt
-    m_nat = m_nat + dx_dt(m_nat, m_nat_inf, tau_m_nat) * dt
-    h_nap = h_nap + dx_dt(h_nap, h_nap_inf, tau_h_nap) * dt
-    h_nat = h_nat + dx_dt(h_nat, h_nat_inf, tau_h_nat) * dt
-    n_hcn = n_hcn + dx_dt(n_hcn, n_hcn_inf, tau_n_hcn) * dt
-    n_kdr = n_kdr + dx_dt(n_kdr, n_kdr_inf, tau_n_kdr) * dt
+    # calculate steady states
+    m_nap = newton_uni(m_nap, func, dfuncdx, m_nap_inf, tau_m_nap, dt)
+    m_nat = newton_uni(m_nat, func, dfuncdx, m_nat_inf, tau_m_nat, dt)
+    h_nap = newton_uni(h_nap, func, dfuncdx, h_nap_inf, tau_h_nap, dt)
+    h_nat = newton_uni(h_nat, func, dfuncdx, h_nat_inf, tau_h_nat, dt)
+    n_hcn = newton_uni(n_hcn, func, dfuncdx, n_hcn_inf, tau_n_hcn, dt)
+    n_kdr = newton_uni(n_kdr, func, dfuncdx, n_kdr_inf, tau_n_kdr, dt)
+
+
+    # calculate sum of conductances
+    g_nap = g_na(m_nap, h_nap, gbar_nap, nap_m['pow'], nap_h['pow'])
+    g_nat = g_na(m_nat, h_nat, gbar_nat, nat_m['pow'], nat_h['pow'])
+    g_hcn = g_k(n_hcn, gbar_hcn, hcn_n['pow'])
+    g_kdr = g_k(n_kdr, gbar_kdr, kdr_n['pow'])
+
+    g_sum = (g_nap + g_nat + g_hcn + g_kdr)
 
 
     # calculate ionic currents
@@ -128,7 +184,8 @@ cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double
     i_leak = (g_leak) * (u - e_leak) * 1e3
 
     # calculate membrane potential
-    u = u + (-i_ion - i_leak + i_inj[n-1])/(cm) * dt
+    u = newton_uni(u, Ufunc, dUfuncdx, i_ion,
+                             i_leak, i_inj[n], g_sum, dt)
 
     U[n] = u
     M_nap[n] = m_nap
@@ -139,9 +196,8 @@ cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double
     N_kdr[n] = n_kdr
 
 
-
 # python based functions
-def forwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat, np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt):
+def backwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat, np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt):
 
     M_nap[0] = x_inf(U[0], nap_m['vh'], nap_m['vs'])
     M_nat[0] = x_inf(U[0], nat_m['vh'], nat_m['vs'])
@@ -151,4 +207,4 @@ def forwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.nd
     N_kdr[0] = x_inf(U[0], kdr_n['vh'], kdr_n['vs'])
 
     for n in range(1, t.shape[0]):
-        udapte_forwardeuler(I, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr, dt, n)
+        udapte_backwardeuler(I, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr, dt, n)
