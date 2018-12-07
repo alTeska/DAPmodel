@@ -4,15 +4,12 @@ from Cython.Build import cythonize
 from setuptools import Extension, setup, find_packages
 
 
-extensions = [Extension('DAPmodel.DAPbaseC',
-                        ['DAPmodel/DAPbaseC.pyx'],
-                        include_dirs = [np.get_include()]),
-              Extension('DAPmodel.dap_cython',
+extensions = [Extension('DAPmodel.dap_cython',
                        ['DAPmodel/dap_cython.pyx'],
                        include_dirs = [np.get_include()]),
-                Extension('DAPmodel.dap_cython_be',
-                         ['DAPmodel/dap_cython_be.pyx'],
-                         include_dirs = [np.get_include()]),]
+              Extension('DAPmodel.dap_cython_be',
+                       ['DAPmodel/dap_cython_be.pyx'],
+                       include_dirs = [np.get_include()]),]
 
 
 setup(
