@@ -13,9 +13,13 @@ params, labels = obs_params()
 
 I, t, t_on, t_off = syn_current(duration=10, dt=dt)
 
+# define models
+dap = DAP(-75, params)
 dap_cython = DAPcython(-75, params)
+
+# run models
+dap.simulate(dt, t, I)
 dap_cython.simulate(dt, t, I)
 
-
-# print(timeit.timeit(lambda: DAP_C.x_inf(1, 2, 3), number=int(1e5)))
-# print(timeit.timeit(lambda: DAP.x_inf(1, 2, 3)  , number=int(1e5)))
+print(timeit.timeit(lambda: dap_cython.simulate(dt, t, I), number=int(1e2)))
+print(timeit.timeit(lambda: dap.simulate(dt, t, I)       , number=int(1e2)))

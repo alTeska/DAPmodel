@@ -127,13 +127,21 @@ class DAPcython(object):
         N_kdr = np.zeros_like(t).astype(np.float64)
 
         U[0] = self.state
-        # solver(t, i_inj, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr)
 
+        dap_cython.forwardeuler(t, i_inj, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr, dt)
 
-        i = 12
-        print(i)
-        cur, i = dap_cython.update_inf(i)
-        print(i)
-        print('cur in python', cur)
+        if noise:
+            U = U + noise_fact*self.rng.randn(1, t.shape[0])
 
-        # return np.array(U).reshape(-1,1)
+        if channels:
+            return {
+                    'U': U.reshape(-1,1),
+                    'M_nap': M_nap,
+                    'M_nat': M_nat,
+                    'H_nap': H_nap,
+                    'H_nat': H_nat,
+                    'N_hcn': N_hcn,
+                    'N_kdr': N_kdr,
+                    }
+        else:
+            return U.reshape(-1,1)

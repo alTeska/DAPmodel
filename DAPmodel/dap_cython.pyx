@@ -1,9 +1,9 @@
 from __future__ import print_function
-import abc
 import numpy as np
 cimport numpy as np
-from libc.math cimport exp
-
+import scipy
+from libc.math cimport exp, log, cos, sqrt
+cimport cython
 
 ###################PARAMETERS#############################
 
@@ -49,20 +49,104 @@ cdef double e_kdr = -110.0    # mV
 cdef double g_leak = 0.000430
 g_leak = g_leak * cell_area
 
+############################################################
 
+# model integration
 cdef x_inf(double V, double x_vh, double x_vs):
     '''steady state values'''
     return 1 / (1 + np.exp((x_vh - V) / x_vs))
 
+cdef x_tau(double V, double xinf, ion_ch):
+    return (ion_ch['tau_min'] + (ion_ch['tau_max'] - ion_ch['tau_min']) * \
+            xinf * np.exp(ion_ch['tau_delta'] * \
+            (ion_ch['vh'] - V) / ion_ch['vs']))
+
+# currents
 cdef i_na(double V, double m, double h, double gbar, double m_pow, double h_pow, double e_ion):
     '''calculates sodium-like ion current'''
-    print('i work')
     return gbar * m**m_pow * h**h_pow * (V - e_ion)
 
-def update_inf(double i):
-    j = x_inf(1,2,3)
+cdef i_k(double V, double n, double gbar, double n_pow, double e_ion):
+    '''calculates potasium-like ion current'''
+    return gbar * n**n_pow * (V - e_ion)
 
-    cur = i_na(2, 1, 1, gbar_kdr, nap_m['pow'], nap_h['pow'], 1)
 
-    print('cur:', cur)
-    return cur, i+j
+cdef dx_dt(double x, double x_inf, double x_tau):
+    '''differential equations for m,h,n'''
+    return (x_inf - x) / x_tau
+
+
+@cython.cdivision(True)
+@cython.boundscheck(False) # turn off bounds-checking for entire function
+@cython.wraparound(False)  # turn off negative index wrapping for entire function
+cdef udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat,np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, int n):
+
+    cdef double u = U[n-1]
+    cdef double m_nap = M_nap[n-1]
+    cdef double m_nat = M_nat[n-1]
+    cdef double h_nap = H_nap[n-1]
+    cdef double h_nat = H_nat[n-1]
+    cdef double n_hcn = N_hcn[n-1]
+    cdef double n_kdr = N_kdr[n-1]
+
+    cdef m_nap_inf, m_nat_inf, h_nap_inf, h_nat_inf, n_hcn_inf, n_kdr_inf
+    cdef tau_m_nap, tau_h_nap, tau_m_nat, tau_h_nat, tau_n_hcn, tau_n_kdr
+
+    m_nap_inf = x_inf(u, nap_m['vh'], nap_m['vs'])
+    m_nat_inf = x_inf(u, nat_m['vh'], nat_m['vs'])
+    h_nap_inf = x_inf(u, nap_h['vh'], nap_h['vs'])
+    h_nat_inf = x_inf(u, nat_h['vh'], nat_h['vs'])
+    n_hcn_inf = x_inf(u, hcn_n['vh'], hcn_n['vs'])
+    n_kdr_inf = x_inf(u, kdr_n['vh'], kdr_n['vs'])
+
+    # calcualte  time constants
+    tau_m_nap = x_tau(u, m_nap_inf, nap_m)
+    tau_h_nap = x_tau(u, h_nap_inf, nap_h)
+    tau_m_nat = x_tau(u, m_nat_inf, nat_m)
+    tau_h_nat = x_tau(u, h_nat_inf, nat_h)
+    tau_n_hcn = x_tau(u, n_hcn_inf, hcn_n)
+    tau_n_kdr = x_tau(u, n_kdr_inf, kdr_n)
+
+    # calculate all steady states
+    m_nap = m_nap + dx_dt(m_nap, m_nap_inf, tau_m_nap) * dt
+    m_nat = m_nat + dx_dt(m_nat, m_nat_inf, tau_m_nat) * dt
+    h_nap = h_nap + dx_dt(h_nap, h_nap_inf, tau_h_nap) * dt
+    h_nat = h_nat + dx_dt(h_nat, h_nat_inf, tau_h_nat) * dt
+    n_hcn = n_hcn + dx_dt(n_hcn, n_hcn_inf, tau_n_hcn) * dt
+    n_kdr = n_kdr + dx_dt(n_kdr, n_kdr_inf, tau_n_kdr) * dt
+
+
+    # calculate ionic currents
+    i_nap = i_na(u, m_nap, h_nap, gbar_nap, nap_m['pow'], nap_h['pow'], e_nap)
+    i_nat = i_na(u, m_nat, h_nat, gbar_nat, nat_m['pow'], nat_h['pow'], e_nat)
+    i_hcn = i_k(u, n_hcn, gbar_hcn, hcn_n['pow'], e_hcn)
+    i_kdr = i_k(u, n_kdr, gbar_kdr, kdr_n['pow'], e_kdr)
+
+    i_ion = (i_nap + i_nat + i_kdr + i_hcn) * 1e3
+    i_leak = (g_leak) * (u - e_leak) * 1e3
+
+    # calculate membrane potential
+    u = u + (-i_ion - i_leak + i_inj[n-1])/(cm) * dt
+
+    U[n] = u
+    M_nap[n] = m_nap
+    M_nat[n] = m_nat
+    H_nap[n] = h_nap
+    H_nat[n] = h_nat
+    N_hcn[n] = n_hcn
+    N_kdr[n] = n_kdr
+
+
+
+# python based functions
+def forwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat, np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt):
+
+    M_nap[0] = x_inf(U[0], nap_m['vh'], nap_m['vs'])
+    M_nat[0] = x_inf(U[0], nat_m['vh'], nat_m['vs'])
+    H_nap[0] = x_inf(U[0], nap_h['vh'], nap_h['vs'])
+    H_nat[0] = x_inf(U[0], nat_h['vh'], nat_h['vs'])
+    N_hcn[0] = x_inf(U[0], hcn_n['vh'], hcn_n['vs'])
+    N_kdr[0] = x_inf(U[0], kdr_n['vh'], kdr_n['vs'])
+
+    for n in range(1, t.shape[0]):
+        udapte_forwardeuler(I, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr, dt, n)
