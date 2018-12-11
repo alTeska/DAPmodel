@@ -8,6 +8,7 @@ cimport cython
 ###################PARAMETERS#############################
 
 cdef double precision = 1e-12
+cdef double noise_fact = 0.5
 
 cdef struct channel:
     int pow
@@ -51,6 +52,11 @@ cdef double g_leak = 0.000430
 g_leak = g_leak * cell_area
 
 ############################################################
+
+def setnoisefactor(double x):
+    """ Changes the noise_factor to the one set in python interface"""
+    global noise_fact
+    noise_fact = x
 
 def setparams(params):
     """ Function used to apply the parameters that can vary."""
@@ -134,7 +140,7 @@ def newton_uni(double old, func, dfuncdx, *args):
 @cython.cdivision(True)
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
-cdef void udapte_backwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat,np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, int n):
+cdef void udapte_backwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat,np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, np.ndarray[double,ndim=1] r_mat, int n):
     """
     Function updates all of the activation parameters and voltage of each iteration of DAP model backward integration.
     """
@@ -196,7 +202,7 @@ cdef void udapte_backwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[doubl
     u = newton_uni(u, Ufunc, dUfuncdx, i_ion,
                              i_leak, i_inj[n], g_sum, dt)
 
-    U[n] = u
+    U[n] = u + r_mat[n] * noise_fact
     M_nap[n] = m_nap
     M_nat[n] = m_nat
     H_nap[n] = h_nap
@@ -206,7 +212,7 @@ cdef void udapte_backwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[doubl
 
 
 # python based functions
-def backwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat, np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt):
+def backwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat, np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, np.ndarray[double,ndim=1] r_mat):
     """
     Function initiates the values required to go through DAP backward integration.
     Then iterates through the required duration.
@@ -220,4 +226,4 @@ def backwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.n
     N_kdr[0] = x_inf(U[0], kdr_n['vh'], kdr_n['vs'])
 
     for n in range(1, t.shape[0]):
-        udapte_backwardeuler(I, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr, dt, n)
+        udapte_backwardeuler(I, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr, dt, r_mat, n)

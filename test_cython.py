@@ -32,10 +32,12 @@ print('\n', 'backward:')
 print("cython:", timeit.timeit(lambda: dap_cython_back.simulate(dt, t, I), number=int(4)))
 print("python:", timeit.timeit(lambda: dap_back.simulate(dt, t, I)       , number=int(4)))
 
-fig, ax = plt.subplots(figsize=(20, 10));
-ax.plot(t, U, label='forward')
-ax.plot(t, U_back, label='backward')
-ax.plot(t, U_cython, label='forward_cython')
-ax.plot(t, U_cython_back, label='backward_cython')
+fig, ax = plt.subplots(2, 1, figsize=(20, 10));
+ax[0].plot(t, U, label='forward')
+ax[0].plot(t, U_cython, label='forward_cython')
+ax[0].legend()
+ax[1].plot(t, U_back, label='backward')
+ax[1].plot(t, U_cython_back, label='backward_cython')
+ax[1].legend()
 
 plt.show()
