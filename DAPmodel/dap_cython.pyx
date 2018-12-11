@@ -51,6 +51,12 @@ g_leak = g_leak * cell_area
 
 ############################################################
 
+def setparams(params):
+    """ Function used to apply the parameters that can vary."""
+    global nap_m, nap_h
+    nap_m['tau_mix'] = params[0]
+    nap_h['tau_delta'] = params[1]
+
 # model integration
 @cython.cdivision(True)
 cdef double x_inf(double V, double x_vh, double x_vs):
@@ -82,6 +88,9 @@ cdef double dx_dt(double x, double x_inf, double x_tau):
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
 cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat,np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, int n):
+    """
+    Function updates all of the activation parameters and voltage of each iteration of DAP model forward integration.
+    """
 
     cdef double u = U[n-1]
     cdef double m_nap = M_nap[n-1]
@@ -142,6 +151,10 @@ cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double
 
 # python based functions
 def forwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat, np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt):
+    """
+    Function initiates the values required to go through DAP forward integration.
+    Then iterates through the required duration.
+    """
 
     M_nap[0] = x_inf(U[0], nap_m['vh'], nap_m['vs'])
     M_nat[0] = x_inf(U[0], nat_m['vh'], nat_m['vs'])
