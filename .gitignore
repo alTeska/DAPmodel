@@ -1,6 +1,6 @@
 DAPmodel/__pycache__/
-pickle/
-plots/
+DAPmodel.egg-info/
+dist/
 other/
 build/
 __pycache__/
