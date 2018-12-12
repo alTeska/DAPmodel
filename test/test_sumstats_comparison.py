@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import argrelmin, argrelmax
 
-from cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
+from DAPmodel.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
                                     get_v_and_t_from_heka, shift_v_rest, get_i_inj_zap)
 
 from DAPmodel import DAP, DAPBe, DAPExp, DAPFeExp

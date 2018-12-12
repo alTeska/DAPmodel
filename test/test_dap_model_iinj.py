@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from DAPmodel import DAP, DAPBe, DAPExp, DAPFeExp
 from DAPmodel.utils import obs_params, syn_current
-from cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
+from DAPmodel.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
                                     get_v_and_t_from_heka, shift_v_rest, get_i_inj_zap)
 
 

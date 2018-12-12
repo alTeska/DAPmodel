@@ -19,7 +19,7 @@ extensions = [Extension('DAPmodel.dap_cython',
 
 setup(
     name='DAPmodel',
-    version='0.0.1',
+    version='0.0.2',
     scripts=['dap_model'] ,
     author="Aleksandra Teska",
     author_email="aleksandra.teska@gmail.com",
@@ -27,10 +27,13 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/alTeska/DAPmodel",
-    packages=find_packages(),
+    # packages=find_packages(),
+    # packages=find_packages(exclude=["*.test", "*.test.*", "test.*", "test"]),
+    packages=['DAPmodel', 'DAPmodel.cell_fitting'],
     ext_modules = cythonize(extensions),
     classifiers=[
-        # "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-        "Operating System :: OS Independent",],
+        "Operating System :: OS Independent",
+        ],
 )
