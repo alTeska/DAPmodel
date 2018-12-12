@@ -1,7 +1,7 @@
 from __future__ import division
 import numpy as np
 
-__author__ = 'caro'
+__author__ = "Caroline Fischer"
 
 
 def to_idx(time_point, dt, decimal_place=None):

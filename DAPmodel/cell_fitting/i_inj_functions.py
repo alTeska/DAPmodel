@@ -2,6 +2,8 @@ from __future__ import division
 import numpy as np
 from .cell_characteristic import to_idx
 
+__author__ = "Caroline Fischer"
+
 
 def get_ramp3_times(delta_first=3, delta_ramp=2, n_times=10):
     return np.arange(delta_first, n_times * delta_ramp + delta_ramp, delta_ramp)

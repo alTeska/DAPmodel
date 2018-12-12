@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib
 
+__author__ = "Caroline Fischer"
+
 
 def init_nan(shape):
     x = np.empty(shape)

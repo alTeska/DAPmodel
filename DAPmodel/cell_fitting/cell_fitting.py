@@ -5,6 +5,8 @@ from .custom_hekareader import HekaReader
 from .i_inj_functions import *
 from .util import init_nan, convert_to_unit
 
+__author__ = "Caroline Fischer"
+
 
 def get_protocols_same_base(file_dir, protocol_base, group='Group1', return_heka=False):
     reg_exp_protocol = re.compile('^'+protocol_base + '(\([0-9]+\))?'+'$')

@@ -1,17 +1,11 @@
-# file created to eliminte the need of installing cell_fitting library by Caro.
+# file created to eliminte the need of installing cell_fitting library by Caroline Fischer
 import os
 import re
 from heka_reader.custom_hekareader import HekaReader
 from cell_fitting.read_heka.i_inj_functions import *
 from cell_fitting.util import init_nan, convert_to_unit
 
-__author__ = 'caro'
-
-
-
-# get_sweep_index_for_amp, get_i_inj_from_function, get_v_and_t_from_heka, shift_v_rest
-
-##### cell_fitting,__init__.py
+__author__ = "Caroline Fischer"
 
 
 def load_data(data_dir, protocol, amp, v_shift=-16):
