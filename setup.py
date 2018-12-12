@@ -1,7 +1,12 @@
 import numpy as np
+
+from setuptools import Extension, setup, find_packages
 from distutils.core import setup
 from Cython.Build import cythonize
-from setuptools import Extension, setup, find_packages
+
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 
 extensions = [Extension('DAPmodel.dap_cython',
@@ -15,6 +20,17 @@ extensions = [Extension('DAPmodel.dap_cython',
 setup(
     name='DAPmodel',
     version='0.0.1',
-    install_requires=['numpy', 'scipy', 'delfi'],
-    ext_modules = cythonize(extensions)
+    scripts=['dap_model'] ,
+    author="Aleksandra Teska",
+    author_email="deepak.kumar.iet@gmail.com",
+    description="A Docker and AWS utility package",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/alTeska/DAPmodel",
+    packages=find_packages(),
+    ext_modules = cythonize(extensions),
+    classifiers=[
+        # "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent",],
 )
