@@ -7,6 +7,7 @@ cimport cython
 
 ###################PARAMETERS#############################
 
+cdef double noise_fact = 0.5
 
 cdef struct channel:
     int pow
@@ -51,6 +52,11 @@ g_leak = g_leak * cell_area
 
 ############################################################
 
+def setnoisefactor(double x):
+    """ Changes the noise_factor to the one set in python interface"""
+    global noise_fact
+    noise_fact = x
+
 def setparams(params):
     """ Function used to apply the parameters that can vary."""
     global nap_m, nap_h
@@ -87,7 +93,7 @@ cdef double dx_dt(double x, double x_inf, double x_tau):
 @cython.cdivision(True)
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
-cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat,np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, int n):
+cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat,np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, np.ndarray[double,ndim=1] r_mat, int n):
     """
     Function updates all of the activation parameters and voltage of each iteration of DAP model forward integration.
     """
@@ -139,7 +145,7 @@ cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double
     # calculate membrane potential
     u = u + (-i_ion - i_leak + i_inj[n-1])/(cm) * dt
 
-    U[n] = u
+    U[n] = u + r_mat[n] * noise_fact
     M_nap[n] = m_nap
     M_nat[n] = m_nat
     H_nap[n] = h_nap
@@ -150,7 +156,7 @@ cdef void udapte_forwardeuler(np.ndarray[double,ndim=1] i_inj, np.ndarray[double
 
 
 # python based functions
-def forwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat, np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt):
+def forwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.ndarray[double,ndim=1] U, np.ndarray[double,ndim=1] M_nap, np.ndarray[double,ndim=1] M_nat, np.ndarray[double,ndim=1] H_nap, np.ndarray[double,ndim=1] H_nat, np.ndarray[double,ndim=1] N_hcn, np.ndarray[double,ndim=1] N_kdr, double dt, np.ndarray[double,ndim=1] r_mat):
     """
     Function initiates the values required to go through DAP forward integration.
     Then iterates through the required duration.
@@ -164,4 +170,4 @@ def forwardeuler(np.ndarray[double,ndim=1] t, np.ndarray[double,ndim=1] I, np.nd
     N_kdr[0] = x_inf(U[0], kdr_n['vh'], kdr_n['vs'])
 
     for n in range(1, t.shape[0]):
-        udapte_forwardeuler(I, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr, dt, n)
+        udapte_forwardeuler(I, U, M_nap, M_nat, H_nap, H_nat, N_hcn, N_kdr, dt, r_mat, n)
