@@ -5,7 +5,7 @@ import scipy
 from libc.math cimport exp, log, cos, sqrt
 cimport cython
 
-###################PARAMETERS#############################
+###################PARAMETERS###################
 
 cdef double precision = 1e-12
 cdef double noise_fact = 0.5
@@ -114,7 +114,7 @@ def dUfuncdx(double g_sum, double dt):
     """ The derivative of f(x) with respect to voltage (U) calculations.[dUfucn/dt]"""
     return 1 + dt * g_sum
 
-# python connected functions
+
 @cython.cdivision(True)
 def newton_uni(double old, func, dfuncdx, *args):
     """
