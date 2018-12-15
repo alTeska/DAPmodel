@@ -8,9 +8,9 @@ from .DAPsimulator import DAPSimulator
 from .DAPsumstats import DAPSummaryStats
 from .DAPSumStats import DAPSummaryStatsA
 
-from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
-from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
-from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes_mf import HodgkinHuxleyStatsSpikes_mf
+# from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
+# from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
+# from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes_mf import HodgkinHuxleyStatsSpikes_mf
 from delfi.summarystats import Identity
 
 
@@ -78,7 +78,7 @@ def syn_obs_data(I, dt, params, V0=-75, seed=None):
     return m.gen_single(params)
 
 
-def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1, n_xcorr=5,
+def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=2, n_xcorr=5,
                   n_mom=5, n_summary=4, seed=None):
     """Summary stats for x_o of DAP"""
 
@@ -87,17 +87,14 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1
         data = m.gen_single(params)
 
     if summary_stats == 0:
-        s = Identity()
-    elif summary_stats == 1:
-        s = HodgkinHuxleyStatsMoments(t_on, t_off, n_xcorr=n_xcorr, n_mom=n_mom, n_summary=n_summary)
-    elif summary_stats == 2:
-        s = HodgkinHuxleyStatsSpikes(t_on, t_off, n_summary=n_summary)
-    elif summary_stats == 3:
-        s = HodgkinHuxleyStatsSpikes_mf(t_on, t_off, n_summary=n_summary)
-    elif summary_stats == 4:
         s = DAPSummaryStats(t_on, t_off, n_summary=n_summary)
-    elif summary_stats == 5:
-        s=DAPSummaryStatsA(t_on, t_off, n_summary=n_summary)
+    elif summary_stats == 1:
+        s = DAPSummaryStatsA(t_on, t_off, n_summary=n_summary)
+    else:
+        s = Identity()
+    # elif summary_stats == 2:
+    #     s = HodgkinHuxleyStatsMoments(t_on, t_off, n_xcorr=n_xcorr, n_mom=n_mom, n_summary=n_summary)
+
     return s.calc([data])
 
 
