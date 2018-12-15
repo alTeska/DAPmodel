@@ -1,9 +1,8 @@
-# file created to eliminte the need of installing cell_fitting library by Caroline Fischer
 import os
 import re
-from heka_reader.custom_hekareader import HekaReader
-from cell_fitting.read_heka.i_inj_functions import *
-from cell_fitting.util import init_nan, convert_to_unit
+from DAPmodel.cell_fitting.custom_hekareader import HekaReader
+from DAPmodel.cell_fitting.i_inj_functions import *
+from DAPmodel.cell_fitting.util import init_nan, convert_to_unit
 
 __author__ = "Caroline Fischer"
 
