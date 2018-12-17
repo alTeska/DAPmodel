@@ -39,7 +39,7 @@ class DAPBase(object):
             'vs': 16.11,          # mV
             'vh': -52.82,         # mV
             'tau_min': 0.036,     # ms
-            'tau_max': params[0], # ms # 15.332
+            'tau_max': 15.332,    # ms
             'tau_delta': 0.505,   # ms
         }
 
@@ -48,8 +48,8 @@ class DAPBase(object):
             'vs': -19.19,          # mV
             'vh': -82.54,          # mV
             'tau_min': 0.336,      # ms
-            'tau_max': 13.659,     # ms  # 13.659 param s[2]
-            'tau_delta': params[1],# ms
+            'tau_max': 13.659,     # ms
+            'tau_delta': 0.439    ,# ms
             }
         self.kdr_n = {
             'pow': 4,
@@ -144,6 +144,31 @@ class DAPBase(object):
         '''calculates potasium-like ion current'''
         return gbar * n**n_pow * (V - e_ion)
 
+    def setparams(self, params):
+        '''
+        Function used to set up the expected parameters, expected lenghts
+        are 2 or 10 (can be extended to 14)
+        '''
+        params_len = np.size(params)
+
+        if params_len == 2:
+            self.gbar_nap = params[0] * self.cell_area
+            self.nap_m['vs'] = params[1]
+
+        elif params_len == 10:
+            self.gbar_nap = params[0] * self.cell_area
+            self.nap_m['vs'] = params[1]
+            self.nap_m['tau_max'] = params[2]
+            self.nap_h['vs'] = params[3]
+            self.nap_h['tau_max'] = params[4]
+            self.nat_m['vh'] = params[5]
+            self.nat_h['vh'] = params[6]
+            self.nat_m['vs'] = params[7]
+            self.nat_h['vs'] = params[8]
+            self.kdr_n['vs'] = params[9]
+        else:
+            raise ValueError('You can only provide 2 or 10 parameters!')
+
 
     @abc.abstractmethod
     def simulate(self, dt, t, i_inj, channels=False, noise=False, noise_fact=1e-3):
@@ -170,6 +195,8 @@ class DAPBase(object):
             'N_hcn': N_hcn,
             'N_kdr': N_kdr,
         """
+        self.setparams(self.params)
+
         i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
 
         U = np.zeros_like(t)

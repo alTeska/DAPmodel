@@ -63,6 +63,8 @@ class DAPExp(DAPBase):
             'N_hcn': N_hcn,
             'N_kdr': N_kdr,
         """
+        self.setparams(self.params)
+
         i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
 
         U = np.zeros_like(t)

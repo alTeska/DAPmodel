@@ -84,6 +84,8 @@ class DAPBe(DAPBase):
             'N_hcn': N_hcn,
             'N_kdr': N_kdr,
         """
+        self.setparams(self.params)
+
         self.precision = precision
         i_inj = i_inj * 1e-3  # input should be in uA (nA * 1e-3)
 

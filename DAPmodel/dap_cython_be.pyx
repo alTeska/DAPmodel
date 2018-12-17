@@ -59,10 +59,31 @@ def setnoisefactor(double x):
     noise_fact = x
 
 def setparams(params):
-    """ Function used to apply the parameters that can vary."""
-    global nap_m, nap_h
-    nap_m['tau_mix'] = params[0]
-    nap_h['tau_delta'] = params[1]
+    '''
+    Function used to set up the expected parameters, expected lenghts
+    are 2 or 10 (can be extended to 14)
+    '''
+    global gbar_nap, nap_m, nap_h, nat_m, nat_h
+    params_len = np.size(params)
+
+    if params_len == 2:
+        gbar_nap = params[0] * cell_area
+        nap_m['vs'] = params[1]
+
+    elif params_len == 10:
+        gbar_nap = params[0] * cell_area
+        nap_m['vs'] = params[1]
+        nap_m['tau_max'] = params[2]
+        nap_h['vs'] = params[3]
+        nap_h['tau_max'] = params[4]
+        nat_m['vh'] = params[5]
+        nat_h['vh'] = params[6]
+        nat_m['vs'] = params[7]
+        nat_h['vs'] = params[8]
+        kdr_n['vs'] = params[9]
+    else:
+        raise ValueError('You can only provide 2 or 10 parameters!')
+
 
 # model integration
 @cython.cdivision(True)

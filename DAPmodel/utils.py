@@ -32,29 +32,40 @@ def obs_params_gbar(reduced_model=False):
 
     return true_params, labels_params
 
-def obs_params():
-    """Parameters for x_o
+
+def obs_params(reduced_model=True):
+    """
+    Parameters for x_o, two optionss: either 2 params (reduced_model=True) or 10
     Returns
     -------
-    true_params : array
-    labels_params : list of str
+    params : array
+    labels : list of str
+
     """
-    # high variability parameters
-    nap_m_tau_max = 15.332   # ms
-    nap_m_vs = 16.11         # mV
-    nap_h_tau_max = 13.659   # ms
 
-    # medium variability
-    nap_h_tau_delta = 0.439    # ms
+    if reduced_model:
+        params = np.zeros(2)
+        params[0] = 0.01527  # gbar_nap
+        params[1] = 16.11    # nap_m['vs']
+        labels = ['gbar_nap, nap_m_vs']
+    else:
+        params = np.zeros(10)
+        params[0] = 0.01527  # gbar_nap
+        params[1] = 16.11    # nap_m['vs']
+        params[2] = 15.332   # nap_m['tau_max']
+        params[3] = -19.19   # nap_h['vs']
+        params[4] = 13.659   # nap_h['tau_max']
+        params[5] = -30.94   # nat_m['vh']
+        params[6] = -60.44   # nat_h['vh']
+        params[7] =  11.99   # nat_m['vs']
+        params[8] =  -13.17  # nat_h['vs']
+        params[9] =  18.84   # kdr_n['vs']
+        labels = ['gbar_nap, nap_m_vs', 'nap_m_tau_max', 'nap_h_vs',
+                  'nap_h_tau_max', 'nat_m_vh', 'nat_h_vh', 'nat_m_vs',
+                  'nat_h_vs', 'krd_n']
 
-    # true_params = np.array([nap_m_tau_max, nap_m_vs, nap_h_tau_max])
-    # labels_params = ['nap_m_tau_max', 'nap_m_vs', 'nap_h_tau_max']
 
-    true_params = np.array([nap_m_tau_max, nap_h_tau_delta])
-    labels_params = ['nap_m_tau_max', 'nap_h_tau_delta']
-
-    return true_params, labels_params
-
+    return params, labels
 
 
 def syn_current(duration=200, dt=0.01, t_on=55, t_off=60, amp=3.1, seed=None, on_off=False):

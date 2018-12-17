@@ -22,7 +22,6 @@ class DAPcython(object):
         self.state = np.asarray(state)
         self.params = np.asarray(params)
 
-
         self.seed = seed
         if seed is not None:
             self.rng = np.random.RandomState(seed=seed)
