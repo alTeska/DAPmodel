@@ -6,6 +6,18 @@ from DAPmodel.DAPcython import DAPcython
 from DAPmodel.utils import obs_params, syn_current
 
 
+# ranges to be tested:
+# gbar_nap [0; 0.5]
+# nap_m_vs [1; 30]
+# nap_m_tau_max [0; 100]
+# nap_h_vs [-30; -1]
+# nap_h_tau_max [0; 100]
+# nat_m_vh [-100; 0]
+# nat_h_vh [-100; 0]
+# nat_m_vs [1; 30]
+# nat_h_vs [-30; -1]
+# kdr_n_vs [1; 30]
+
 dt = 1e-2
 params, labels = obs_params()
 
@@ -22,15 +34,6 @@ U = dap.simulate(dt, t, I)
 U_cython = dap_cython.simulate(dt, t, I)
 U_back = dap_back.simulate(dt, t, I)
 U_cython_back = dap_cython_back.simulate(dt, t, I)
-
-print('\n', 'forward:')
-print("cython:", timeit.timeit(lambda: dap_cython.simulate(dt, t, I), number=int(4)))
-print("python:", timeit.timeit(lambda: dap.simulate(dt, t, I)       , number=int(4)))
-
-
-print('\n', 'backward:')
-print("cython:", timeit.timeit(lambda: dap_cython_back.simulate(dt, t, I), number=int(4)))
-print("python:", timeit.timeit(lambda: dap_back.simulate(dt, t, I)       , number=int(4)))
 
 fig, ax = plt.subplots(2, 1, figsize=(20, 10));
 ax[0].plot(t, U, label='forward')

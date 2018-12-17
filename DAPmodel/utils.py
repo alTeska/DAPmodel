@@ -53,13 +53,13 @@ def obs_params(reduced_model=True):
         params[0] = 0.01527  # gbar_nap
         params[1] = 16.11    # nap_m['vs']
         params[2] = 15.332   # nap_m['tau_max']
-        params[3] = -19.19   # nap_h['vs']
+        params[3] =-19.19    # nap_h['vs']
         params[4] = 13.659   # nap_h['tau_max']
-        params[5] = -30.94   # nat_m['vh']
-        params[6] = -60.44   # nat_h['vh']
-        params[7] =  11.99   # nat_m['vs']
-        params[8] =  -13.17  # nat_h['vs']
-        params[9] =  18.84   # kdr_n['vs']
+        params[5] =-30.94    # nat_m['vh']
+        params[6] =-60.44    # nat_h['vh']
+        params[7] = 11.99    # nat_m['vs']
+        params[8] =-13.17    # nat_h['vs']
+        params[9] = 18.84    # kdr_n['vs']
         labels = ['gbar_nap, nap_m_vs', 'nap_m_tau_max', 'nap_h_vs',
                   'nap_h_tau_max', 'nat_m_vh', 'nat_h_vh', 'nat_m_vs',
                   'nat_h_vs', 'krd_n']
