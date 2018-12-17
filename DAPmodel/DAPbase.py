@@ -2,7 +2,21 @@ import abc
 import numpy as np
 
 
-# class DAPBase(metaclass=abc.ABCMeta):
+class IonChannel():
+    '''utility class to store the ion channels specific values'''
+    def __init__(self, n_pow=1, vs=1, vh=1, tau_min=1, tau_max=1, tau_delta=1):
+        super(IonChannel, self).__init__()
+        self.pow = n_pow
+        self.vs = vs
+        self.vh = vh
+        self.tau_min = tau_min
+        self.tau_max = tau_max
+        self.tau_delta = tau_delta
+
+# self.nap_m = IonChannel(n_pow=3, vs=16.11, vh=-52.8, tau_min=0.036,
+                        # tau_max=params[0], tau_delta=0.505)
+
+
 class DAPBase(object):
     __metaclass__ = abc.ABCMeta
     """Abstract Base class of DAP cell model
@@ -27,7 +41,7 @@ class DAPBase(object):
             'tau_min': 0.036,     # ms
             'tau_max': params[0], # ms # 15.332
             'tau_delta': 0.505,   # ms
-            }
+        }
 
         self.nap_h = {
             'pow': 1,
