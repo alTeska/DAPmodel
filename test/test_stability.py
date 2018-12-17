@@ -7,7 +7,7 @@ from DAPmodel.utils import obs_params, syn_current
 
 
 dt = 1e-2
-params, labels = obs_params(reduced_model=False)
+params, labels = obs_params()
 
 I, t, t_on, t_off = syn_current(duration=120, dt=dt)
 

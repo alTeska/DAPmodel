@@ -40,8 +40,6 @@ time_start = time.clock()
 # load the data
 I, t, dt = load_current(data_dir, protocol='rampIV', ramp_amp=3.1)
 params, labels = obs_params()
-params = np.array([.5, 0.4])  # for stability test
-
 
 # define models
 dap = DAP(-75, params)

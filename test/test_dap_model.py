@@ -10,7 +10,7 @@ from DAPmodel.DAPSumStats import DAPSummaryStatsA
 time_start = time.clock()
 
 dt = 1e-2
-params, labels = obs_params()
+params, labels = obs_params(reduced_model=True)
 # params = np.array([5, 0.4])  # for stability test
 
 I, t, t_on, t_off = syn_current(duration=150, dt=dt)
