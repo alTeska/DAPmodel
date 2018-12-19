@@ -7,6 +7,7 @@ from DAPmodel import DAP, DAPBe
 from .DAPsimulator import DAPSimulator
 from .DAPsumstats import DAPSummaryStats
 from .DAPSumStats import DAPSummaryStatsA
+from .DAPSumStatsNoAP import DAPSummaryStatsNoAP
 
 # from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
 # from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
@@ -101,8 +102,10 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=2
         s = DAPSummaryStats(t_on, t_off, n_summary=n_summary)
     elif summary_stats == 1:
         s = DAPSummaryStatsA(t_on, t_off, n_summary=n_summary)
+    elif summary_stats == 2:
+        s = DAPSummaryStatsNoAP(t_on, t_off, n_summary=n_summary)
     else:
-        s = Identity()
+        raise ValueError('Only 0, 1, 2 as an option for summary statistics.')
     # elif summary_stats == 2:
     #     s = HodgkinHuxleyStatsMoments(t_on, t_off, n_xcorr=n_xcorr, n_mom=n_mom, n_summary=n_summary)
 

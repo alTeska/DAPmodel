@@ -2,7 +2,7 @@
 import numpy as np
 
 from delfi.simulator.BaseSimulator import BaseSimulator
-from DAPmodel import DAP, DAPExp, DAPBe, DAPFeExp
+from DAPmodel import DAP, DAPExp, DAPBe, DAPFeExp, DAPcython
 
 def param_transform(prior_log, x):
     if prior_log:
@@ -18,7 +18,8 @@ def param_invtransform(prior_log, x):
 
 class DAPSimulator(BaseSimulator):
     def __init__(self, I, dt, V0, dim_param=4, prior_log=False, seed=None):
-        """Hodgkin-Huxley simulator
+        """
+        DAP simulator
 
         Parameters
         ----------
@@ -60,7 +61,7 @@ class DAPSimulator(BaseSimulator):
 
         dap_seed = self.gen_newseed()
 
-        dap = DAPBe(self.init, params, seed=dap_seed)
+        dap = DAPcython(self.init, params, seed=dap_seed)
 
         # if integration == 'Backward':
         #     dap = DAPBe(self.init, params, seed=dap_seed)

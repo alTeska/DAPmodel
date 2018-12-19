@@ -87,7 +87,6 @@ class DAPSummaryStatsNoAP(BaseSummaryStats):
                             ])
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
-            print('sum_stats_vec', sum_stats_vec)
             stats.append(sum_stats_vec)
 
         return np.asarray(stats)

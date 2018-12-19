@@ -71,33 +71,49 @@ class DAPSummaryStatsA(BaseSummaryStats):
 
             # Action potential
             threshold = -30
-            AP_onsets = np.where(v > threshold)[0]
-            AP_start = AP_onsets[0]
-            AP_end = AP_onsets[-1]
-            AP_max_idx = AP_start + np.argmax(v[AP_start:AP_end])
-            AP_max = v[AP_max_idx]
-            AP_amp = AP_max - rest_pot
+            if np.any(v > threshold):
+                AP_onsets = np.where(v > threshold)[0]
+                AP_start = AP_onsets[0]
+                AP_end = AP_onsets[-1]
+                AP_max_idx = AP_start + np.argmax(v[AP_start:AP_end])
+                AP_max = v[AP_max_idx]
+                AP_amp = AP_max - rest_pot
 
-            # AP width
-            AP_onsets_half_max = np.where(v > AP_max+rest_pot/2)[0]
-            AP_width = t[AP_onsets_half_max[-1]] - t[AP_onsets_half_max[0]]
+                # AP width
+                AP_onsets_half_max = np.where(v > AP_max+rest_pot/2)[0]
+                AP_width = t[AP_onsets_half_max[-1]] - t[AP_onsets_half_max[0]]
 
-            # DAP: fAHP
-            fAHP_idx = argrelmin(v)[0][1]
-            fAHP = v[fAHP_idx] - rest_pot
+                # DAP: fAHP
+                fAHP_idx = argrelmin(v)[0][1]
+                fAHP = v[fAHP_idx] - rest_pot
 
-            # DAP amplitude
-            DAP_max_idx = argrelmax(v)[0][1]
-            DAP_max = v[DAP_max_idx]
-            DAP_amp = DAP_max - rest_pot
+                # DAP amplitude
+                DAP_max_idx = argrelmax(v)[0][1]
+                DAP_max = v[DAP_max_idx]
+                DAP_amp = DAP_max - rest_pot
 
-            DAP_deflection = DAP_amp - fAHP
-            DAP_time = t[DAP_max_idx] - t[AP_max_idx]    # Time between AP and DAP maximum
+                DAP_deflection = DAP_amp - fAHP
+                DAP_time = t[DAP_max_idx] - t[AP_max_idx]    # Time between AP and DAP maximum
 
-            # Width of DAP: between fAHP and halfsize of fAHP after DAP max
-            vnorm = v[fAHP_idx:-1]  - rest_pot
-            half_max = np.where((vnorm < fAHP/2))[0]
-            DAP_width = half_max[0] * dt
+                # Width of DAP: between fAHP and halfsize of fAHP after DAP max
+                vnorm = v[fAHP_idx:-1]  - rest_pot
+
+                if np.any(vnorm < fAHP/2):
+                    half_max = np.where(vnorm < fAHP/2)[0]
+                    DAP_width = half_max[0] * dt
+                else:
+                    DAP_width = 0
+
+            else:
+                #case without any action potential
+                AP_onsets = 0
+                AP_amp = 0
+                AP_width = 0
+                DAP_amp = 0
+                DAP_width = 0
+                DAP_deflection = 0
+                DAP_time = 0
+
 
             sum_stats_vec = np.array([
                             rest_pot,
@@ -108,7 +124,7 @@ class DAPSummaryStatsA(BaseSummaryStats):
                             DAP_width,
                             DAP_deflection,
                             DAP_time,
-                            rest_pot_std,  # TODO: decide about keeping it
+                            # rest_pot_std,  # TODO: decide about keeping it
                             ])
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
