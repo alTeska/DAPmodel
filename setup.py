@@ -19,7 +19,7 @@ extensions = [Extension('DAPmodel.dap_cython',
 
 setup(
     name='DAPmodel',
-    version='0.0.2',
+    version='0.0.3',
     scripts=['dap_model'] ,
     author="Aleksandra Teska",
     author_email="aleksandra.teska@gmail.com",

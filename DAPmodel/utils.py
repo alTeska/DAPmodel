@@ -48,7 +48,7 @@ def obs_params(reduced_model=True):
         params = np.zeros(2)
         params[0] = 0.01527  # gbar_nap
         params[1] = 16.11    # nap_m['vs']
-        labels = ['gbar_nap, nap_m_vs']
+        labels = ['gbar_nap', 'nap_m_vs']
     else:
         params = np.zeros(10)
         params[0] = 0.01527  # gbar_nap
@@ -61,7 +61,7 @@ def obs_params(reduced_model=True):
         params[7] = 11.99    # nat_m['vs']
         params[8] =-13.17    # nat_h['vs']
         params[9] = 18.84    # kdr_n['vs']
-        labels = ['gbar_nap, nap_m_vs', 'nap_m_tau_max', 'nap_h_vs',
+        labels = ['gbar_nap', 'nap_m_vs', 'nap_m_tau_max', 'nap_h_vs',
                   'nap_h_tau_max', 'nat_m_vh', 'nat_h_vh', 'nat_m_vs',
                   'nat_h_vs', 'krd_n']
 
