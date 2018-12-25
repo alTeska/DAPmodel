@@ -81,7 +81,10 @@ class DAPSummaryStatsA(BaseSummaryStats):
 
                 # AP width
                 AP_onsets_half_max = np.where(v > AP_max+rest_pot/2)[0]
-                AP_width = t[AP_onsets_half_max[-1]] - t[AP_onsets_half_max[0]]
+                if np.size(AP_onsets_half_max) > 1:
+                    AP_width = t[AP_onsets_half_max[-1]] - t[AP_onsets_half_max[0]]
+                else:
+                    AP_width = 0
 
                 # DAP: fAHP
                 fAHP_idx = argrelmin(v)[0][1]
@@ -96,7 +99,7 @@ class DAPSummaryStatsA(BaseSummaryStats):
                 DAP_time = t[DAP_max_idx] - t[AP_max_idx]    # Time between AP and DAP maximum
 
                 # Width of DAP: between fAHP and halfsize of fAHP after DAP max
-                vnorm = v[fAHP_idx:-1]  - rest_pot
+                vnorm = v[fAHP_idx:-1] - rest_pot
 
                 if np.any(vnorm < fAHP/2):
                     half_max = np.where(vnorm < fAHP/2)[0]
@@ -129,5 +132,6 @@ class DAPSummaryStatsA(BaseSummaryStats):
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
             stats.append(sum_stats_vec)
+            # print('summary statistics', sum_stats_vec)
 
         return np.asarray(stats)
