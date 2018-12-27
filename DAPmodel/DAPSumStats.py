@@ -84,7 +84,7 @@ class DAPSummaryStatsA(BaseSummaryStats):
                 if np.size(AP_onsets_half_max) > 1:
                     AP_width = t[AP_onsets_half_max[-1]] - t[AP_onsets_half_max[0]]
                 else:
-                    AP_width = 0
+                    AP_width = 999
 
                 # DAP: fAHP
                 fAHP_idx = argrelmin(v)[0][1]
@@ -105,22 +105,22 @@ class DAPSummaryStatsA(BaseSummaryStats):
                     half_max = np.where(vnorm < fAHP/2)[0]
                     DAP_width = half_max[0] * dt
                 else:
-                    DAP_width = 0
+                    DAP_width = 999
 
             else:
                 #case without any action potential
-                AP_onsets = 0
-                AP_amp = 0
-                AP_width = 0
-                DAP_amp = 0
-                DAP_width = 0
-                DAP_deflection = 0
-                DAP_time = 0
+                AP_onsets = 999
+                AP_amp = 999
+                AP_width = 999
+                DAP_amp = 999
+                DAP_width = 999
+                DAP_deflection = 999
+                DAP_time = 999
 
 
             sum_stats_vec = np.array([
                             rest_pot,
-                            rmse,
+                            # rmse,
                             AP_amp,
                             AP_width,
                             DAP_amp,
