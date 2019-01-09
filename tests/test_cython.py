@@ -2,7 +2,7 @@ import timeit
 import matplotlib.pyplot as plt
 
 from DAPmodel import DAP, DAPBe
-from DAPmodel.DAPcython import DAPcython
+from DAPmodel import DAPcython
 from DAPmodel.utils import obs_params, syn_current
 
 

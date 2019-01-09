@@ -8,7 +8,6 @@ from DAPmodel.DAPSumStatsNoAP import DAPSummaryStatsNoAP
 from DAPmodel.DAPSumStats import DAPSummaryStatsA
 from DAPmodel.DAPsimulator import DAPSimulator
 from DAPmodel import DAP
-from DAPmodel.utils_analysis import simulate_data_distr
 from DAPmodel.utils import (obs_params, syn_current, syn_obs_data, prior,
                             syn_obs_stats)
 
@@ -51,7 +50,7 @@ sum_stats_A = DAPSummaryStatsA(t_on, t_off, n_summary=8)
 # print('summary stats no AP file:', sum_stats_no_AP.calc([x_o]))
 print('summary stats:', sum_stats.calc([x_o]))
 print('summary stats A:', sum_stats_A.calc([x_o]), '\n')
-print('ss diff:', sum_stats.calc([x_o]) - sum_stats_A.calc([x_o]), '\n')
+# print('ss diff:', sum_stats.calc([x_o]) - sum_stats_A.calc([x_o]), '\n')
 
 # Print summary statistics for alternative values
 params, labels = obs_params()
@@ -59,7 +58,7 @@ x_1 = syn_obs_data(i_inj[0], 0.01, params)
 # print(x_1)
 print('summary stats:', sum_stats.calc([x_1]))
 print('summary stats A:', sum_stats_A.calc([x_1]), '\n')
-print('ss diff:', sum_stats.calc([x_1]) - sum_stats_A.calc([x_1]), '\n')
+# print('ss diff:', sum_stats.calc([x_1]) - sum_stats_A.calc([x_1]), '\n')
 
 # plot voltage trace
 fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(20, 10));
