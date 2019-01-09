@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 from DAPmodel import DAP, DAPBe, DAPExp, DAPFeExp
 from DAPmodel.utils import obs_params, syn_current
-from DAPmodel.DAPsumstats import DAPSummaryStats
-from DAPmodel.DAPSumStats import DAPSummaryStatsA
+from DAPmodel.dap_sumstats_dict import DAPSummaryStatsDict
+from DAPmodel.dap_sumstats import DAPSummaryStats
 
 time_start = time.clock()
 
@@ -27,15 +27,15 @@ DAPexpDict = dap_exp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e
 DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
 DAPbeDict = dap_be.simulate(dt, t, I, channels=True, noise=False, noise_fact=1e-1)
 
+sum_stats_dict = DAPSummaryStatsDict(t_on, t_off, n_summary=8)
 sum_stats = DAPSummaryStats(t_on, t_off, n_summary=8)
-sum_statsA = DAPSummaryStatsA(t_on, t_off, n_summary=8)
 x_o =  {'data': DAPbeDict['U'],
         'time': t,
         'dt': dt,
         'I': I}
-# print('summary stats:', sum_stats.calc([x_o]))
-print('summary stats A:', sum_statsA.calc([x_o]))
-# print('ss diff:', sum_stats.calc([x_o]) - sum_stats_A.calc([x_o]), '\n')
+# print('summary stats:', sum_stats_dict.calc([x_o]))
+print('summary stats A:', sum_stats.calc([x_o]))
+# print('ss diff:', sum_stats_dict.calc([x_o]) - sum_stats.calc([x_o]), '\n')
 
 
 time_end = time.clock()

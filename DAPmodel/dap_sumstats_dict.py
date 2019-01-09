@@ -5,7 +5,7 @@ from DAPmodel.analyze_APs import get_spike_characteristics,  get_spike_character
 from delfi.summarystats.BaseSummaryStats import BaseSummaryStats
 
 
-class DAPSummaryStats(BaseSummaryStats):
+class DAPSummaryStatsDict(BaseSummaryStats):
     """SummaryStats class for the DAP model
 
     Calculates summary statistics of AP/DAP:
@@ -13,7 +13,7 @@ class DAPSummaryStats(BaseSummaryStats):
     """
     def __init__(self, t_on, t_off, n_summary=6, seed=None):
         """See SummaryStats.py for docstring"""
-        super(DAPSummaryStats, self).__init__(seed=seed)
+        super(DAPSummaryStatsDict, self).__init__(seed=seed)
         self.t_on = t_on
         self.t_off = t_off
         self.n_summary = n_summary

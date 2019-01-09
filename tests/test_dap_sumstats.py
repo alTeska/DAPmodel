@@ -3,8 +3,8 @@ import argparse, os, sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-from DAPmodel.DAPsumstats import DAPSummaryStats
-from DAPmodel.DAPSumStats import DAPSummaryStatsA
+from DAPmodel.dap_sumstats_dict import DAPSummaryStatsDict
+from DAPmodel.dap_sumstats import DAPSummaryStats
 from DAPmodel.dap_simulator import DAPSimulator
 from DAPmodel import DAP
 from DAPmodel.utils import (obs_params, syn_current, syn_obs_data, prior,
@@ -42,21 +42,21 @@ x_o =  {'data': v,
         'dt': t[1]-t[0],
         'I': i_inj[0]}
 
+sum_stats_dict = DAPSummaryStatsDict(t_on, t_off, n_summary=8)
 sum_stats = DAPSummaryStats(t_on, t_off, n_summary=8)
-sum_stats_A = DAPSummaryStatsA(t_on, t_off, n_summary=8)
 
 # print('summary stats no AP file:', sum_stats_no_AP.calc([x_o]))
-print('summary stats:', sum_stats.calc([x_o]))
-print('summary stats A:', sum_stats_A.calc([x_o]), '\n')
-# print('ss diff:', sum_stats.calc([x_o]) - sum_stats_A.calc([x_o]), '\n')
+print('summary stats:', sum_stats_dict.calc([x_o]))
+print('summary stats A:', sum_stats.calc([x_o]), '\n')
+# print('ss diff:', sum_stats_dict.calc([x_o]) - sum_stats.calc([x_o]), '\n')
 
 # Print summary statistics for alternative values
 params, labels = obs_params()
 x_1 = syn_obs_data(i_inj[0], 0.01, params)
 # print(x_1)
 print('summary stats:', sum_stats.calc([x_1]))
-print('summary stats A:', sum_stats_A.calc([x_1]), '\n')
-# print('ss diff:', sum_stats.calc([x_1]) - sum_stats_A.calc([x_1]), '\n')
+print('summary stats A:', sum_stats.calc([x_1]), '\n')
+# print('ss diff:', sum_stats_dict.calc([x_1]) - sum_stats.calc([x_1]), '\n')
 
 # plot voltage trace
 fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(20, 10));
