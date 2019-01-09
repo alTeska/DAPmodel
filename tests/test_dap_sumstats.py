@@ -4,9 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from DAPmodel.DAPsumstats import DAPSummaryStats
-from DAPmodel.DAPSumStatsNoAP import DAPSummaryStatsNoAP
 from DAPmodel.DAPSumStats import DAPSummaryStatsA
-from DAPmodel.DAPsimulator import DAPSimulator
+from DAPmodel.dap_simulator import DAPSimulator
 from DAPmodel import DAP
 from DAPmodel.utils import (obs_params, syn_current, syn_obs_data, prior,
                             syn_obs_stats)
@@ -45,7 +44,6 @@ x_o =  {'data': v,
 
 sum_stats = DAPSummaryStats(t_on, t_off, n_summary=8)
 sum_stats_A = DAPSummaryStatsA(t_on, t_off, n_summary=8)
-# sum_stats_no_AP = DAPSummaryStatsNoAP(t_on, t_off, n_summary=2)
 
 # print('summary stats no AP file:', sum_stats_no_AP.calc([x_o]))
 print('summary stats:', sum_stats.calc([x_o]))

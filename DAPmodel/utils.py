@@ -4,10 +4,9 @@ import delfi.distribution as dd
 from delfi.summarystats import Identity
 
 from DAPmodel import DAP, DAPBe
-from .DAPsimulator import DAPSimulator
+from .dap_simulator import DAPSimulator
 from .DAPsumstats import DAPSummaryStats
 from .DAPSumStats import DAPSummaryStatsA
-from .DAPSumStatsNoAP import DAPSummaryStatsNoAP
 
 # from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
 # from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
