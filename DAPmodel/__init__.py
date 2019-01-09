@@ -1,7 +1,7 @@
 # from __future__ import absolute_import
 
-from .DAPmodel import DAP
-from .DAPmodelBE import DAPBe
-from .DAPmodelExp import DAPExp
-from .DAPmodelFEExp import DAPFeExp
-from .DAPcython import DAPcython
+from .dap_fe import DAP
+from .dap_be import DAPBe
+from .dap_exp import DAPExp
+from .dap_fe_exp import DAPFeExp
+from .dap_cyth import DAPcython

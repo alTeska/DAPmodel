@@ -1,14 +1,14 @@
 import numpy as np
-from .DAPbase import DAPBase
+from .dap_base import DAPBase
 
 
-class DAPExp(DAPBase):
+class DAPFeExp(DAPBase):
     """
     DAP Model based on HH equations for the tests with LFI
     Model conists of 4 types of ion channels: Nap, Nat, Kdr, hcn_slow.
     i_inj = nA
 
-    Integrated with Exponential Euler method.
+    Integrated with mixture of Exponential and Forward Euler method.
     """
 
     def __init__(self, state, params, seed=None, **kwargs):
@@ -29,6 +29,7 @@ class DAPExp(DAPBase):
         '''calculates potasium-like ion current'''
         return gbar * n**n_pow * (e_ion)
 
+
     # condactivities
     def g_na(self, m, h, gbar, m_pow, h_pow):
         '''calculates sodium-like ion current'''
@@ -37,6 +38,7 @@ class DAPExp(DAPBase):
     def g_k(self, n, gbar, n_pow):
         '''calculates potasium-like ion current'''
         return gbar * n**n_pow
+
 
 
     def simulate(self, dt, t, i_inj, channels=False, noise=False, noise_fact=1e-3):
@@ -103,6 +105,7 @@ class DAPExp(DAPBase):
 
             g_sum = (g_nap + g_nat + g_hcn + g_kdr + self.g_leak)
 
+
             # calculate membrane potential
             V_inf = (g_e_sum + i_inj[n] * 1e-3) / g_sum
             tau_v = (self.cm)* 1e-3  / g_sum
@@ -133,7 +136,6 @@ class DAPExp(DAPBase):
             H_nat[n+1] = self.dx_dt_exp(H_nat[n], H_nat_inf, tau_h_nat, dt)
             N_hcn[n+1] = self.dx_dt_exp(N_hcn[n], N_hcn_inf, tau_n_hcn, dt)
             N_kdr[n+1] = self.dx_dt_exp(N_kdr[n], N_kdr_inf, tau_n_kdr, dt)
-
 
         if noise:
             U = U + noise_fact*self.rng.randn(1, t.shape[0])
