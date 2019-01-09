@@ -3,7 +3,7 @@ import numpy as np
 import delfi.distribution as dd
 from delfi.summarystats import Identity
 
-from DAPmodel import DAP, DAPBe
+from dap import DAP, DAPBe
 from .dap_simulator import DAPSimulator
 from .dap_sumstats_dict import DAPSummaryStatsDict
 from .dap_sumstats import DAPSummaryStats

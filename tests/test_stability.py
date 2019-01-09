@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from DAPmodel import DAP, DAPBe
-from DAPmodel import DAPcython
-from DAPmodel.utils import obs_params, syn_current
+from dap import DAP, DAPBe
+from dap import DAPcython
+from dap.utils import obs_params, syn_current
 
 
 # ranges to be tested:

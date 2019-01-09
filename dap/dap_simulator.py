@@ -2,7 +2,7 @@
 import numpy as np
 
 from delfi.simulator.BaseSimulator import BaseSimulator
-from DAPmodel import DAP, DAPExp, DAPBe, DAPFeExp, DAPcython
+from dap import DAP, DAPExp, DAPBe, DAPFeExp, DAPcython
 
 def param_transform(prior_log, x):
     if prior_log:

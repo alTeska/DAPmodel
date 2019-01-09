@@ -1,9 +1,9 @@
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from DAPmodel import DAP, DAPBe, DAPExp, DAPFeExp
-from DAPmodel.utils import obs_params, syn_current
-from DAPmodel.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
+from dap import DAP, DAPBe, DAPExp, DAPFeExp
+from dap.utils import obs_params, syn_current
+from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
                                     get_v_and_t_from_heka, shift_v_rest, get_i_inj_zap)
 
 # from test_dap_model_iinj import load_current

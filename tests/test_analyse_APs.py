@@ -1,6 +1,6 @@
-from DAPmodel.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
+from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
                                     get_v_and_t_from_heka, shift_v_rest)
-from DAPmodel.analyze_APs import (get_spike_characteristics, get_spike_characteristics_dict,
+from dap.analyze_APs import (get_spike_characteristics, get_spike_characteristics_dict,
                                   check_measures)
 
 

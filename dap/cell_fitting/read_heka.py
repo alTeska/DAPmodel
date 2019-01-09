@@ -1,8 +1,8 @@
 import os
 import re
-from DAPmodel.cell_fitting.custom_hekareader import HekaReader
-from DAPmodel.cell_fitting.i_inj_functions import *
-from DAPmodel.cell_fitting.util import init_nan, convert_to_unit
+from dap.cell_fitting.custom_hekareader import HekaReader
+from dap.cell_fitting.i_inj_functions import *
+from dap.cell_fitting.util import init_nan, convert_to_unit
 
 __author__ = "Caroline Fischer"
 

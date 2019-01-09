@@ -2,12 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import argrelmin, argrelmax
 
-from DAPmodel.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
+from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
                                     get_v_and_t_from_heka, shift_v_rest, get_i_inj_zap)
 
-from DAPmodel import DAP, DAPBe, DAPExp, DAPFeExp
-from DAPmodel.analyze_APs import get_spike_characteristics,  get_spike_characteristics_dict
-from DAPmodel.utils import obs_params, syn_current
+from dap import DAP, DAPBe, DAPExp, DAPFeExp
+from dap.analyze_APs import get_spike_characteristics,  get_spike_characteristics_dict
+from dap.utils import obs_params, syn_current
 
 
 def load_current(data_dir, protocol='rampIV', ramp_amp=3.1):
