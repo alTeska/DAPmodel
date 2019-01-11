@@ -88,7 +88,7 @@ class DAPSummaryStats(BaseSummaryStats):
 
                 # DAP: fAHP
                 fAHP_idx = argrelmin(v)[0][1]
-                fAHP = v[fAHP_idx] - rest_pot
+                fAHP = v[fAHP_idx]
 
                 # DAP amplitude
                 DAP_max_idx = argrelmax(v)[0][1]
@@ -119,16 +119,24 @@ class DAPSummaryStats(BaseSummaryStats):
 
 
             sum_stats_vec = np.array([
-                            rest_pot,
                             # rmse,
+                            rest_pot,
                             AP_amp,
                             AP_width,
                             DAP_amp,
                             DAP_width,
                             DAP_deflection,
                             DAP_time,
-                            # rest_pot_std,  # TODO: decide about keeping it
                             ])
+
+            sum_stats_vec_inx = np.array([
+                            # rmse,
+                            rest_pot,
+                            AP_max_idx,
+                            fAHP_idx,
+
+                            ])
+
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
             stats.append(sum_stats_vec)
