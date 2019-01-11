@@ -45,7 +45,14 @@ def sumstats(v, t, t_on, t_off):
     # RMSE
     # n = len(v0)
     # rmse = np.linalg.norm(v - v0) / np.sqrt(n)
+
     rest_pot = np.mean(v[t < t_on])
+
+    # more then one AP:
+    X = np.shape(np.where(v > 30))[1]
+
+
+    # hyperpolarization after DAP
     mAHP_idx = np.argmin(v)
     mAHP = v[mAHP_idx]
 
@@ -63,11 +70,12 @@ def sumstats(v, t, t_on, t_off):
     AP_width = t[AP_onsets_half_max[-1]] - t[AP_onsets_half_max[0]]
 
     # DAP: fAHP
-    fAHP_idx = argrelmin(v)[0][1]
+    v_dap = v[AP_max_idx:]
+    fAHP_idx = argrelmin(v[AP_max_idx:])[0][0] + AP_max_idx
     fAHP = v[fAHP_idx]
 
     # DAP amplitude
-    DAP_max_idx = argrelmax(v)[0][1]
+    DAP_max_idx = argrelmax(v_dap)[0][1] + AP_max_idx
     DAP_max = v[DAP_max_idx]
     DAP_amp = DAP_max - rest_pot
 
@@ -81,20 +89,34 @@ def sumstats(v, t, t_on, t_off):
     half_max = np.where((abs(vnorm) < abs(fAHP - rest_pot)/2))[0]
 
     DAP_width_idx = DAP_max_idx + half_max[0]
-    DAP_width = ((DAP_max_idx + half_max[0]) - fAHP_idx) * dt
+    DAP_width = (DAP_width_idx - fAHP_idx) * dt
+
+    # print('\n', 'LOCAL')
+    # print('rest_pot', rest_pot)
+    # print('AP_amp', AP_amp)
+    # print('AP_width', AP_width)
+    # print('fAHP', fAHP)
+    # print('DAP_amp', DAP_amp)
+    # print('DAP_width', DAP_width)
+    # print('DAP_deflection', DAP_deflection)
+    # print('DAP_time', DAP_time)
+    # print('mAHP', mAHP)
 
     sum_stats_vec = np.array([
-                    # rest_pot,
                     # rmse,
-                    AP_amp[0],
+                    rest_pot,
+                    AP_amp,
                     AP_width,
-                    DAP_amp[0],
+                    fAHP,
+                    DAP_amp,
                     DAP_width,
-                    DAP_deflection[0],
+                    DAP_deflection,
                     DAP_time,
-                    # rest_pot_std, # should it be included?
+                    mAHP,
                     ])
 
+
+    # return sum_stats_vec, DAP_max, DAP_max_idx, AP_max, AP_max_idx, fAHP, fAHP_idx, rest_pot, mAHP_idx, mAHP, DAP_width_idx
     return sum_stats_vec, DAP_max, DAP_max_idx, AP_max, AP_max_idx, fAHP, fAHP_idx, rest_pot, mAHP_idx, mAHP, DAP_width_idx
 
 
@@ -111,31 +133,34 @@ I, t, t_on, t_off, dt = load_current(data_dir, protocol='rampIV', ramp_amp=3.1)
 # define models
 dap_be = DAPBe(-75, params)
 m = DAPSimulator(I=I, dt=dt, V0=-75)
-s = DAPSummaryStats(t_on, t_off, n_summary=7)
+s = DAPSummaryStats(t_on, t_off, n_summary=9)
 
 
 # run models
 U = dap_be.simulate(dt, t, I)
 data = m.gen_single(params)
-statistics = s.calc([data])
+statistics = s.calc([data])[0]
 
+U = data['data'].transpose()
+t = data['time']
 
 sum_stats_vec, DAP_max, DAP_max_idx, AP_max, AP_max_idx, fAHP, fAHP_idx, rest_pot, mAHP_idx, mAHP, DAP_width_idx = sumstats(U, t, t_on, t_off)
 
-
+# print('\n diff:',statistics-sum_stats_vec)
 
 # Plot the results
 plt.figure()
 plt.plot(t, I)
-plt.plot(t, U.transpose()[0])
+# plt.plot(t, U.transpose()[0], label='U')
+plt.plot(t, data['data'], label='data')
+plt.legend()
 
 plt.plot(t[DAP_max_idx], DAP_max, '*')
 plt.plot(t[AP_max_idx], AP_max, '*')
-plt.plot(t[fAHP_idx], fAHP+rest_pot, '*')
+plt.plot(t[fAHP_idx], fAHP, '*')
 plt.plot(t[mAHP_idx], mAHP, '*')
 plt.plot([t[DAP_max_idx], t[AP_max_idx]], [-70, -70])
 plt.plot(t[DAP_width_idx], U[DAP_width_idx], 's')
 plt.plot([t[fAHP_idx], t[DAP_width_idx]], [U[fAHP_idx], U[DAP_width_idx]], '--')
-
 
 plt.show()
