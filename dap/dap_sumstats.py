@@ -70,8 +70,9 @@ class DAPSummaryStats(BaseSummaryStats):
             n = len(self.v0)
 
 
+            # print(np.shape(np.where(v > 0))[1])
             # more then one AP:
-            multiple_AP = np.shape(np.where(v > 30))[1]
+            multiple_AP = np.shape(np.where(v > 0))[1]
 
             #case without any action potential or more then one AP
             if (np.all(v <= 20)) or (multiple_AP > 100):
@@ -112,10 +113,8 @@ class DAPSummaryStats(BaseSummaryStats):
 
                 # DAP: fAHP
                 v_dap = v[AP_max_idx:]
-
-
-                # TODO print(np.any(v_dap < rest_pot))
                 # if np.any(v_dap < rest_pot):
+                print(np.any(v_dap < rest_pot))
 
                 fAHP_idx = argrelmin(v[AP_max_idx:])[0][0] + AP_max_idx
                 fAHP = v[fAHP_idx]
@@ -138,6 +137,8 @@ class DAPSummaryStats(BaseSummaryStats):
                     DAP_width = (DAP_width_idx - fAHP_idx) * dt
                 else:
                     DAP_width = 999
+
+
             sum_stats_vec = np.array([
                             # rmse,
                             rest_pot,
