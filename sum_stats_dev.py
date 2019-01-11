@@ -5,7 +5,7 @@ from scipy.signal import argrelmin, argrelmax
 from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
                                         get_v_and_t_from_heka, shift_v_rest, get_i_inj_zap)
 
-from dap import DAPBe
+from dap import DAPBe, DAPcython
 from dap.dap_sumstats_dict import DAPSummaryStatsDict
 from dap.dap_sumstats import DAPSummaryStats
 from dap.dap_simulator import DAPSimulator
@@ -120,9 +120,14 @@ def sumstats(v, t, t_on, t_off):
     return sum_stats_vec, DAP_max, DAP_max_idx, AP_max, AP_max_idx, fAHP, fAHP_idx, rest_pot, mAHP_idx, mAHP, DAP_width_idx
 
 
+
+
+
+# gbar_nap       [0   ; 0.5]   ( 0.01527)
+# nap_m_vs       [1   ; 30 ]   ( 16.11  )
 dt = 1e-2
 params, labels = obs_params()
-# params = np.array([.5, 0.4])  # for stability test
+params_test = np.array([0.015, 16])  # for stability test
 
 data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
 # data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
@@ -131,28 +136,47 @@ data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best
 I, t, t_on, t_off, dt = load_current(data_dir, protocol='rampIV', ramp_amp=3.1)
 
 # define models
-dap_be = DAPBe(-75, params)
+dap = DAPcython(-75, params)
 m = DAPSimulator(I=I, dt=dt, V0=-75)
 s = DAPSummaryStats(t_on, t_off, n_summary=9)
 
 
 # run models
-U = dap_be.simulate(dt, t, I)
-data = m.gen_single(params)
-statistics = s.calc([data])[0]
+U = dap.simulate(dt, t, I)
+data = m.gen_single(params_test)
+statistics, stats_idx = s.calc([data])
 
-U = data['data'].transpose()
-t = data['time']
+print(statistics)
+print(stats_idx)
+AP_max_idx = stats_idx[0][0]
+fAHP_idx = stats_idx[0][1]
+mAHP_idx = stats_idx[0][2]
+DAP_max_idx = stats_idx[0][3]
+DAP_width_idx = stats_idx[0][4]
 
-sum_stats_vec, DAP_max, DAP_max_idx, AP_max, AP_max_idx, fAHP, fAHP_idx, rest_pot, mAHP_idx, mAHP, DAP_width_idx = sumstats(U, t, t_on, t_off)
+rest_pot = statistics[0][0]
+AP_amp = statistics[0][1]
+AP_width = statistics[0][2]
+fAHP = statistics[0][3]
+DAP_amp = statistics[0][4]
+DAP_width = statistics[0][5]
+DAP_deflection = statistics[0][6]
+DAP_time = statistics[0][7]
+mAHP = statistics[0][8]
+# U = data['data'].transpose()
+
+# t = data['time']
+
+# calculate local stats
+# sum_stats_vec, DAP_max, DAP_max_idx, AP_max, AP_max_idx, fAHP, fAHP_idx, rest_pot, mAHP_idx, mAHP, DAP_width_idx = sumstats(U, t, t_on, t_off)
 
 # print('\n diff:',statistics-sum_stats_vec)
 
 # Plot the results
 plt.figure()
 plt.plot(t, I)
-# plt.plot(t, U.transpose()[0], label='U')
-plt.plot(t, data['data'], label='data')
+plt.plot(t, U.transpose()[0], label='U_params')
+plt.plot(t, data['data'], label='U_testing')
 plt.legend()
 
 plt.plot(t[DAP_max_idx], DAP_max, '*')
