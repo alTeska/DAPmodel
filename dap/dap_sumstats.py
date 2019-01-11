@@ -149,18 +149,18 @@ class DAPSummaryStats(BaseSummaryStats):
                             mAHP,
                             ])
 
-            sum_stats_vec_inx = np.array([
-                            AP_max_idx,
-                            fAHP_idx,
-                            mAHP_idx,
-                            DAP_max_idx,
-                            DAP_width_idx,
-                            ])
+            # sum_stats_vec_inx = np.array([
+            #                 AP_max_idx,
+            #                 fAHP_idx,
+            #                 mAHP_idx,
+            #                 DAP_max_idx,
+            #                 DAP_width_idx,
+            #                 ])
 
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
             stats.append(sum_stats_vec)
-            stats_idx.append(sum_stats_vec_inx)
+            # stats_idx.append(sum_stats_vec_inx)
             # print('summary statistics', sum_stats_vec)
 
-        return np.asarray(stats), np.asarray(stats_idx)
+        return np.asarray(stats)
