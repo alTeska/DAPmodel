@@ -49,6 +49,7 @@ class DAPSummaryStats(BaseSummaryStats):
         np.array, 2d with n_reps x n_summary
         """
         stats = []
+        stats_idx = []
         for r in range(len(repetition_list)):
             x = repetition_list[r]
 
@@ -68,13 +69,9 @@ class DAPSummaryStats(BaseSummaryStats):
             # RMSE
             n = len(self.v0)
 
-            # Action potential
-            threshold = -30
-
 
             # more then one AP:
             multiple_AP = np.shape(np.where(v > 30))[1]
-            print(multiple_AP)
 
             #case without any action potential or more then one AP
             if (np.all(v <= 20)) or (multiple_AP > 100):
@@ -88,6 +85,7 @@ class DAPSummaryStats(BaseSummaryStats):
                 mAHP = 999
 
             else:
+                threshold = -30
                 # hyperpolarization after DAP
                 mAHP_idx = np.argmin(v)
                 mAHP = v[mAHP_idx]
@@ -135,15 +133,15 @@ class DAPSummaryStats(BaseSummaryStats):
 
 
 
-            # print('rest_pot', rest_pot)
-            # print('AP_amp', AP_amp)
-            # print('AP_width', AP_width)
-            # print('fAHP', fAHP)
-            # print('DAP_amp', DAP_amp)
-            # print('DAP_width', DAP_width)
-            # print('DAP_deflection', DAP_deflection)
-            # print('DAP_time', DAP_time)
-            # print('mAHP', mAHP)
+            print('rest_pot', rest_pot)
+            print('AP_amp', AP_amp)
+            print('AP_width', AP_width)
+            print('fAHP', fAHP)
+            print('DAP_amp', DAP_amp)
+            print('DAP_width', DAP_width)
+            print('DAP_deflection', DAP_deflection)
+            print('DAP_time', DAP_time)
+            print('mAHP', mAHP)
 
             sum_stats_vec = np.array([
                             # rmse,
@@ -158,17 +156,18 @@ class DAPSummaryStats(BaseSummaryStats):
                             mAHP,
                             ])
 
-            # sum_stats_vec_inx = np.array([
-            #                 # rmse,
-            #                 rest_pot,
-            #                 AP_max_idx,
-            #                 fAHP_idx,
-            #
-            #                 ])
+            sum_stats_vec_inx = np.array([
+                            AP_max_idx,
+                            fAHP_idx,
+                            mAHP_idx,
+                            DAP_max_idx,
+                            DAP_width_idx,
+                            ])
 
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
             stats.append(sum_stats_vec)
+            stats_idx.append(sum_stats_vec_inx)
             # print('summary statistics', sum_stats_vec)
 
-        return np.asarray(stats)
+        return np.asarray(stats), np.asarray(stats_idx)
