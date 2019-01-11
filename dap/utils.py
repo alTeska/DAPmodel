@@ -3,11 +3,10 @@ import numpy as np
 import delfi.distribution as dd
 from delfi.summarystats import Identity
 
-from DAPmodel import DAP, DAPBe
-from .DAPsimulator import DAPSimulator
-from .DAPsumstats import DAPSummaryStats
-from .DAPSumStats import DAPSummaryStatsA
-from .DAPSumStatsNoAP import DAPSummaryStatsNoAP
+from dap import DAP, DAPBe
+from .dap_simulator import DAPSimulator
+from .dap_sumstats_dict import DAPSummaryStatsDict
+from .dap_sumstats import DAPSummaryStats
 
 # from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
 # from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
@@ -90,7 +89,7 @@ def syn_obs_data(I, dt, params, V0=-75, seed=None):
     return m.gen_single(params)
 
 
-def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=2, n_xcorr=5,
+def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1, n_xcorr=5,
                   n_mom=5, n_summary=4, seed=None):
     """Summary stats for x_o of DAP"""
 
@@ -99,13 +98,11 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=2
         data = m.gen_single(params)
 
     if summary_stats == 0:
-        s = DAPSummaryStats(t_on, t_off, n_summary=n_summary)
+        s = DAPSummaryStatsDict(t_on, t_off, n_summary=n_summary)
     elif summary_stats == 1:
-        s = DAPSummaryStatsA(t_on, t_off, n_summary=n_summary)
-    elif summary_stats == 2:
-        s = DAPSummaryStatsNoAP(t_on, t_off, n_summary=n_summary)
+        s = DAPSummaryStats(t_on, t_off, n_summary=n_summary)
     else:
-        raise ValueError('Only 0, 1, 2 as an option for summary statistics.')
+        raise ValueError('Only 0, 1 as an option for summary statistics.')
     # elif summary_stats == 2:
     #     s = HodgkinHuxleyStatsMoments(t_on, t_off, n_xcorr=n_xcorr, n_mom=n_mom, n_summary=n_summary)
 

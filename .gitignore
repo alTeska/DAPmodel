@@ -1,10 +1,10 @@
-DAPmodel/__pycache__/
-DAPmodel.egg-info/
+dap/__pycache__/
+dap.egg-info/
 
-DAPmodel/dap_cython_be.c
-DAPmodel/dap_cython.c
-DAPmodel/dap_cython.cpython-36m-x86_64-linux-gnu.so
-DAPmodel/dap_cython_be.cpython-36m-x86_64-linux-gnu.so
+dap/dap_cython_be.c
+dap/dap_cython.c
+dap/dap_cython.cpython-36m-x86_64-linux-gnu.so
+dap/dap_cython_be.cpython-36m-x86_64-linux-gnu.so
 dap_model
 
 dist/

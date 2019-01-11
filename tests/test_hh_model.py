@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from DAPmodel.hh_model import Hodgkin_Huxley_Model
+from dap.hh_model import Hodgkin_Huxley_Model
 
 
 # stiumlation current

@@ -1,9 +1,9 @@
 import timeit
 import matplotlib.pyplot as plt
 
-from DAPmodel import DAP, DAPBe
-from DAPmodel.DAPcython import DAPcython
-from DAPmodel.utils import obs_params, syn_current
+from dap import DAP, DAPBe
+from dap import DAPcython
+from dap.utils import obs_params, syn_current
 
 
 dt = 1e-2

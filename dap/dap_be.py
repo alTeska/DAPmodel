@@ -1,5 +1,5 @@
 import numpy as np
-from .DAPbase import DAPBase
+from .dap_base import DAPBase
 
 
 class DAPBe(DAPBase):
