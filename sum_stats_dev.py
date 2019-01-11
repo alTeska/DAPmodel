@@ -38,7 +38,8 @@ def load_current(data_dir, protocol='rampIV', ramp_amp=3.1):
 # nap_m_vs       [1   ; 30 ]   ( 16.11  )
 dt = 1e-2
 params, labels = obs_params()
-params_test = np.array([0.015, 16])  # for stability test
+params_test = np.array([0.01527, 16.11])  # for stability test
+params_test = np.array([0.01, 22.56])  # for stability test
 
 data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
 # data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
@@ -52,10 +53,12 @@ m = DAPSimulator(I=I, dt=dt, V0=-75)
 s = DAPSummaryStats(t_on, t_off, n_summary=9)
 
 # run models
-U = dap.simulate(dt, t, I)
+V = dap.simulate(dt, t, I)
 data = m.gen_single(params_test)
 statistics, stats_idx = s.calc([data])
 
+
+U = data['data']
 AP_max_idx = stats_idx[0][0]
 fAHP_idx = stats_idx[0][1]
 mAHP_idx = stats_idx[0][2]
@@ -75,11 +78,24 @@ mAHP = statistics[0][8]
 DAP_max = DAP_amp + rest_pot
 AP_max = AP_amp + rest_pot
 
+
+print('rest_pot', rest_pot)
+print('AP_amp', AP_amp)
+print('AP_width', AP_width)
+print('fAHP', fAHP)
+print('DAP_amp', DAP_amp)
+print('DAP_width', DAP_width)
+print('DAP_deflection', DAP_deflection)
+print('DAP_time', DAP_time)
+print('mAHP', mAHP)
+
+
 # Plot the results
-plt.figure()
+plt.figure(figsize=(15,10))
+plt.ylim(-100, 100)
 plt.plot(t, I)
-plt.plot(t, U.transpose()[0], label='U_goal')
-plt.plot(t, data['data'], label='U_param')
+plt.plot(t, V.transpose()[0], label='U_goal')
+plt.plot(t, U, label='U_param')
 plt.legend()
 
 plt.plot(t[DAP_max_idx], DAP_max, '*')

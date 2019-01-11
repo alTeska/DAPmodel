@@ -83,6 +83,14 @@ class DAPSummaryStats(BaseSummaryStats):
                 DAP_deflection = 999
                 DAP_time = 999
                 mAHP = 999
+                fAHP = 999
+
+                # TODO: TEMPORARY to be removed
+                AP_max_idx = 1
+                fAHP_idx = 1
+                mAHP_idx = 1
+                DAP_max_idx = 1
+                DAP_width_idx = 1
 
             else:
                 threshold = -30
@@ -102,13 +110,11 @@ class DAPSummaryStats(BaseSummaryStats):
                 AP_onsets_half_max = np.where(v > (AP_max+rest_pot)/2)[0]
                 AP_width = t[AP_onsets_half_max[-1]] - t[AP_onsets_half_max[0]]
 
-                # if np.size(AP_onsets_half_max) > 1:
-                #     AP_width = t[AP_onsets_half_max[-1]] - t[AP_onsets_half_max[0]]
-                # else:
-                #     AP_width = 999
-
                 # DAP: fAHP
                 v_dap = v[AP_max_idx:]
+                # if np.any(v_dap < rest_pot):
+                print(np.any(v_dap < rest_pot))
+
                 fAHP_idx = argrelmin(v[AP_max_idx:])[0][0] + AP_max_idx
                 fAHP = v[fAHP_idx]
 
@@ -130,19 +136,6 @@ class DAPSummaryStats(BaseSummaryStats):
                     DAP_width = (DAP_width_idx - fAHP_idx) * dt
                 else:
                     DAP_width = 999
-
-
-
-            print('rest_pot', rest_pot)
-            print('AP_amp', AP_amp)
-            print('AP_width', AP_width)
-            print('fAHP', fAHP)
-            print('DAP_amp', DAP_amp)
-            print('DAP_width', DAP_width)
-            print('DAP_deflection', DAP_deflection)
-            print('DAP_time', DAP_time)
-            print('mAHP', mAHP)
-
             sum_stats_vec = np.array([
                             # rmse,
                             rest_pot,
