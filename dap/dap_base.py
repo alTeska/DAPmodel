@@ -1,3 +1,15 @@
+# param ranges:
+# gbar_nap       [0   ; 0.5]   ( 0.01527)
+# nap_m_vs       [1   ; 30 ]   ( 16.11  )
+# nap_m_tau_max  [0   ; 100]   ( 15.332 )
+# nap_h_vs       [-30 ;-1  ]   (-19.19  )
+# nap_h_tau_max  [0   ; 100]   ( 13.659 )
+# nat_m_vh       [-100; 0  ]   (-30.94  )
+# nat_h_vh       [-100; 0  ]   (-60.44  )
+# nat_m_vs       [ 1  ; 30 ]   ( 11.99  )
+# nat_h_vs       [-30 ;-1  ]   (-13.17  )
+# kdr_n_vs       [ 1  ; 30 ]   ( 18.84  )
+
 import abc
 import numpy as np
 

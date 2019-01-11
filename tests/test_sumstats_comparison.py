@@ -121,7 +121,7 @@ dap_be = DAPBe(-75, params)
 U = dap_be.simulate(dt, t, I)
 # U0 = dap.simulate(dt, t, I)
 
-sumstats_hand, DAP_max, DAP_max_idx, AP_max, AP_max_idx, fAHP, fAHP_idx, rest_pot = sumstats(U.transpose(), t, t_on, t_off)
+sumstats_hand, DAP_max, DAP_max_idx, AP_max, AP_max_idx, fAHP, fAHP_idx, rest_pot = sumstats(U, t, t_on, t_off)
 print(sumstats_hand, '\n')
 
 # characteristics = sum_stats_analyze(U.transpose()[0], t, t_on, t_off)
