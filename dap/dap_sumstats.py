@@ -112,8 +112,10 @@ class DAPSummaryStats(BaseSummaryStats):
 
                 # DAP: fAHP
                 v_dap = v[AP_max_idx:]
+
+
+                # TODO print(np.any(v_dap < rest_pot))
                 # if np.any(v_dap < rest_pot):
-                print(np.any(v_dap < rest_pot))
 
                 fAHP_idx = argrelmin(v[AP_max_idx:])[0][0] + AP_max_idx
                 fAHP = v[fAHP_idx]
