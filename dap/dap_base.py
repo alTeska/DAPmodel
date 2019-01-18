@@ -162,11 +162,11 @@ class DAPBase(object):
         are 2 or 10 (can be extended to 14)
         '''
         params_len = np.size(params)
-
-        if params_len == 2:
+        if params_len == 1:
+            self.gbar_nap = params[0] * self.cell_area
+        elif params_len == 2:
             self.gbar_nap = params[0] * self.cell_area
             self.nap_m['vs'] = params[1]
-
         elif params_len == 10:
             self.gbar_nap = params[0] * self.cell_area
             self.nap_m['vs'] = params[1]
@@ -179,7 +179,7 @@ class DAPBase(object):
             self.nat_h['vs'] = params[8]
             self.kdr_n['vs'] = params[9]
         else:
-            raise ValueError('You can only provide 2 or 10 parameters!')
+            raise ValueError('You can only provide 1, 2 or 10 parameters!')
 
 
     @abc.abstractmethod

@@ -38,8 +38,8 @@ def load_current(data_dir, protocol='rampIV', ramp_amp=3.1):
 # nap_m_vs       [1   ; 30 ]   ( 16.11  )
 dt = 1e-2
 params, labels = obs_params()
-params_test = np.array([0.01527, 16.11])  # for stability test
-params_test = np.array([0.05, 19.53])  # for stability test
+params_test = np.array([0.1527, 16.11])  # original values
+# params_test = np.array([0.05, 19.53])  # for stability test
 
 data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
 # data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
