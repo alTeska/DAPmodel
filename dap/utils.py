@@ -15,20 +15,27 @@ from delfi.summarystats import Identity
 
 
 
-def obs_params_gbar(reduced_model=False):
+def obs_params_gbar(reduced_model=True):
     """Parameters for x_o
     Returns
     -------
     true_params : array
     labels_params : list of str
     """
-    gbar_kdr = 0.00313  # (S/cm2)
-    gbar_hcn = 5e-05    # (S/cm2)
-    gbar_nap = 0.01527  # (S/cm2)
-    gbar_nat = 0.142    # (S/cm2)
+    gbar_nap = 0.01527    # (S/cm2)
+    gbar_leak = 0.000430  # (S/cm2)
+    gbar_nat = 0.142      # (S/cm2)
+    gbar_kdr = 0.00313    # (S/cm2)
+    gbar_hcn = 5e-05      # (S/cm2)
 
-    true_params = np.array([gbar_kdr, gbar_hcn, gbar_nap, gbar_nat])
-    labels_params = ['gbar_kdr', 'gbar_hcn', 'gbar_nap', 'gbar_nat']
+    if reduced_model:
+        true_params = np.array([gbar_nap])
+        labels_params = ['gbar_nap']
+
+    else:
+        true_params = np.array([gbar_nap, gbar_leak, gbar_nat, gbar_kdr, gbar_hcn])
+        labels_params = ['gbar_nap', 'gbar_leak', 'gbar_nat', 'gbar_kdr', 'gbar_hcn']
+
 
     return true_params, labels_params
 

@@ -63,34 +63,46 @@ def setparams(params):
     Function used to set up the expected parameters, expected lenghts
     are 2 or 10 (can be extended to 14)
     '''
-    global gbar_nap, nap_m, nap_h, nat_m, nat_h
+    global gbar_nap, nap_m, nap_h, nat_m, nat_h, gbar_leak, gbar_nat, gbar_kdr, gbar_hcn
     params_len = np.size(params)
 
     if params_len == 1:
-        gbar_nap = params[0] * 0.1 * cell_area
-
-    elif params_len == 2:
-        gbar_nap = params[0] * 0.1 * cell_area
-        nap_m['vs'] = params[1]
-
-    elif params_len == 3:
-        gbar_nap = params[0] * 0.1 * cell_area
-        nap_m['vs'] = params[1]
-        nap_m['tau_max'] = params[2]
-
-    elif params_len == 10:
         gbar_nap = params[0] * cell_area
-        nap_m['vs'] = params[1]
-        nap_m['tau_max'] = params[2]
-        nap_h['vs'] = params[3]
-        nap_h['tau_max'] = params[4]
-        nat_m['vh'] = params[5]
-        nat_h['vh'] = params[6]
-        nat_m['vs'] = params[7]
-        nat_h['vs'] = params[8]
-        kdr_n['vs'] = params[9]
+    elif params_len == 2:
+        gbar_nap = params[0] * cell_area
+        gbar_leak = params[1] * cell_area
+    elif params_len == 3:
+        gbar_nap = params[0] * cell_area
+        gbar_leak = params[1] * cell_area
+        gbar_nat = params[2] * cell_area
+    elif params_len == 4:
+        gbar_nap = params[0] * cell_area
+        gbar_leak = params[1] * cell_area
+        gbar_nat = params[2] * cell_area
+        gbar_kdr = params[3] * cell_area
+    elif params_len == 5:
+        gbar_nap = params[0] * cell_area
+        gbar_leak = params[1] * cell_area
+        gbar_nat = params[2] * cell_area
+        gbar_kdr = params[3] * cell_area
+        gbar_hcn = params[4] * cell_area
+    elif params_len == 14:
+        gbar_nap = params[0] * cell_area
+        gbar_leak = params[1] * cell_area
+        gbar_nat = params[2] * cell_area
+        gbar_kdr = params[3] * cell_area
+        gbar_hcn = params[4] * cell_area
+        nap_m['vs'] = params[5]
+        nap_m['tau_max'] = params[6]
+        nap_h['vs'] = params[7]
+        nap_h['tau_max'] = params[8]
+        nat_m['vh'] = params[9]
+        nat_h['vh'] = params[10]
+        nat_m['vs'] = params[11]
+        nat_h['vs'] = params[12]
+        kdr_n['vs'] = params[13]
     else:
-        raise ValueError('You can only provide 1, 2, 3 or 10 parameters!')
+        raise ValueError('You can only provide 1, 2, 3, 4, 5 or 14 parameters!')
 
 
 # model integration
