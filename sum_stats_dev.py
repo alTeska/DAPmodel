@@ -38,8 +38,8 @@ def load_current(data_dir, protocol='rampIV', ramp_amp=3.1):
 # nap_m_vs       [1   ; 30 ]   ( 16.11  )
 dt = 1e-2
 params, labels = obs_params()
-params_test = np.array([0.01527, 16.11])  # for stability test
-params_test = np.array([0.01, 22.56])  # for stability test
+params_test = np.array([0.1527, 16.11])  # original values
+# params_test = np.array([0.05, 19.53])  # for stability test
 
 data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
 # data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
@@ -55,15 +55,15 @@ s = DAPSummaryStats(t_on, t_off, n_summary=9)
 # run models
 V = dap.simulate(dt, t, I)
 data = m.gen_single(params_test)
-statistics, stats_idx = s.calc([data])
-
+statistics = s.calc([data])
+# statistics, stats_idx = s.calc([data])
 
 U = data['data']
-AP_max_idx = stats_idx[0][0]
-fAHP_idx = stats_idx[0][1]
-mAHP_idx = stats_idx[0][2]
-DAP_max_idx = stats_idx[0][3]
-DAP_width_idx = stats_idx[0][4]
+# AP_max_idx = stats_idx[0][0]
+# fAHP_idx = stats_idx[0][1]
+# mAHP_idx = stats_idx[0][2]
+# DAP_max_idx = stats_idx[0][3]
+# DAP_width_idx = stats_idx[0][4]
 
 rest_pot = statistics[0][0]
 AP_amp = statistics[0][1]
@@ -97,13 +97,13 @@ plt.plot(t, I)
 plt.plot(t, V.transpose()[0], label='U_goal')
 plt.plot(t, U, label='U_param')
 plt.legend()
-
-plt.plot(t[DAP_max_idx], DAP_max, '*')
-plt.plot(t[AP_max_idx], AP_max, '*')
-plt.plot(t[fAHP_idx], fAHP, '*')
-plt.plot(t[mAHP_idx], mAHP, '*')
-plt.plot([t[DAP_max_idx], t[AP_max_idx]], [-70, -70], '--')
-plt.plot(t[DAP_width_idx], U[DAP_width_idx], 's')
-plt.plot([t[fAHP_idx], t[DAP_width_idx]], [U[fAHP_idx], U[DAP_width_idx]], '--')
+#
+# plt.plot(t[DAP_max_idx], DAP_max, '*')
+# plt.plot(t[AP_max_idx], AP_max, '*')
+# plt.plot(t[fAHP_idx], fAHP, '*')
+# plt.plot(t[mAHP_idx], mAHP, '*')
+# plt.plot([t[DAP_max_idx], t[AP_max_idx]], [-70, -70], '--')
+# plt.plot(t[DAP_width_idx], U[DAP_width_idx], 's')
+# plt.plot([t[fAHP_idx], t[DAP_width_idx]], [U[fAHP_idx], U[DAP_width_idx]], '--')
 
 plt.show()

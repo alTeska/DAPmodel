@@ -39,7 +39,7 @@ class DAPcython(object):
             self.setnoisefactor = dap_cython_be.setnoisefactor
 
 
-    def simulate(self, dt, t, i_inj, channels=False, noise=False, noise_fact=1e-3):
+    def simulate(self, dt, t, i_inj, channels=False, noise=False, noise_fact=1e-2):
         """Run simulation of DAP model given the injection current - CYTHON"""
         self.setparams(self.params)
         self.setnoisefactor(noise_fact)

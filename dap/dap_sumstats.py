@@ -68,13 +68,17 @@ class DAPSummaryStats(BaseSummaryStats):
 
             # RMSE
             n = len(self.v0)
+            # rmse = np.linalg.norm(v - self.v0) / np.sqrt(n)
 
 
+            # print(np.shape(np.where(v > 0))[1])
             # more then one AP:
-            multiple_AP = np.shape(np.where(v > 30))[1]
+            multiple_AP = np.shape(np.where(v > 0))[1]
 
             #case without any action potential or more then one AP
-            if (np.all(v <= 20)) or (multiple_AP > 100):
+
+            # if (np.all(v <= 20)) or (multiple_AP > 100):
+            if (np.all(v <= 20)):
                 AP_onsets = 999
                 AP_amp = 999
                 AP_width = 999
@@ -85,12 +89,12 @@ class DAPSummaryStats(BaseSummaryStats):
                 mAHP = 999
                 fAHP = 999
 
-                # TODO: TEMPORARY to be removed
-                AP_max_idx = 1
-                fAHP_idx = 1
-                mAHP_idx = 1
-                DAP_max_idx = 1
-                DAP_width_idx = 1
+                # # TODO: TEMPORARY to be removed
+                # AP_max_idx = 1
+                # fAHP_idx = 1
+                # mAHP_idx = 1
+                # DAP_max_idx = 1
+                # DAP_width_idx = 1
 
             else:
                 threshold = -30
@@ -112,10 +116,8 @@ class DAPSummaryStats(BaseSummaryStats):
 
                 # DAP: fAHP
                 v_dap = v[AP_max_idx:]
-
-
-                # TODO print(np.any(v_dap < rest_pot))
                 # if np.any(v_dap < rest_pot):
+                # print(np.any(v_dap < rest_pot))
 
                 fAHP_idx = argrelmin(v[AP_max_idx:])[0][0] + AP_max_idx
                 fAHP = v[fAHP_idx]
@@ -138,8 +140,9 @@ class DAPSummaryStats(BaseSummaryStats):
                     DAP_width = (DAP_width_idx - fAHP_idx) * dt
                 else:
                     DAP_width = 999
+
+
             sum_stats_vec = np.array([
-                            # rmse,
                             rest_pot,
                             AP_amp,
                             AP_width,
@@ -149,6 +152,7 @@ class DAPSummaryStats(BaseSummaryStats):
                             DAP_deflection,
                             DAP_time,
                             mAHP,
+                            # rmse,
                             ])
 
             # sum_stats_vec_inx = np.array([
@@ -163,6 +167,8 @@ class DAPSummaryStats(BaseSummaryStats):
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
             stats.append(sum_stats_vec)
             # stats_idx.append(sum_stats_vec_inx)
-            # print('summary statistics', sum_stats_vec)
+
+            np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
+            print('s', sum_stats_vec)
 
         return np.asarray(stats)
