@@ -1,18 +1,12 @@
-import time
-import argparse, os, sys
-import numpy as np
 import matplotlib.pyplot as plt
 
 from dap.dap_sumstats_dict import DAPSummaryStatsDict
 from dap.dap_sumstats import DAPSummaryStats
-from dap.dap_simulator import DAPSimulator
 from dap import DAP
-from dap.utils import (obs_params, syn_current, syn_obs_data, prior,
-                            syn_obs_stats)
+from dap.utils import (obs_params, syn_obs_data)
 
 from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
-                                    get_v_and_t_from_heka, shift_v_rest)
-
+                                        get_v_and_t_from_heka, shift_v_rest)
 
 n_rounds = 1
 n_samples = 10
