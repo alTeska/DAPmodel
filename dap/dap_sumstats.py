@@ -168,7 +168,7 @@ class DAPSummaryStats(BaseSummaryStats):
             stats.append(sum_stats_vec)
             # stats_idx.append(sum_stats_vec_inx)
 
-            np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
-            print('s', sum_stats_vec)
+            # np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
+            # print('s', sum_stats_vec)
 
         return np.asarray(stats)

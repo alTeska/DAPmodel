@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 
 from dap.dap_sumstats_dict import DAPSummaryStatsDict
 from dap.dap_sumstats import DAPSummaryStats
-from dap import DAP
 from dap.utils import (obs_params, syn_obs_data)
 
 from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
@@ -39,18 +38,15 @@ x_o =  {'data': v,
 sum_stats_dict = DAPSummaryStatsDict(t_on, t_off, n_summary=8)
 sum_stats = DAPSummaryStats(t_on, t_off, n_summary=8)
 
-# print('summary stats no AP file:', sum_stats_no_AP.calc([x_o]))
 print('summary stats:', sum_stats_dict.calc([x_o]))
 print('summary stats A:', sum_stats.calc([x_o]), '\n')
-# print('ss diff:', sum_stats_dict.calc([x_o]) - sum_stats.calc([x_o]), '\n')
 
 # Print summary statistics for alternative values
 params, labels = obs_params()
 x_1 = syn_obs_data(i_inj[0], 0.01, params)
-# print(x_1)
+
 print('summary stats:', sum_stats.calc([x_1]))
 print('summary stats A:', sum_stats.calc([x_1]), '\n')
-# print('ss diff:', sum_stats_dict.calc([x_1]) - sum_stats.calc([x_1]), '\n')
 
 # plot voltage trace
 fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(20, 10));
