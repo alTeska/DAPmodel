@@ -86,7 +86,7 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
             # moments of the signal
             std_pw = np.power(np.std(v_dap), np.linspace(3,self.n_mom,self.n_mom-2))
             std_pw = np.concatenate((np.ones(1),std_pw))
-            moments = spstats.moment(v, np.linspace(2,self.n_mom,self.n_mom-1))/std_pw
+            moments = spstats.moment(v_dap, np.linspace(2,self.n_mom,self.n_mom-1))/std_pw
 
             # concatenation of summary statistics
             # try:
