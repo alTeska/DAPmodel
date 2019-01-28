@@ -25,7 +25,7 @@ U_back = dap_back.simulate(dt, t, I)
 U_cython_back = dap_cython_back.simulate(dt, t, I)
 
 
-
+# plot
 fig, ax = plt.subplots(5, 1, figsize=(20, 10));
 ax[0].plot(t, U, label='forward')
 ax[1].plot(t, U_cython)

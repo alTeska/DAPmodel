@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 
 from dap import DAP, DAPBe
 from dap import DAPcython
-from dap.utils import obs_params, syn_current
+from dap.utils import obs_params_gbar, syn_current
 
 
 dt = 1e-2
-params, labels = obs_params(reduced_model=False)
+params, labels = obs_params_gbar(reduced_model=True)
 
 I, t, t_on, t_off = syn_current(duration=120, dt=dt)
 
