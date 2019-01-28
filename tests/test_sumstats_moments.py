@@ -50,8 +50,7 @@ x_1 = {'data': U.reshape(-1),
 
 # calcualte summary statistics
 sum_stats = DAPSummaryStats(t_on, t_off, n_summary=9)
-sum_stats_mom = DAPSummaryStatsMoments(t_on, t_off, n_summary=9)
-
+sum_stats_mom = DAPSummaryStatsMoments(t_on, t_off, n_summary=13)
 
 print('summary stats real:', sum_stats.calc([x_o]))
 print('summary stats synt:', sum_stats.calc([x_1]))

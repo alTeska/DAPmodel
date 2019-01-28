@@ -93,7 +93,9 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
             sum_stats_vec = np.concatenate((
                     np.array([rest_pot,rest_pot_std, np.mean(v_dap)]),
                     x_corr1,
-                    moments
+                    moments,
+                    spike_times,
+                    spike_max,
                 ))
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
             # except:
