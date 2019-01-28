@@ -5,14 +5,11 @@ from delfi.summarystats import Identity
 
 from dap import DAP, DAPBe
 from .dap_simulator import DAPSimulator
-from .dap_sumstats_dict import DAPSummaryStatsDict
 from .dap_sumstats import DAPSummaryStats
+from .dap_sumstats_dict import DAPSummaryStatsDict
+from .dap_sumstats_moments import DAPSummaryStatsMoments
 
-# from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsMoments import HodgkinHuxleyStatsMoments
-# from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes import HodgkinHuxleyStatsSpikes
-# from lfimodels.hodgkinhuxley.HodgkinHuxleyStatsSpikes_mf import HodgkinHuxleyStatsSpikes_mf
 from delfi.summarystats import Identity
-
 
 
 def obs_params_gbar(reduced_model=True):
@@ -108,10 +105,10 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1
         s = DAPSummaryStatsDict(t_on, t_off, n_summary=n_summary)
     elif summary_stats == 1:
         s = DAPSummaryStats(t_on, t_off, n_summary=n_summary)
+    elif summary_stats == 2:
+        s = DAPSummaryStatsMoments(t_on, t_off, n_summary=n_summary)
     else:
         raise ValueError('Only 0, 1 as an option for summary statistics.')
-    # elif summary_stats == 2:
-    #     s = HodgkinHuxleyStatsMoments(t_on, t_off, n_xcorr=n_xcorr, n_mom=n_mom, n_summary=n_summary)
 
     return s.calc([data])
 
