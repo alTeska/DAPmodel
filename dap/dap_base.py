@@ -165,10 +165,10 @@ class DAPBase(object):
         params_len = np.size(params)
 
         if params_len == 1:
-            self.gbar_nap = params[0] * self.cell_area
+            self.gbar_nap = params[0] * 0.1 *  self.cell_area
         elif params_len == 2:
-            self.gbar_nap = params[0] * self.cell_area
-            self.gbar_leak = params[1] * self.cell_area
+            self.gbar_nap = params[0] * 0.1 *  self.cell_area
+            self.gbar_leak = params[1] * 0.1 *  self.cell_area
         elif params_len == 3:
             self.gbar_nap = params[0] * self.cell_area
             self.gbar_leak = params[1] * self.cell_area

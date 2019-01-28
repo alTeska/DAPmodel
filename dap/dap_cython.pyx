@@ -66,10 +66,10 @@ def setparams(params):
     params_len = np.size(params)
 
     if params_len == 1:
-        gbar_nap = params[0] * cell_area
+        gbar_nap = params[0] * 0.1 *  cell_area
     elif params_len == 2:
-        gbar_nap = params[0] * cell_area
-        gbar_leak = params[1] * cell_area
+        gbar_nap = params[0] * 0.1 *  cell_area
+        gbar_leak = params[1] * 0.1 *  cell_area
     elif params_len == 3:
         gbar_nap = params[0] * cell_area
         gbar_leak = params[1] * cell_area

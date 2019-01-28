@@ -29,8 +29,8 @@ def obs_params_gbar(reduced_model=True):
     gbar_hcn = 5e-05      # (S/cm2)
 
     if reduced_model:
-        true_params = np.array([gbar_nap])
-        labels_params = ['gbar_nap']
+        true_params = np.array([gbar_nap, gbar_leak])
+        labels_params = ['gbar_nap', 'gbar_leak']
 
     else:
         true_params = np.array([gbar_nap, gbar_leak, gbar_nat, gbar_kdr, gbar_hcn])
