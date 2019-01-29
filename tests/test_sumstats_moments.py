@@ -31,7 +31,7 @@ i_inj, t_on, t_off = get_i_inj_from_function(protocol, [sweep_idx], time[-1], ti
 # generate syntetic data
 params, labels = obs_params_gbar(reduced_model=True)
 params = params*10
-I, t, t_on, t_off = syn_current(duration=120, dt=dt)
+# I, t, t_on, t_off = syn_current(duration=120, dt=dt)
 dap = DAPcython(-75, params)
 U = dap.simulate(dt, time, i_inj[0])
 
@@ -64,4 +64,4 @@ ax.plot(time, i_inj[0], label='I')
 ax.plot(time, v, label='real')
 ax.plot(time, U, label='synthetic')
 ax.legend()
-plt.show()
+# plt.show()

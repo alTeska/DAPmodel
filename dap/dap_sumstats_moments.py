@@ -65,10 +65,10 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
 
             # find relevant lenght of the trace (for now from t_on till the end)
             v_dap = np.array(x['data'])
-            v_dap = v_dap[(t>t_on)]
+            v_dap = v_dap[(t > t_on) & (t < 100)]
 
             # TODO: optionally cut the tail as well but might not work with
-            # bad trace: use v2 instead of dap for further calcualtions
+            # bad trace: use v2 instead of dap for further calcualtions -> 100 ms for now
             # ind = np.where(v_dap > rest_pot)
             # v2 = v_dap[ind[0][0]:ind[0][-1]]
 
