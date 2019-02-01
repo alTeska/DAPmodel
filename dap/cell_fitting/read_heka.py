@@ -114,7 +114,7 @@ def get_i_inj_from_function(protocol, sweep_idxs, tstop, dt, return_discontinuit
     if return_discontinuities:
         return i_inj, discontinuities
     if protocol == 'IV':
-        return i_inj, step_start, step_end
+        return i_inj, start_step, end_step
     elif protocol == 'rampIV':
         return i_inj, ramp_start, ramp_end
 

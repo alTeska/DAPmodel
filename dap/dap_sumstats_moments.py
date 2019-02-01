@@ -61,11 +61,11 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
             # remaining negative slopes are at spike peaks
             ind = np.where(np.diff(v) < 0)
             spike_times = np.array(t)[ind]
-            spike_max = x['data'][ind]
+            spikes = np.shape(np.array(t)[ind])[0]
 
             # find relevant lenght of the trace (for now from t_on till the end)
             v_dap = np.array(x['data'])
-            v_dap = v_dap[(t > t_on) & (t < 100)]
+            v_all = v_dap[(t > t_on) & (t < 100)]
 
             # TODO: optionally cut the tail as well but might not work with
             # bad trace: use v2 instead of dap for further calcualtions -> 100 ms for now
@@ -73,7 +73,7 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
             # v2 = v_dap[ind[0][0]:ind[0][-1]]
 
             # normalize for autokorrelations
-            x_on_off = v_dap - np.mean(v_dap)
+            x_on_off = v_all - np.mean(v_all)
             x_corr_val = np.dot(x_on_off,x_on_off)
             xcorr_steps = np.linspace(1./dt,self.n_xcorr*1./dt,self.n_xcorr).astype(int)
             x_corr_full = np.zeros(self.n_xcorr)
@@ -84,27 +84,40 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
             x_corr1 = x_corr_full/x_corr_val
 
             # moments of the signal
-            std_pw = np.power(np.std(v_dap), np.linspace(3,self.n_mom,self.n_mom-2))
-            std_pw = np.concatenate((np.ones(1),std_pw))
-            moments = spstats.moment(v_dap, np.linspace(2,self.n_mom,self.n_mom-1))/std_pw
+            v_AP  = v_dap[(t >= t_on) & (t <= t_off+1)]
+            v_DAP = v_dap[(t > t_off+1) & (t < 100)]
+
+            # import matplotlib.pyplot as plt
+            # fig, ax = plt.subplots(1,3)
+            # ax[0].plot(v_all)
+            # ax[1].plot(v_AP)
+            # ax[2].plot(v_DAP)
+            # plt.show(   )
+
+            std_pw_AP = np.power(np.std(v_AP), np.linspace(3,self.n_mom,self.n_mom-2))
+            std_pw_AP = np.concatenate((np.ones(1),std_pw_AP))
+            moments_AP = spstats.moment(v_AP, np.linspace(2,self.n_mom,self.n_mom-1))/std_pw_AP
+
+            std_pw_DAP = np.power(np.std(v_DAP), np.linspace(3,self.n_mom,self.n_mom-2))
+            std_pw_DAP = np.concatenate((np.ones(1),std_pw_DAP))
+            moments_DAP = spstats.moment(v_DAP, np.linspace(2,self.n_mom,self.n_mom-1))/std_pw_DAP
 
             # concatenation of summary statistics
             # try:
             sum_stats_vec = np.concatenate((
-                    np.array([rest_pot,rest_pot_std, np.mean(v_dap)]),
+                    np.array([rest_pot,rest_pot_std, np.mean(v_dap), spikes]),
                     x_corr1,
-                    moments,
-                    spike_times,
-                    spike_max,
+                    moments_AP,
+                    moments_DAP,
+                    # spikes,
                 ))
+
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
             # except:
                 # return None
 
-
             stats.append(sum_stats_vec)
-
-            np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
+            # np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
             # print('s', sum_stats_vec)
 
         return np.asarray(stats)

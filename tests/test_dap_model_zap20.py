@@ -1,8 +1,8 @@
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from dap import DAP, DAPBe, DAPExp, DAPFeExp
-from dap.utils import obs_params, syn_current
+from dap import DAPcython
+from dap.utils import obs_params_gbar, syn_current
 from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
                                     get_v_and_t_from_heka, shift_v_rest, get_i_inj_zap)
 
@@ -26,94 +26,55 @@ def load_current(data_dir, protocol='rampIV', ramp_amp=3.1):
     t = t[0]
     dt = t[1] - t[0]
 
+    # dt = 0.1
     I, _ = get_i_inj_from_function(protocol, [sweep_idx], t[-1], dt,
                                               return_discontinuities=True)
     I = I[0]
 
-    return I, t, dt
+    return I, v, t, dt
 
-data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
+data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'  # best cell
 # data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
 
 time_start = time.clock()
 
 # load the data
-I, t, dt = load_current(data_dir, protocol='Zap20', ramp_amp=3.1)
-params, labels = obs_params()
+I, v, t, dt = load_current(data_dir, protocol='IV', ramp_amp=1)
+print(np.shape(I))
+
+params, labels = obs_params_gbar()
+# params *=10
+# params = np.array([0.159, 1.039])
 
 plt.plot(t,I)
+plt.plot(t,v)
 plt.show()
 
 # define models
-dap = DAP(-75, params)
-dap_exp = DAPExp(-75, params)
-dap_feexp = DAPFeExp(-75, params)
-dap_be = DAPBe(-75, params)
+dap = DAPcython(-75, params)
 
 # run model
 DAPdict = dap.simulate(dt, t, I, channels=True)
-DAPexpDict = dap_exp.simulate(dt, t, I, channels=True)
-DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True)
-DAPbeDict = dap_be.simulate(dt, t, I, channels=True)
 
 time_end = time.clock()
 print('time elapsed:', time_end - time_start)
 
 # plot voltage trace
-fig, ax = plt.subplots(ncols=2, nrows=5, figsize=(20, 10));
-ax[0][0].plot(t, DAPdict['U'], label='DAP');
-ax[0][0].set_title('Forward Euler')
-ax[0][0].grid()
-
-ax[1][0].plot(t, DAPexpDict['U'], label='DAPExp');
-ax[1][0].set_title('Exp Euler')
-ax[1][0].grid()
-
-ax[2][0].plot(t, DAPfexpDict['U'], label='DAPExp2');
-ax[2][0].set_title('Exp + Forward Euler')
-ax[2][0].grid()
-
-ax[3][0].plot(t, DAPbeDict['U'], label='DapBe');
-ax[3][0].set_title('Backward Euler')
-ax[3][0].grid()
-
-ax[4][0].plot(t, I);
+fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(20, 10));
+ax.plot(t, DAPdict['U'], label='model');
+ax.plot(t, v, label='data');
+ax.grid()
+ax.plot(t, I);
+ax.legend()
+plt.show()
 
 # plot activation functions
-ax[0][1].plot(t, DAPdict['M_nap'], label='M_nap');
-ax[0][1].plot(t, DAPdict['M_nat'], label='M_nat');
-ax[0][1].plot(t, DAPdict['H_nap'], label='H_nap');
-ax[0][1].plot(t, DAPdict['H_nat'], label='H_nat');
-ax[0][1].plot(t, DAPdict['N_hcn'], label='N_hcn');
-ax[0][1].plot(t, DAPdict['N_kdr'], label='N_kdr');
-ax[0][1].set_title('Forward Euler')
-ax[0][1].legend()
-
-ax[1][1].plot(t, DAPexpDict['M_nap'], label='M_nap_exp');
-ax[1][1].plot(t, DAPexpDict['M_nat'], label='M_nat_exp');
-ax[1][1].plot(t, DAPexpDict['H_nap'], label='H_nap_exp');
-ax[1][1].plot(t, DAPexpDict['H_nat'], label='H_nat_exp');
-ax[1][1].plot(t, DAPexpDict['N_hcn'], label='N_hcn_exp');
-ax[1][1].plot(t, DAPexpDict['N_kdr'], label='N_kdr_exp');
-ax[1][1].set_title('Exp Euler')
-ax[1][1].legend()
-
-ax[2][1].plot(t, DAPfexpDict['M_nap'], label='M_nap_exp2');
-ax[2][1].plot(t, DAPfexpDict['M_nat'], label='M_nat_exp2');
-ax[2][1].plot(t, DAPfexpDict['H_nap'], label='H_nap_exp2');
-ax[2][1].plot(t, DAPfexpDict['H_nat'], label='H_nat_exp2');
-ax[2][1].plot(t, DAPfexpDict['N_hcn'], label='N_hcn_exp2');
-ax[2][1].plot(t, DAPfexpDict['N_kdr'], label='N_kdr_exp2');
-ax[2][1].set_title('Exp + Forward Euler')
-ax[2][1].legend()
-
-ax[3][1].plot(t, DAPbeDict['M_nap'], label='M_napBe');
-ax[3][1].plot(t, DAPbeDict['M_nat'], label='M_natBe');
-ax[3][1].plot(t, DAPbeDict['H_nap'], label='H_napBe');
-ax[3][1].plot(t, DAPbeDict['H_nat'], label='H_natBe');
-ax[3][1].plot(t, DAPbeDict['N_hcn'], label='N_hcnBe');
-ax[3][1].plot(t, DAPbeDict['N_kdr'], label='N_kdrBe');
-ax[3][0].set_title('Backward Euler')
-ax[3][1].legend()
-
-plt.show()
+# fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(20, 10));
+# ax.plot(t, DAPdict['M_nap'], label='M_nap');
+# ax.plot(t, DAPdict['M_nat'], label='M_nat');
+# ax.plot(t, DAPdict['H_nap'], label='H_nap');
+# ax.plot(t, DAPdict['H_nat'], label='H_nat');
+# ax.plot(t, DAPdict['N_hcn'], label='N_hcn');
+# ax.plot(t, DAPdict['N_kdr'], label='N_kdr');
+#
+# ax.legend()
