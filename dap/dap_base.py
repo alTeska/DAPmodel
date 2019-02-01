@@ -165,31 +165,31 @@ class DAPBase(object):
         params_len = np.size(params)
 
         if params_len == 1:
-            self.gbar_nap = params[0] * 0.1 *  self.cell_area
+            self.gbar_nap = params[0] * 0.1 * self.cell_area
         elif params_len == 2:
-            self.gbar_nap = params[0] * 0.1 *  self.cell_area
-            self.gbar_leak = params[1] * 0.1 *  self.cell_area
+            self.gbar_nap = params[0] * 0.1 * self.cell_area
+            self.gbar_leak = params[1] * 0.1 * self.cell_area
         elif params_len == 3:
-            self.gbar_nap = params[0] * self.cell_area
-            self.gbar_leak = params[1] * self.cell_area
-            self.gbar_nat = params[2] * self.cell_area
+            self.gbar_nap = params[0] * 0.1 * self.cell_area
+            self.gbar_leak = params[1] * 0.1 * self.cell_area
+            self.gbar_nat = params[2] * 0.1 * self.cell_area
         elif params_len == 4:
-            self.gbar_nap = params[0] * self.cell_area
-            self.gbar_leak = params[1] * self.cell_area
-            self.gbar_nat = params[2] * self.cell_area
-            self.gbar_kdr = params[3] * self.cell_area
+            self.gbar_nap = params[0] * 0.1 * self.cell_area
+            self.gbar_leak = params[1] * 0.1 * self.cell_area
+            self.gbar_nat = params[2] * 0.1 * self.cell_area
+            self.gbar_kdr = params[3] * 0.1 * self.cell_area
         elif params_len == 5:
-            self.gbar_nap = params[0] * self.cell_area
-            self.gbar_leak = params[1] * self.cell_area
-            self.gbar_nat = params[2] * self.cell_area
-            self.gbar_kdr = params[3] * self.cell_area
-            self.gbar_hcn = params[4] * self.cell_area
+            self.gbar_nap = params[0] * 0.1 * self.cell_area
+            self.gbar_leak = params[1] * 0.1 * self.cell_area
+            self.gbar_nat = params[2] * 0.1 * self.cell_area
+            self.gbar_kdr = params[3] * 0.1 * self.cell_area
+            self.gbar_hcn = params[4] * 0.1 * self.cell_area
         elif params_len == 14:
-            self.gbar_nap = params[0] * self.cell_area
-            self.gbar_leak = params[1] * self.cell_area
-            self.gbar_nat = params[2] * self.cell_area
-            self.gbar_kdr = params[3] * self.cell_area
-            self.gbar_hcn = params[4] * self.cell_area
+            self.gbar_nap = params[0] * 0.1 * self.cell_area
+            self.gbar_leak = params[1] * 0.1 * self.cell_area
+            self.gbar_nat = params[2] * 0.1 * self.cell_area
+            self.gbar_kdr = params[3] * 0.1 * self.cell_area
+            self.gbar_hcn = params[4] * 0.1 * self.cell_area
             self.nap_m['vs'] = params[5]
             self.nap_m['tau_max'] = params[6]
             self.nap_h['vs'] = params[7]
