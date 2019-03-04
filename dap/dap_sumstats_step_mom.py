@@ -106,7 +106,6 @@ class DAPSummaryStatsStepMoments(BaseSummaryStats):
             std_pw = np.concatenate((np.ones(1),std_pw))
             moments = spstats.moment(x['data'][(t > t_on) & (t < t_off)], np.linspace(2,self.n_mom,self.n_mom-1))/std_pw
 
-            print('spikes:', spikes)
 
             sum_stats_vec = np.concatenate((
                     np.array([rest_pot,rest_pot_std,np.mean(x['data'][(t > t_on) & (t < t_off)]), spikes]),

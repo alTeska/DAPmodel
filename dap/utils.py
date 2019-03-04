@@ -62,7 +62,6 @@ def obs_params_gbar(reduced_model=True):
         true_params = np.array([gbar_nap, gbar_leak, gbar_nat, gbar_kdr, gbar_hcn])
         labels_params = ['gbar_nap', 'gbar_leak', 'gbar_nat', 'gbar_kdr', 'gbar_hcn']
 
-
     return true_params*10, labels_params
 
 
@@ -77,26 +76,31 @@ def obs_params(reduced_model=True):
     """
 
     if reduced_model:
-        params = np.zeros(2)
-        params[0] = 0.01527  # gbar_nap
-        params[1] = 16.11    # nap_m['vs']
-        labels = ['gbar_nap', 'nap_m_vs']
-    else:
-        params = np.zeros(10)
-        params[0] = 0.01527  # gbar_nap
-        params[1] = 16.11    # nap_m['vs']
-        params[2] = 15.332   # nap_m['tau_max']
-        params[3] =-19.19    # nap_h['vs']
-        params[4] = 13.659   # nap_h['tau_max']
-        params[5] =-30.94    # nat_m['vh']
-        params[6] =-60.44    # nat_h['vh']
-        params[7] = 11.99    # nat_m['vs']
-        params[8] =-13.17    # nat_h['vs']
-        params[9] = 18.84    # kdr_n['vs']
-        labels = ['gbar_nap', 'nap_m_vs', 'nap_m_tau_max', 'nap_h_vs',
-                  'nap_h_tau_max', 'nat_m_vh', 'nat_h_vh', 'nat_m_vs',
-                  'nat_h_vs', 'krd_n']
+        params = np.zeros(5)
+        params[0] = 0.01527  * 10  # (S/cm2)
+        params[1] = 0.000430 * 10  # (S/cm2)
+        params[2] = 0.142    * 10  # (S/cm2)
+        params[3] = 0.00313  * 10  # (S/cm2)
+        params[4] = 5e-05    * 10  # (S/cm2)
 
+        labels = ['gbar_nap', 'gbar_leak', 'gbar_nat', 'gbar_kdr', 'gbar_hcn']
+    else:
+        params = np.zeros(11)
+        params[0] = 0.01527  * 10  # (S/cm2)
+        params[1] = 0.000430 * 10  # (S/cm2)
+        params[2] = 0.142    * 10  # (S/cm2)
+        params[3] = 0.00313  * 10  # (S/cm2)
+        params[4] = 5e-05    * 10  # (S/cm2)
+
+        params[5] = 13.659   # nap_h['tau_max']
+        params[6] =-19.19    # nap_h['vs']
+        params[7] = 15.332   # nap_m['tau_max']
+        params[8] = 16.11    # nap_m['vs']
+        params[9] = 21.286   # kdr_n['tau_max']
+        params[10] = 18.84   # kdr_n['vs']
+        labels = ['gbar_nap', 'gbar_leak', 'gbar_nat', 'gbar_kdr', 'gbar_hcn',
+                  'nap_h_tau_max', 'nap_h_vs', 'nap_m_tau_max', 'nap_m_vs',
+                  'kdr_n_tau_max', 'kdr_n_vs']
 
     return params, labels
 
