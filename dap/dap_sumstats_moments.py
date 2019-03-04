@@ -1,18 +1,21 @@
 import numpy as np
 from scipy import stats as spstats
-# from scipy.signal import argrelmin, argrelmax
-
 from delfi.summarystats.BaseSummaryStats import BaseSummaryStats
+
 
 class DAPSummaryStatsMoments(BaseSummaryStats):
     """SummaryStats class for the DAP model
 
-    Calculates summary statistics of AP/DAP:
-    AP_amp, AP_width, DAP_amp, DAP_width, DAP_deflection, DAP_time
+    Calculates summary statistics of AP/DAP with ramp function:
+    Summary statistics based on statistical moments of the signal. Features
+    here consist of moments calculated with spstats function of given order
+    (means, std, skewness etc.) and autocorrelation of the signal.
 
-    Version excluding the analyze_APs file, recalculates the values
+    Two moments for single AP are calculated: for AP and DAP timing (purposely
+    chosen window).
+
     """
-    def __init__(self, t_on, t_off,n_mom = 5, n_xcorr = 4, n_summary=2, seed=None):
+    def __init__(self, t_on, t_off,n_mom=5, n_xcorr=4, n_summary=2, seed=None):
         """See SummaryStats.py for docstring"""
         super(DAPSummaryStatsMoments, self).__init__(seed=seed)
         self.t_on = t_on
@@ -87,13 +90,6 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
             v_AP  = v_dap[(t >= t_on) & (t <= t_off+1)]
             v_DAP = v_dap[(t > t_off+1) & (t < 100)]
 
-            # import matplotlib.pyplot as plt
-            # fig, ax = plt.subplots(1,3)
-            # ax[0].plot(v_all)
-            # ax[1].plot(v_AP)
-            # ax[2].plot(v_DAP)
-            # plt.show(   )
-
             std_pw_AP = np.power(np.std(v_AP), np.linspace(3,self.n_mom,self.n_mom-2))
             std_pw_AP = np.concatenate((np.ones(1),std_pw_AP))
             moments_AP = spstats.moment(v_AP, np.linspace(2,self.n_mom,self.n_mom-1))/std_pw_AP
@@ -102,6 +98,7 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
             std_pw_DAP = np.concatenate((np.ones(1),std_pw_DAP))
             moments_DAP = spstats.moment(v_DAP, np.linspace(2,self.n_mom,self.n_mom-1))/std_pw_DAP
 
+
             # concatenation of summary statistics
             # try:
             sum_stats_vec = np.concatenate((
@@ -109,7 +106,6 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
                     x_corr1,
                     moments_AP,
                     moments_DAP,
-                    # spikes,
                 ))
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
