@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 from dap.dap_simulator import DAPSimulator
 from dap.utils import obs_params_gbar, syn_current

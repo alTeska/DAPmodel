@@ -1,45 +1,15 @@
 import time
-import numpy as np
 import matplotlib.pyplot as plt
+
 from dap import DAP, DAPBe, DAPExp, DAPFeExp
-from dap.utils import obs_params, syn_current
-from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, get_i_inj_from_function,
-                                    get_v_and_t_from_heka, shift_v_rest, get_i_inj_zap)
-
-
-def load_current(data_dir, protocol='rampIV', ramp_amp=3.1):
-    '''
-    ramp_amp:  optimal=3.1, steps of 0.05 -0.15
-    protocol: 'rampIV', 'IV', 'Zap20'
-
-    '''
-    v_shift = -16  # shift for accounting for the liquid junction potential
-
-    if protocol == 'Zap20':
-        sweep_idx = 0
-    else:
-        sweep_idx = get_sweep_index_for_amp(ramp_amp, protocol)
-
-    v, t = get_v_and_t_from_heka(data_dir, protocol, sweep_idxs=[sweep_idx])
-    v = shift_v_rest(v[0], v_shift)
-    t = t[0]
-    dt = t[1] - t[0]
-
-    I, _ = get_i_inj_from_function(protocol, [sweep_idx], t[-1], dt,
-                                              return_discontinuities=True)
-    I = I[0]
-
-    return I, t, dt
-
-
-data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
-# data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
+from dap.utils import obs_params_gbar, syn_current
 
 time_start = time.clock()
 
-# load the data
-I, t, dt = load_current(data_dir, protocol='rampIV', ramp_amp=3.1)
-params, labels = obs_params()
+dt = 1e-2
+params, labels = obs_params_gbar(reduced_model=True)
+
+I, t, t_on, t_off = syn_current(duration=150, dt=dt)
 
 # define models
 dap = DAP(-75, params)
@@ -47,11 +17,19 @@ dap_exp = DAPExp(-75, params)
 dap_feexp = DAPFeExp(-75, params)
 dap_be = DAPBe(-75, params)
 
-# run model
-DAPdict = dap.simulate(dt, t, I, channels=True)
-DAPexpDict = dap_exp.simulate(dt, t, I, channels=True)
-DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True)
-DAPbeDict = dap_be.simulate(dt, t, I, channels=True)
+# run models
+DAPdict = dap.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
+DAPexpDict = dap_exp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
+DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
+DAPbeDict = dap_be.simulate(dt, t, I, channels=True, noise=False, noise_fact=1e-1)
+
+sum_stats_dict = DAPSummaryStatsDict(t_on, t_off, n_summary=8)
+sum_stats = DAPSummaryStats(t_on, t_off, n_summary=8)
+
+x_o =  {'data': DAPbeDict['U'],
+        'time': t,
+        'dt': dt,
+        'I': I}
 
 time_end = time.clock()
 print('time elapsed:', time_end - time_start)
@@ -75,6 +53,7 @@ ax[3][0].set_title('Backward Euler')
 ax[3][0].grid()
 
 ax[4][0].plot(t, I);
+
 
 # plot activation functions
 ax[0][1].plot(t, DAPdict['M_nap'], label='M_nap');

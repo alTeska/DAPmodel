@@ -1,15 +1,44 @@
 # model based on lfimodels library by Jan-Matthis Lückmann
 import numpy as np
 import delfi.distribution as dd
-from delfi.summarystats import Identity
 
-from dap import DAP, DAPBe
+from dap import DAPcython
 from .dap_simulator import DAPSimulator
 from .dap_sumstats import DAPSummaryStats
 from .dap_sumstats_dict import DAPSummaryStatsDict
 from .dap_sumstats_moments import DAPSummaryStatsMoments
 
-from delfi.summarystats import Identity
+
+from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, shift_v_rest,
+                                        get_i_inj_from_function,
+                                        get_v_and_t_from_heka)
+
+
+def load_current(data_dir, protocol='rampIV', ramp_amp=3.1):
+    '''
+    Loads the current from recorded dataset.abs
+
+    protocol: 'rampIV', 'IV', 'Zap20'
+    ramp_amp:   steps of 0.05 -0.15
+
+    * ramp_amp for rampIV=3.1, ramp_amp for 'IV'=1
+    '''
+    v_shift = -16  # shift for accounting for the liquid junction potential
+
+    if protocol == 'Zap20':
+        sweep_idx = 0
+    else:
+        sweep_idx = get_sweep_index_for_amp(ramp_amp, protocol)
+
+    v, t = get_v_and_t_from_heka(data_dir, protocol, sweep_idxs=[sweep_idx])
+    v = shift_v_rest(v[0], v_shift)
+    t = t[0]
+    dt = t[1] - t[0]
+
+    I, t_on, t_off = get_i_inj_from_function(protocol, [sweep_idx], t[-1], dt,
+                                             return_discontinuities=False)
+
+    return I[0], v, t, t_on, t_off, dt
 
 
 def obs_params_gbar(reduced_model=True):
@@ -98,7 +127,7 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1
     """Summary stats for x_o of DAP"""
 
     if data is None:
-        m = DAP(I=I, dt=dt, V0=V0, seed=seed)
+        m = DAPcython(I=I, dt=dt, V0=V0, seed=seed)
         data = m.gen_single(params)
 
     if summary_stats == 0:

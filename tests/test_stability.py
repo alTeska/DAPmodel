@@ -1,9 +1,11 @@
+# TODO proper stability testing
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 from dap import DAP, DAPBe
 from dap import DAPcython
-from dap.utils import obs_params, syn_current
+from dap.utils import obs_params_gbar, syn_current
 
 
 # ranges to be tested:
@@ -22,7 +24,7 @@ gbar_range = np.arange(0, 0.5, 0.1)
 print(gbar_range)
 
 dt = 1e-2
-params, labels = obs_params()
+params, labels = obs_params_gbar()
 I, t, t_on, t_off = syn_current(duration=120, dt=dt)
 
 for r in gbar_range:

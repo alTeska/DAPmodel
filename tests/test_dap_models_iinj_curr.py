@@ -1,19 +1,17 @@
 import time
-import numpy as np
 import matplotlib.pyplot as plt
-
 from dap import DAP, DAPBe, DAPExp, DAPFeExp
-from dap.utils import obs_params, syn_current
-from dap.dap_sumstats_dict import DAPSummaryStatsDict
-from dap.dap_sumstats import DAPSummaryStats
+from dap.utils import load_current, obs_params_gbar
+
+
+data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
+# data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
 
 time_start = time.clock()
 
-dt = 1e-2
-params, labels = obs_params(reduced_model=True)
-# params = np.array([5, 0.4])  # for stability test
-
-I, t, t_on, t_off = syn_current(duration=150, dt=dt)
+# load the data
+I, v, t, t_on, t_off, dt = load_current(data_dir, protocol='rampIV', ramp_amp=3.1)
+params, labels = obs_params_gbar()
 
 # define models
 dap = DAP(-75, params)
@@ -21,22 +19,11 @@ dap_exp = DAPExp(-75, params)
 dap_feexp = DAPFeExp(-75, params)
 dap_be = DAPBe(-75, params)
 
-# run models
-DAPdict = dap.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
-DAPexpDict = dap_exp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
-DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
-DAPbeDict = dap_be.simulate(dt, t, I, channels=True, noise=False, noise_fact=1e-1)
-
-sum_stats_dict = DAPSummaryStatsDict(t_on, t_off, n_summary=8)
-sum_stats = DAPSummaryStats(t_on, t_off, n_summary=8)
-x_o =  {'data': DAPbeDict['U'],
-        'time': t,
-        'dt': dt,
-        'I': I}
-# print('summary stats:', sum_stats_dict.calc([x_o]))
-print('summary stats A:', sum_stats.calc([x_o]))
-# print('ss diff:', sum_stats_dict.calc([x_o]) - sum_stats.calc([x_o]), '\n')
-
+# run model
+DAPdict = dap.simulate(dt, t, I, channels=True)
+DAPexpDict = dap_exp.simulate(dt, t, I, channels=True)
+DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True)
+DAPbeDict = dap_be.simulate(dt, t, I, channels=True)
 
 time_end = time.clock()
 print('time elapsed:', time_end - time_start)
@@ -60,7 +47,6 @@ ax[3][0].set_title('Backward Euler')
 ax[3][0].grid()
 
 ax[4][0].plot(t, I);
-
 
 # plot activation functions
 ax[0][1].plot(t, DAPdict['M_nap'], label='M_nap');

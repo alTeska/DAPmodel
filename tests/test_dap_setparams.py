@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from dap import DAP, DAPBe
 from dap import DAPcython
