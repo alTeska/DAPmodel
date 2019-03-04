@@ -159,7 +159,7 @@ class DAPBase(object):
     def setparams(self, params):
         '''
         Function used to set up the expected parameters, expected lenghts
-        are 2 or 10 (can be extended to 14)
+        are range from 1 to 5 and can be extended to 11.
         '''
         #TODO: adapt this to use setattr
         params_len = np.size(params)
@@ -184,23 +184,20 @@ class DAPBase(object):
             self.gbar_nat = params[2] * 0.1 * self.cell_area
             self.gbar_kdr = params[3] * 0.1 * self.cell_area
             self.gbar_hcn = params[4] * 0.1 * self.cell_area
-        elif params_len == 14:
+        elif params_len == 11:
             self.gbar_nap = params[0] * 0.1 * self.cell_area
             self.gbar_leak = params[1] * 0.1 * self.cell_area
             self.gbar_nat = params[2] * 0.1 * self.cell_area
             self.gbar_kdr = params[3] * 0.1 * self.cell_area
             self.gbar_hcn = params[4] * 0.1 * self.cell_area
-            self.nap_m['vs'] = params[5]
-            self.nap_m['tau_max'] = params[6]
-            self.nap_h['vs'] = params[7]
-            self.nap_h['tau_max'] = params[8]
-            self.nat_m['vh'] = params[9]
-            self.nat_h['vh'] = params[10]
-            self.nat_m['vs'] = params[11]
-            self.nat_h['vs'] = params[12]
-            self.kdr_n['vs'] = params[13]
+            self.nap_h['tau_max'] = params[5]
+            self.nap_h['vs'] = params[6]
+            self.nap_m['tau_max'] = params[7]
+            self.nap_m['vs'] = params[8]
+            self.kdr_n['tau_max'] = params[9]
+            self.kdr_n['vs'] = params[10]
         else:
-            raise ValueError('You can only provide 1, 2, 3, 4, 5 or 14 parameters!')
+            raise ValueError('You can only provide 1, 2, 3, 4, 5 or 11 parameters!')
 
 
     def set_attribute(self, key, value):

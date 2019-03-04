@@ -61,7 +61,7 @@ def setnoisefactor(double x):
 def setparams(params):
     '''
     Function used to set up the expected parameters, expected lenghts
-    are 2 or 10 (can be extended to 14)
+    are range from 1 to 5 and can be extended to 11.
     '''
     global gbar_nap, nap_m, nap_h, nat_m, nat_h, gbar_leak, gbar_nat, gbar_kdr, gbar_hcn
     params_len = np.size(params)
@@ -86,24 +86,20 @@ def setparams(params):
         gbar_nat = params[2] * 0.1 * cell_area
         gbar_kdr = params[3] * 0.1 * cell_area
         gbar_hcn = params[4] * 0.1 * cell_area
-    elif params_len == 14:
+    elif params_len == 11:
         gbar_nap = params[0] * 0.1 * cell_area
         gbar_leak = params[1] * 0.1 * cell_area
         gbar_nat = params[2] * 0.1 * cell_area
         gbar_kdr = params[3] * 0.1 * cell_area
         gbar_hcn = params[4] * 0.1 * cell_area
-        nap_m['vs'] = params[5]
-        nap_m['tau_max'] = params[6]
-        nap_h['vs'] = params[7]
-        nap_h['tau_max'] = params[8]
-        nat_m['vh'] = params[9]
-        nat_h['vh'] = params[10]
-        nat_m['vs'] = params[11]
-        nat_h['vs'] = params[12]
-        kdr_n['vs'] = params[13]
+        nap_h['tau_max'] = params[5]
+        nap_h['vs'] = params[6]
+        nap_m['tau_max'] = params[7]
+        nap_m['vs'] = params[8]
+        kdr_n['tau_max'] = params[9]
+        kdr_n['vs'] = params[10]
     else:
-        raise ValueError('You can only provide 1, 2, 3, 4, 5 or 14 parameters!')
-
+        raise ValueError('You can only provide 1, 2, 3, 4, 5 or 11 parameters!')
 
 # model integration
 @cython.cdivision(True)

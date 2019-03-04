@@ -65,7 +65,7 @@ def obs_params_gbar(reduced_model=True):
     return true_params*10, labels_params
 
 
-def obs_params(reduced_model=True):
+def obs_params(reduced_model=False):
     """
     Parameters for x_o, two optionss: either 2 params (reduced_model=True) or 10
     Returns
