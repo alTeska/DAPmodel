@@ -34,7 +34,7 @@ def obs_params_gbar(reduced_model=True):
         labels_params = ['gbar_nap', 'gbar_leak', 'gbar_nat', 'gbar_kdr', 'gbar_hcn']
 
 
-    return true_params, labels_params
+    return true_params*10, labels_params
 
 
 def obs_params(reduced_model=True):
