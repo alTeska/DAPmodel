@@ -1,13 +1,13 @@
 import time
 import matplotlib.pyplot as plt
-
 from dap import DAP, DAPBe, DAPExp, DAPFeExp
-from dap.utils import obs_params_gbar, syn_current
+from dap.utils import obs_params_gbar, obs_params, syn_current
 
 time_start = time.clock()
 
 dt = 1e-2
-params, labels = obs_params_gbar(reduced_model=True)
+# params, labels = obs_params_gbar(reduced_model=True)
+params, labels = obs_params(reduced_model=False)
 
 I, t, t_on, t_off = syn_current(duration=150, dt=dt)
 
@@ -23,8 +23,6 @@ DAPexpDict = dap_exp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e
 DAPfexpDict = dap_feexp.simulate(dt, t, I, channels=True, noise=True, noise_fact=1e-1)
 DAPbeDict = dap_be.simulate(dt, t, I, channels=True, noise=False, noise_fact=1e-1)
 
-sum_stats_dict = DAPSummaryStatsDict(t_on, t_off, n_summary=8)
-sum_stats = DAPSummaryStats(t_on, t_off, n_summary=8)
 
 x_o =  {'data': DAPbeDict['U'],
         'time': t,
