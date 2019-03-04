@@ -22,19 +22,13 @@ class DAPSummaryStats(BaseSummaryStats):
         self.t_off = t_off
         self.n_summary = n_summary
 
-        data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
-        protocol = 'rampIV' # 'IV' # 'rampIV' # 'Zap20'
-        ramp_amp = 3.1 # steps of 0.05 -0.15
-        v_shift = -16  # shift for accounting for the liquid junction potential
+        data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'
+        I, v, t, t_on, t_off, dt = load_current(data_dir,
+                                                protocol='rampIV',
+                                                ramp_amp=3.1)
 
-        if protocol == 'Zap20':
-            sweep_idx = 0
-        else:
-            sweep_idx = get_sweep_index_for_amp(ramp_amp, protocol)
-
-        self.v0, self.t = get_v_and_t_from_heka(data_dir, protocol, sweep_idxs=[sweep_idx])
-        self.v0 = shift_v_rest(self.v0[0], v_shift)
-
+        self.t = t
+        self.v0 = v
 
     def calc(self, repetition_list):
         """Calculate summary statistics
@@ -71,13 +65,10 @@ class DAPSummaryStats(BaseSummaryStats):
             # rmse = np.linalg.norm(v - self.v0) / np.sqrt(n)
 
 
-            # print(np.shape(np.where(v > 0))[1])
             # more then one AP:
             multiple_AP = np.shape(np.where(v > 0))[1]
 
             #case without any action potential or more then one AP
-
-            # if (np.all(v <= 20)) or (multiple_AP > 100):
             if (np.all(v <= 20)):
                 AP_onsets = 999
                 AP_amp = 999
@@ -88,13 +79,6 @@ class DAPSummaryStats(BaseSummaryStats):
                 DAP_time = 999
                 mAHP = 999
                 fAHP = 999
-
-                # # TODO: TEMPORARY to be removed
-                # AP_max_idx = 1
-                # fAHP_idx = 1
-                # mAHP_idx = 1
-                # DAP_max_idx = 1
-                # DAP_width_idx = 1
 
             else:
                 threshold = -30
@@ -116,8 +100,6 @@ class DAPSummaryStats(BaseSummaryStats):
 
                 # DAP: fAHP
                 v_dap = v[AP_max_idx:]
-                # if np.any(v_dap < rest_pot):
-                # print(np.any(v_dap < rest_pot))
 
                 fAHP_idx = argrelmin(v[AP_max_idx:])[0][0] + AP_max_idx
                 fAHP = v[fAHP_idx]
@@ -152,23 +134,9 @@ class DAPSummaryStats(BaseSummaryStats):
                             DAP_deflection,
                             DAP_time,
                             mAHP,
-                            # rmse,
                             ])
-
-            # sum_stats_vec_inx = np.array([
-            #                 AP_max_idx,
-            #                 fAHP_idx,
-            #                 mAHP_idx,
-            #                 DAP_max_idx,
-            #                 DAP_width_idx,
-            #                 ])
-
 
             sum_stats_vec = sum_stats_vec[0:self.n_summary]
             stats.append(sum_stats_vec)
-            # stats_idx.append(sum_stats_vec_inx)
-
-            # np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
-            # print('s', sum_stats_vec)
 
         return np.asarray(stats)
