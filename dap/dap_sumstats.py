@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.signal import argrelmin, argrelmax
 
-from .cell_fitting.read_heka import get_sweep_index_for_amp, get_i_inj_from_function, get_v_and_t_from_heka, shift_v_rest
 from dap.analyze_APs import get_spike_characteristics,  get_spike_characteristics_dict
+from dap.utils import load_current
 
 from delfi.summarystats.BaseSummaryStats import BaseSummaryStats
 
@@ -62,7 +62,7 @@ class DAPSummaryStats(BaseSummaryStats):
 
             # RMSE
             n = len(self.v0)
-            # rmse = np.linalg.norm(v - self.v0) / np.sqrt(n)
+            rmse = np.linalg.norm(v - self.v0) / np.sqrt(n)
 
 
             # more then one AP:

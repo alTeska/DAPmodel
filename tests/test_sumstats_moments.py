@@ -2,8 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from dap.dap_sumstats_moments import DAPSummaryStatsMoments
 from dap import DAPcython
-from dap.utils import obs_params_gbar, load_current
-np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
+gginp.set_printoptions(formatter={'float': '{: 0.2f}'.format})
 
 
 data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell

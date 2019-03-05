@@ -4,7 +4,6 @@ import delfi.distribution as dd
 
 from dap import DAPcython
 from .dap_simulator import DAPSimulator
-from .dap_sumstats import DAPSummaryStats
 from .dap_sumstats_moments import DAPSummaryStatsMoments
 from dap.cell_fitting.read_heka import (get_sweep_index_for_amp, shift_v_rest,
                                         get_i_inj_from_function,
@@ -123,7 +122,7 @@ def syn_obs_data(I, dt, params, V0=-75, seed=None):
     return m.gen_single(params)
 
 
-def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1, n_xcorr=5,
+def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=0, n_xcorr=5,
                   n_mom=5, n_summary=4, seed=None):
     """Summary stats for x_o of DAP"""
 
@@ -132,8 +131,6 @@ def syn_obs_stats(I, params, dt, t_on, t_off, data=None, V0=-75, summary_stats=1
         data = m.gen_single(params)
 
     if summary_stats == 0:
-        s = DAPSummaryStats(t_on, t_off, n_summary=n_summary)
-    elif summary_stats == 1:
         s = DAPSummaryStatsMoments(t_on, t_off, n_summary=n_summary)
     else:
         raise ValueError('Only 0, 1 as an option for summary statistics.')
