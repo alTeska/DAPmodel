@@ -41,7 +41,7 @@ class DAPSimulator(BaseSimulator):
         self.init = [V0]
 
 
-    def gen_single(self, params, integration='Backward'):
+    def gen_single(self, params):
         """Forward model for simulator for single parameter set
 
         Parameters
@@ -62,18 +62,6 @@ class DAPSimulator(BaseSimulator):
         dap_seed = self.gen_newseed()
 
         dap = DAPcython(self.init, params, seed=dap_seed)
-
-        # if integration == 'Backward':
-        #     dap = DAPBe(self.init, params, seed=dap_seed)
-        # elif integration == 'Forward':
-        #     dap = DAP(self.init, params, seed=dap_seed)
-        # elif integration == 'Exponential':
-        #     dap = DAPExp(self.init, params, seed=dap_seed)
-        # elif integration == 'ForwardExponential':
-        #     dap = DAPFeExp(self.init, params, seed=dap_seed)
-        # else:
-        #     ValueError("No such integration avalibe, try Backward")
-
         states = dap.simulate(self.dt, self.t, self.I)
 
         return {'data': states.reshape(-1),
