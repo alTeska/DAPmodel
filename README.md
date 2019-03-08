@@ -45,8 +45,8 @@ U = dap.simulate(dt, t, I)
 ## Currents Visualization
 <figure>
 <p align="center">
-    <img src="/img/ramp.png" width="50%">
-    <img src="/img/step_current.png" width="50%">
+    <img src="/img/ramp.png" width="45%">
+    <img src="/img/step_current.png" width="45%">
 </p>
 </figure>
 
