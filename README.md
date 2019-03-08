@@ -23,7 +23,7 @@ The repo has additional object to ease the integration into inference methods: <
 Experimental data is not attached to this repository, however it contains multiple cell recordings with variety of 3 currents: <i>ramp, step</i> and <i>Zap20</i> (changing its frequency sinusoid).
 
 ## Data Analysis and Inference
-The model stored in this repository is connected to the application of Data Inference onto it, in order to find best fit of parameters that can represent the real cell recorded data. Used scripts can be found in [DAP_analysis](https://github.com/alTeska/DAP_analysis) repository. 
+The model stored in this repository is connected to the application of Data Inference onto it, in order to find best fit of parameters that can represent the real cell recorded data. Used scripts can be found in [DAP_analysis](https://github.com/alTeska/DAP_analysis) repository.
 
 ## Example of Use
 
@@ -42,7 +42,13 @@ dap = DAPcython(-75, params, solver=1)
 # run models
 U = dap.simulate(dt, t, I)
 ```
-
+## Currents Visualization
+<figure>
+<p align="center">
+    <img src="/img/ramp.png" width="50%">
+    <img src="/img/step_current.png" width="50%">
+</p>
+</figure>
 
 ## License
 
