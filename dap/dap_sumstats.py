@@ -61,8 +61,8 @@ class DAPSummaryStats(BaseSummaryStats):
             rest_pot_std = np.std(v[int(.9*t_on/dt):int(t_on/dt)])   # TODO: add if needed
 
             # RMSE
-            n = len(self.v0)
-            rmse = np.linalg.norm(v - self.v0) / np.sqrt(n)
+            # n = len(self.v0)
+            # rmse = np.linalg.norm(v - self.v0) / np.sqrt(n)
 
 
             # more then one AP:
