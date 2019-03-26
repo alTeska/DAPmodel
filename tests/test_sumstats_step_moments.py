@@ -37,6 +37,8 @@ sum_stats = DAPSummaryStatsStepMoments(t_on, t_off, n_summary=17)
 
 print('summary stats real:', sum_stats.calc([x_o]))
 print('summary stats synt:', sum_stats.calc([x_1]))
+print('summary stats real:', np.size(sum_stats.calc([x_o])))
+print('summary stats synt:', np.size(sum_stats.calc([x_1])))
 
 # vizualize solution
 fig, ax = plt.subplots(1,1, figsize=(10, 5))

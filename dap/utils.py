@@ -104,10 +104,10 @@ def obs_params(reduced_model=False):
 
 def syn_current(duration=200, dt=0.01, t_on=55, t_off=60, amp=3.1, seed=None, on_off=False):
     """Simulation of triangular current"""
-    t = np.arange(0, duration+dt, dt)
+    t = np.arange(0, duration, dt)
     I = np.zeros_like(t)
 
-    stim = len(I[int(np.round(t_on/dt)):int(np.round(t_off/dt))])
+    stim = len(I[int(np.round(t_on/dt)):int(np.floor(t_off/dt))])
 
     i_up = np.linspace(0, amp, (stim/2))
     i_down = np.linspace(amp, 0, (stim/2))
