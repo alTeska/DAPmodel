@@ -101,7 +101,7 @@ def obs_params(reduced_model=False):
 
     return params, labels
 
-def load_prior_ranges():
+def load_prior_ranges(n_params=-1):
     """Returns ranges of parameters narrowed down based on best 3500 models"""
 
     labels = ['gbar_nap', 'gbar_leak', 'gbar_nat', 'gbar_kdr', 'gbar_hcn',
@@ -116,7 +116,7 @@ def load_prior_ranges():
     prior_max = np.array((0.027263, 0.02, 0.261845, 0.004325, 0.000065,
                       25.651677, -7.194925, 27.320601, 28.028747, 33.284546))
 
-    return prior_min, prior_max, labels
+    return prior_min[:n_params], prior_max[:n_params], labels[:n_params]
 
 
 def syn_current(duration=200, dt=0.01, t_on=55, t_off=60, amp=3.1, seed=None, on_off=False):
