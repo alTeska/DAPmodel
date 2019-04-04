@@ -67,31 +67,31 @@ def setparams(params):
     params_len = np.size(params)
 
     if params_len == 1:
-        gbar_nap = params[0] * 0.1 * cell_area
+        gbar_nap = params[0] * 0.001 * cell_area
     elif params_len == 2:
-        gbar_nap = params[0] * 0.1 * cell_area
-        gbar_leak = params[1] * 0.1 * cell_area
+        gbar_nap = params[0] * 0.001 * cell_area
+        gbar_leak = params[1] * 0.001 * cell_area
     elif params_len == 3:
-        gbar_nap = params[0] * 0.1 * cell_area
-        gbar_leak = params[1] * 0.1 * cell_area
-        gbar_nat = params[2] * 0.1 * cell_area
+        gbar_nap = params[0] * 0.001 * cell_area
+        gbar_leak = params[1] * 0.001 * cell_area
+        gbar_nat = params[2] * 0.001 * cell_area
     elif params_len == 4:
-        gbar_nap = params[0] * 0.1 * cell_area
-        gbar_leak = params[1] * 0.1 * cell_area
-        gbar_nat = params[2] * 0.1 * cell_area
-        gbar_kdr = params[3] * 0.1 * cell_area
+        gbar_nap = params[0] * 0.001 * cell_area
+        gbar_leak = params[1] * 0.001 * cell_area
+        gbar_nat = params[2] * 0.001 * cell_area
+        gbar_kdr = params[3] * 0.001 * cell_area
     elif params_len == 5:
-        gbar_nap = params[0] * 0.1 * cell_area
-        gbar_leak = params[1] * 0.1 * cell_area
-        gbar_nat = params[2] * 0.1 * cell_area
-        gbar_kdr = params[3] * 0.1 * cell_area
-        gbar_hcn = params[4] * 0.1 * cell_area
+        gbar_nap = params[0] * 0.001 * cell_area
+        gbar_leak = params[1] * 0.001 * cell_area
+        gbar_nat = params[2] * 0.001 * cell_area
+        gbar_kdr = params[3] * 0.001 * cell_area
+        gbar_hcn = params[4] * 0.001 * cell_area
     elif params_len == 11:
-        gbar_nap = params[0] * 0.1 * cell_area
-        gbar_leak = params[1] * 0.1 * cell_area
-        gbar_nat = params[2] * 0.1 * cell_area
-        gbar_kdr = params[3] * 0.1 * cell_area
-        gbar_hcn = params[4] * 0.1 * cell_area
+        gbar_nap = params[0] * 0.001 * cell_area
+        gbar_leak = params[1] * 0.001 * cell_area
+        gbar_nat = params[2] * 0.001 * cell_area
+        gbar_kdr = params[3] * 0.001 * cell_area
+        gbar_hcn = params[4] * 0.001 * cell_area
         nap_h['tau_max'] = params[5]
         nap_h['vs'] = params[6]
         nap_m['tau_max'] = params[7]

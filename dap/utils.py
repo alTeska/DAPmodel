@@ -74,20 +74,20 @@ def obs_params(reduced_model=False):
 
     if reduced_model:
         params = np.zeros(5)
-        params[0] = 0.01527  * 10  # (S/cm2)
-        params[1] = 0.000430 * 10  # (S/cm2)
-        params[2] = 0.142    * 10  # (S/cm2)
-        params[3] = 0.00313  * 10  # (S/cm2)
-        params[4] = 5e-05    * 10  # (S/cm2)
+        params[0] = 0.01527  * 1000  # (S/cm2)
+        params[1] = 0.000430 * 1000  # (S/cm2)
+        params[2] = 0.142    * 1000  # (S/cm2)
+        params[3] = 0.00313  * 1000  # (S/cm2)
+        params[4] = 5e-05    * 1000  # (S/cm2)
 
         labels = ['gbar_nap', 'gbar_leak', 'gbar_nat', 'gbar_kdr', 'gbar_hcn']
     else:
         params = np.zeros(11)
-        params[0] = 0.01527  * 10  # (S/cm2)
-        params[1] = 0.000430 * 10  # (S/cm2)
-        params[3] = 0.00313  * 10  # (S/cm2)
-        params[2] = 0.142    * 10  # (S/cm2)
-        params[4] = 5e-05    * 10  # (S/cm2)
+        params[0] = 0.01527  * 1000  # (S/cm2)
+        params[1] = 0.000430 * 1000  # (S/cm2)
+        params[3] = 0.00313  * 1000  # (S/cm2)
+        params[2] = 0.142    * 1000  # (S/cm2)
+        params[4] = 5e-05    * 1000  # (S/cm2)
 
         params[5] = 13.659   # nap_h['tau_max']
         params[6] =-19.19    # nap_h['vs']
@@ -108,12 +108,12 @@ def load_prior_ranges(n_params=-1):
               'nap_h_tau_max', 'nap_h_vs', 'nap_m_tau_max', 'nap_m_vs',
               'kdr_n_tau_max', 'kdr_n_vs']
 
-    prior_min = np.array((0.003274, 0.001, 0.021962, 0.001925, 0.000041,
+    prior_min = np.array((0.3274, 0.1, 2.1962, 0.1925, 0.0041,
                           1.662074, -31.186329, 3.384709, 4.124004, 9.287113,
                           6.848391))
 
 
-    prior_max = np.array((0.027263, 0.02, 0.261845, 0.004325, 0.000065,
+    prior_max = np.array((2.7263, 2, 26.1845, 0.4325, 0.0065,
                       25.651677, -7.194925, 27.320601, 28.028747, 33.284546))
 
     return prior_min[:n_params], prior_max[:n_params], labels[:n_params]
