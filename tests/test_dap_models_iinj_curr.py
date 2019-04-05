@@ -29,32 +29,32 @@ time_end = time.clock()
 print('time elapsed:', time_end - time_start)
 
 # plot voltage trace
-fig, ax = plt.subplots(ncols=2, nrows=5, figsize=(20, 10));
-ax[0][0].plot(t, DAPdict['U'], label='DAP');
+fig, ax = plt.subplots(ncols=2, nrows=5, figsize=(20, 10))
+ax[0][0].plot(t, DAPdict['U'], label='DAP')
 ax[0][0].set_title('Forward Euler')
 ax[0][0].grid()
 
-ax[1][0].plot(t, DAPexpDict['U'], label='DAPExp');
+ax[1][0].plot(t, DAPexpDict['U'], label='DAPExp')
 ax[1][0].set_title('Exp Euler')
 ax[1][0].grid()
 
-ax[2][0].plot(t, DAPfexpDict['U'], label='DAPExp2');
+ax[2][0].plot(t, DAPfexpDict['U'], label='DAPExp2')
 ax[2][0].set_title('Exp + Forward Euler')
 ax[2][0].grid()
 
-ax[3][0].plot(t, DAPbeDict['U'], label='DapBe');
+ax[3][0].plot(t, DAPbeDict['U'], label='DapBe')
 ax[3][0].set_title('Backward Euler')
 ax[3][0].grid()
 
-ax[4][0].plot(t, I);
+ax[4][0].plot(t, I)
 
 # plot activation functions
-ax[0][1].plot(t, DAPdict['M_nap'], label='M_nap');
-ax[0][1].plot(t, DAPdict['M_nat'], label='M_nat');
-ax[0][1].plot(t, DAPdict['H_nap'], label='H_nap');
-ax[0][1].plot(t, DAPdict['H_nat'], label='H_nat');
-ax[0][1].plot(t, DAPdict['N_hcn'], label='N_hcn');
-ax[0][1].plot(t, DAPdict['N_kdr'], label='N_kdr');
+ax[0][1].plot(t, DAPdict['M_nap'], label='M_nap')
+ax[0][1].plot(t, DAPdict['M_nat'], label='M_nat')
+ax[0][1].plot(t, DAPdict['H_nap'], label='H_nap')
+ax[0][1].plot(t, DAPdict['H_nat'], label='H_nat')
+ax[0][1].plot(t, DAPdict['N_hcn'], label='N_hcn')
+ax[0][1].plot(t, DAPdict['N_kdr'], label='N_kdr')
 ax[0][1].set_title('Forward Euler')
 ax[0][1].legend()
 
