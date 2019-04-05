@@ -45,11 +45,11 @@ def obs_params_gbar(reduced_model=True):
     true_params : array
     labels_params : list of str
     """
-    gbar_nap = 0.01527    # (S/cm2)
-    gbar_leak = 0.000430  # (S/cm2)
-    gbar_nat = 0.142      # (S/cm2)
-    gbar_kdr = 0.00313    # (S/cm2)
-    gbar_hcn = 5e-05      # (S/cm2)
+    gbar_nap = 0.01527   * 1000 # (S/cm2)
+    gbar_leak = 0.000430 * 1000 # (S/cm2)
+    gbar_nat = 0.142     * 1000 # (S/cm2)
+    gbar_kdr = 0.00313   * 1000 # (S/cm2)
+    gbar_hcn = 5e-05     * 1000 # (S/cm2)
 
     if reduced_model:
         true_params = np.array([gbar_nap, gbar_leak])

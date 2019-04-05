@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from dap import DAPcython
 from dap.dap_sumstats_step_mom import DAPSummaryStatsStepMoments
-from dap.utils import obs_params_gbar, load_current
+from dap.utils import obs_params, load_current
 np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
 
 
@@ -13,7 +13,7 @@ data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best
 I, v, t, t_on, t_off, dt = load_current(data_dir, protocol='IV', ramp_amp=1)
 
 # generate syntetic data
-params, labels = obs_params_gbar(reduced_model=True)
+params, labels = obs_params(reduced_model=True)
 
 dap = DAPcython(-75, params)
 U = dap.simulate(dt, t, I)
