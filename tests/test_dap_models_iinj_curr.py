@@ -1,7 +1,7 @@
 import time
 import matplotlib.pyplot as plt
 from dap import DAP, DAPBe, DAPExp, DAPFeExp
-from dap.utils import load_current, obs_params_gbar
+from dap.utils import load_current, obs_params
 
 
 data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
@@ -11,7 +11,7 @@ time_start = time.clock()
 
 # load the data
 I, v, t, t_on, t_off, dt = load_current(data_dir, protocol='rampIV', ramp_amp=3.1)
-params, labels = obs_params_gbar()
+params, labels = obs_params()
 
 # define models
 dap = DAP(-75, params)
