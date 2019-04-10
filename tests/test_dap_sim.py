@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 from dap.dap_simulator import DAPSimulator
-from dap.utils import obs_params_gbar, syn_current
+from dap.utils import obs_params, syn_current
 
 
-params, labels = obs_params_gbar()
+params, labels = obs_params()
 I, t, t_on, t_off = syn_current(duration=150, dt=0.01)
 
 # define model
