@@ -88,18 +88,18 @@ class DAPSummaryStatsStepMoments(BaseSummaryStats):
                ISI = np.diff(spike_times_stim)
                A_ind = np.mean( [ (ISI[i_min+1]-ISI[i_min])/(ISI[i_min+1]+ISI[i_min]) for i_min in range (0,ISI.shape[0]-1)] )
 
-            # auto-correlations
-            x_on_off = x['data'][(t > t_on) & (t < t_off)]-np.mean(x['data'][(t > t_on) & (t < t_off)])
-            x_corr_val = np.dot(x_on_off, x_on_off)
-
-            xcorr_steps = np.linspace(1./dt, self.n_xcorr*1./dt, self.n_xcorr).astype(int)
-            x_corr_full = np.zeros(self.n_xcorr)
-
-            for ii in range(self.n_xcorr):
-                x_on_off_part = np.concatenate((x_on_off[xcorr_steps[ii]:], np.zeros(xcorr_steps[ii])))
-                x_corr_full[ii] = np.dot(x_on_off,x_on_off_part)
-
-            x_corr1 = x_corr_full/x_corr_val
+            # # auto-correlations
+            # x_on_off = x['data'][(t > t_on) & (t < t_off)]-np.mean(x['data'][(t > t_on) & (t < t_off)])
+            # x_corr_val = np.dot(x_on_off, x_on_off)
+            # 
+            # xcorr_steps = np.linspace(1./dt, self.n_xcorr*1./dt, self.n_xcorr).astype(int)
+            # x_corr_full = np.zeros(self.n_xcorr)
+            # 
+            # for ii in range(self.n_xcorr):
+            #     x_on_off_part = np.concatenate((x_on_off[xcorr_steps[ii]:], np.zeros(xcorr_steps[ii])))
+            #     x_corr_full[ii] = np.dot(x_on_off,x_on_off_part)
+            # 
+            # x_corr1 = x_corr_full/x_corr_val
 
             # moments of the signal
             std_pw = np.power(np.std(x['data'][(t > t_on) & (t < t_off)]), np.linspace(3,self.n_mom,self.n_mom-2))
@@ -110,7 +110,7 @@ class DAPSummaryStatsStepMoments(BaseSummaryStats):
             sum_stats_vec = np.concatenate((
                     np.array([rest_pot,rest_pot_std,np.mean(x['data'][(t > t_on) & (t < t_off)]), spikes]),
                     np.array([spike_times_stim.shape[0]]),
-                    x_corr1,
+                    # x_corr1,
                     moments,
                     ISI1,
                 ))

@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from dap import DAPcython
 from dap.dap_sim_multi_protocol import DAPSimulatorMultiProtocol
+from dap.dap_sumstats_moments import DAPSummaryStatsMoments
+from dap.dap_sumstats_step_mom import DAPSummaryStatsStepMoments
 from dap.utils import obs_params, load_current
 
 np.set_printoptions(suppress=True, precision=2)
@@ -23,6 +26,15 @@ dap1 = DAPSimulatorMultiProtocol(I_all, dt_all, -75)
 # run model
 stats = dap1.gen_single(params, I_all[0], tr, dtr)
 data_list = dap1.gen(params_list)
+print(stats)
+print(data_list[0])
+
+# calcualte summary statistics
+sum_stats_step = DAPSummaryStatsStepMoments(t_ons, t_offs, n_summary=17)
+sum_stats_mom = DAPSummaryStatsMoments(t_onr, t_offr, n_summary=17)
+
+print('summary stats ramp:', sum_stats_mom.calc(data_list[0]))
+print('summary stats step:', sum_stats_step.calc(data_list[1]))
 
 
 # plot inputs

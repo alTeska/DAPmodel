@@ -75,16 +75,16 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
             # ind = np.where(v_dap > rest_pot)
             # v2 = v_dap[ind[0][0]:ind[0][-1]]
 
-            # normalize for autokorrelations
-            x_on_off = v_all - np.mean(v_all)
-            x_corr_val = np.dot(x_on_off,x_on_off)
-            xcorr_steps = np.linspace(1./dt,self.n_xcorr*1./dt,self.n_xcorr).astype(int)
-            x_corr_full = np.zeros(self.n_xcorr)
-            for ii in range(self.n_xcorr):
-                x_on_off_part = np.concatenate((x_on_off[xcorr_steps[ii]:],np.zeros(xcorr_steps[ii])))
-                x_corr_full[ii] = np.dot(x_on_off,x_on_off_part)
-
-            x_corr1 = x_corr_full/x_corr_val
+            # # normalize for autokorrelations
+            # x_on_off = v_all - np.mean(v_all)
+            # x_corr_val = np.dot(x_on_off,x_on_off)
+            # xcorr_steps = np.linspace(1./dt,self.n_xcorr*1./dt,self.n_xcorr).astype(int)
+            # x_corr_full = np.zeros(self.n_xcorr)
+            # for ii in range(self.n_xcorr):
+            #     x_on_off_part = np.concatenate((x_on_off[xcorr_steps[ii]:],np.zeros(xcorr_steps[ii])))
+            #     x_corr_full[ii] = np.dot(x_on_off,x_on_off_part)
+            # 
+            # x_corr1 = x_corr_full/x_corr_val
 
             # moments of the signal
             v_AP  = v_dap[(t >= t_on) & (t <= t_off+1)]
@@ -103,7 +103,7 @@ class DAPSummaryStatsMoments(BaseSummaryStats):
             # try:
             sum_stats_vec = np.concatenate((
                     np.array([rest_pot,rest_pot_std, np.mean(v_dap), spikes]),
-                    x_corr1,
+                    # x_corr1,
                     moments_AP,
                     moments_DAP,
                 ))
