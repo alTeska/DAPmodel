@@ -8,6 +8,7 @@ dap/dap_cython_be.cpython-36m-x86_64-linux-gnu.so
 .magicindex.json
 dap/dap_cython.cpython-37m-x86_64-linux-gnu.so
 dap/dap_cython_be.cpython-37m-x86_64-linux-gnu.so
+dap/dap_cython_be.cpython-34m.so
 dap_model
 
 dist/
