@@ -12,7 +12,7 @@ np.set_printoptions(suppress=True, precision=2)
 dt = 0.01
 params, labels = obs_params()
 params_list = [params]
-data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
+data_dir = '/home/alteska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'    # best cell
 
 # load the data
 Ir, vr, tr, t_onr, t_offr, dtr = load_current(data_dir, protocol='rampIV', ramp_amp=3.1)

@@ -6,8 +6,8 @@ from dap.utils import obs_params_gbar, load_current
 
 params, labels = obs_params_gbar()
 
-data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'  # best cell
-# data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
+data_dir = '/home/alteska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'  # best cell
+# data_dir = '/home/alteska/Desktop/LFI_DAP/data/rawData/2015_08_11d.dat'  # second best cell
 
 
 # load the data TODO: load actual Zap20 with CORRECT ramp_amp

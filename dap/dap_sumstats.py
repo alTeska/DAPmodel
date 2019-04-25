@@ -22,7 +22,7 @@ class DAPSummaryStats(BaseSummaryStats):
         self.t_off = t_off
         self.n_summary = n_summary
 
-        data_dir = '/home/ateska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'
+        data_dir = '/home/alteska/Desktop/LFI_DAP/data/rawData/2015_08_26b.dat'
         I, v, t, t_on, t_off, dt = load_current(data_dir,
                                                 protocol='rampIV',
                                                 ramp_amp=3.1)
