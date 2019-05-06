@@ -1,4 +1,4 @@
-# model based on lfimodels library by Jan-Matthis Lückmann
+    # model based on lfimodels library by Jan-Matthis Lückmann
 import numpy as np
 
 from delfi.simulator.BaseSimulator import BaseSimulator
@@ -40,10 +40,6 @@ class DAPSimulatorMultiProtocol(BaseSimulator):
         for ii, I in enumerate(self.I_all):
             t = np.linspace(0, len(I), len(I))*dt_all[ii]
             self.t_all.append(t)
-    
-        # self.I = I
-        # self.dt = dt
-        # self.t = np.linspace(0, len(I), len(I))*self.dt
 
         self.prior_log = prior_log
         self.init = [V0]
@@ -73,7 +69,7 @@ class DAPSimulatorMultiProtocol(BaseSimulator):
         for ii, I in enumerate(self.I_all):
             t = self.t_all[ii]
             dt = self.dt_all[ii]
-            
+
             for param in params_list:
                 rep_list = []
                 for r in range(n_reps):

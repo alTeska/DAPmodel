@@ -2,6 +2,7 @@
 import numpy as np
 import delfi.distribution as dd
 
+from tqdm import tqdm
 from dap import DAPcython
 from .dap_simulator import DAPSimulator
 from .dap_sumstats_moments import DAPSummaryStatsMoments
@@ -116,7 +117,7 @@ def load_prior_ranges(n_params=11):
     scale = np.ones_like(prior_min)
     scale[0:5] = 1000
     scale = scale[:n_params]
-    
+
     return prior_min[:n_params]*scale, prior_max[:n_params]*scale, labels[:n_params]
 
 
