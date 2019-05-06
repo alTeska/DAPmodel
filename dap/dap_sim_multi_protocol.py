@@ -1,4 +1,4 @@
-    # model based on lfimodels library by Jan-Matthis Lückmann
+# model based on lfimodels library by Jan-Matthis Lückmann
 import numpy as np
 
 from delfi.simulator.BaseSimulator import BaseSimulator
